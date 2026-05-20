@@ -1,26 +1,76 @@
 @import "tailwindcss";
 
+@theme {
+  --font-serif: var(--font-playfair), Georgia, serif;
+  --font-sans: var(--font-poppins), system-ui, sans-serif;
+  
+  /* Luxury Gold Color Palette */
+  --color-gold-50: #faf8f5;
+  --color-gold-100: #f3edd8;
+  --color-gold-200: #e6dbb3;
+  --color-gold-300: #d3c28c;
+  --color-gold-400: #c5a880; /* Core Luxury Accent */
+  --color-gold-500: #b8915b;
+  --color-gold-600: #9e7647;
+  --color-gold-700: #7f5b35;
+  --color-gold-800: #624328;
+  --color-gold-900: #4a321e;
+  --color-gold-950: #291a0f;
+  
+  /* Deep Forest Green Palette */
+  --color-forest-900: #182c25;
+  --color-forest-950: #0f1c18;
+  
+  /* Charcoal and Obsidian */
+  --color-obsidian: #111111;
+  --color-carbon-light: #222222;
+  --color-carbon-text: #4a4a4a;
+}
+
 :root {
   --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --foreground: #111111;
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+/* Custom transitions and scroll behaviors */
+.glass-effect {
+  backdrop-filter: blur(16px);
+  background: rgba(17, 17, 17, 0.75);
+}
+
+.glass-effect-light {
+  backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.85);
+}
+
+/* Fade in class for scroll animations */
+.fade-in-section {
+  opacity: 0;
+  transform: translateY(25px);
+  visibility: hidden;
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+  will-change: opacity, transform;
+}
+
+.fade-in-section.is-visible {
+  opacity: 1;
+  transform: none;
+  visibility: visible;
+}
+
+/* Hide default scrollbar in map preview and carousels */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

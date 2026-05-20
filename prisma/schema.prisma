@@ -1,0 +1,147 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum PropertyType {
+  CASA
+  TERRENO
+  DEPARTAMENTO
+  PROYECTO
+}
+
+enum PropertyStatus {
+  DISPONIBLE
+  RESERVADO
+  VENDIDO
+}
+
+enum LeadStatus {
+  NUEVO
+  CONTACTADO
+  COMPLETO
+  PERDIDO
+}
+
+enum VisitStatus {
+  PENDIENTE
+  CONFIRMADA
+  CANCELADA
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(ADMIN)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Property {
+  id             String          @id @default(uuid())
+  title          String
+  slug           String          @unique
+  description    String
+  price          Float
+  location       String
+  city           String
+  state          String
+  m2Total        Float
+  m2Covered      Float?
+  bedrooms       Int?
+  bathrooms      Int?
+  parkingSpaces  Int?
+  type           PropertyType
+  status         PropertyStatus  @default(DISPONIBLE)
+  featured       Boolean         @default(false)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  images         PropertyImage[]
+  leads          Lead[]
+  visits         Visit[]
+}
+
+model PropertyImage {
+  id         String   @id @default(uuid())
+  url        String
+  publicId   String?  // Para Cloudinary/S3 en el futuro
+  isMain     Boolean  @default(false)
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+}
+
+model Lead {
+  id         String     @id @default(uuid())
+  name       String
+  email      String
+  phone      String
+  message    String
+  status     LeadStatus @default(NUEVO)
+  propertyId String?
+  property   Property?  @relation(fields: [propertyId], references: [id], onDelete: SetNull)
+  createdAt  DateTime   @default(now())
+}
+
+model Visit {
+  id         String      @id @default(uuid())
+  name       String
+  email      String
+  phone      String
+  date       DateTime
+  time       String
+  notes      String?
+  status     VisitStatus @default(PENDIENTE)
+  propertyId String
+  property   Property    @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  createdAt  DateTime    @default(now())
+}
+
+enum OrderStatus {
+  PAGADO
+  ENTREGADO
+}
+
+model Order {
+  id            String      @id @default(uuid())
+  orderNumber   String      @unique
+  name          String
+  email         String
+  phone         String
+  address       String
+  paymentMethod String      // "TARJETA" o "SPEI"
+  total         Float
+  status        OrderStatus @default(PAGADO)
+  items         Json        // Detalle de los productos (nombre, peso, cantidad, etc.)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+enum GrillCategory {
+  CORTE
+  PARRILLADA
+  PAPA
+  EMBUTIDO
+  BBQ
+  COMPLEMENTO
+}
+
+model GrillProduct {
+  id          String        @id @default(uuid())
+  name        String
+  description String
+  price       Float
+  category    GrillCategory
+  isActive    Boolean       @default(true)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
