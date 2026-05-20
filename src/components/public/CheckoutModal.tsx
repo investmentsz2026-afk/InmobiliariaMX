@@ -8,8 +8,8 @@ import { bankConfig } from "@/lib/paymentConfig";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 
-// Cargar Stripe sólo si la clave pública está presente
-const stripePromise = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ? loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) : null;
+// Cargar Stripe con la clave pública (se lee del .env)
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "");
 
 // =============================
 // Componente interno del formulario de pago
@@ -240,23 +240,21 @@ function CheckoutForm() {
             <div className="space-y-1.5">
               <label className="block text-[9px] uppercase tracking-widest text-neutral-500 font-bold">Método de Pago</label>
               <div className="grid grid-cols-2 gap-3">
-                {process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setPaymentMethod("TARJETA");
-                      setError("");
-                    }}
-                    className={`py-2.5 px-3 border text-[10px] font-bold uppercase tracking-wider rounded-sm transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer ${
-                      paymentMethod === "TARJETA"
-                        ? "border-gold-400 bg-gold-400/10 text-gold-400"
-                        : "border-neutral-800 bg-black/20 text-neutral-400 hover:text-neutral-200"
-                    }`}
-                  >
-                    <CreditCard className="w-3.5 h-3.5" />
-                    Tarjeta
-                  </button>
-                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPaymentMethod("TARJETA");
+                    setError("");
+                  }}
+                  className={`py-2.5 px-3 border text-[10px] font-bold uppercase tracking-wider rounded-sm transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer ${
+                    paymentMethod === "TARJETA"
+                      ? "border-gold-400 bg-gold-400/10 text-gold-400"
+                      : "border-neutral-800 bg-black/20 text-neutral-400 hover:text-neutral-200"
+                  }`}
+                >
+                  <CreditCard className="w-3.5 h-3.5" />
+                  Tarjeta
+                </button>
                 <button
                   type="button"
                   onClick={() => {
@@ -408,7 +406,7 @@ function CheckoutForm() {
             {/* Submit button */}
             <button
               type="submit"
-              disabled={paymentMethod === "TARJETA" && !stripePromise}
+              disabled={paymentMethod === "TARJETA" && !stripe}
               className="w-full py-4 bg-gold-400 hover:bg-gold-500 text-obsidian text-xs font-bold tracking-widest uppercase transition-all duration-300 rounded-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {paymentMethod === "TARJETA" ? `Pagar $${subtotal.toLocaleString("es-MX", { minimumFractionDigits: 2 })} MXN` : "Confirmar Pedido SPEI"}
@@ -536,26 +534,22 @@ export default function CheckoutModal() {
           exit={{ scale: 0.95, opacity: 0 }}
           className="relative w-full max-w-lg bg-[#111111] border border-white/10 rounded-sm overflow-hidden shadow-2xl z-10 flex flex-col my-8"
         >
-          {stripePromise ? (
-           <Elements
-             stripe={stripePromise}
-             options={{
-               appearance: {
-                 theme: "night",
-                 variables: {
-                   colorPrimary: "#d4a844",
-                   colorBackground: "#111111",
-                   colorText: "#e5e5e5",
-                   fontFamily: "system-ui, -apple-system, sans-serif",
-                 },
-               },
-             }}
-           >
-             <CheckoutForm />
-           </Elements>
-         ) : (
-           <CheckoutForm />
-         )}
+          <Elements
+            stripe={stripePromise}
+            options={{
+              appearance: {
+                theme: "night",
+                variables: {
+                  colorPrimary: "#d4a844",
+                  colorBackground: "#111111",
+                  colorText: "#e5e5e5",
+                  fontFamily: "system-ui, -apple-system, sans-serif",
+                },
+              },
+            }}
+          >
+            <CheckoutForm />
+          </Elements>
         </motion.div>
       </div>
     </AnimatePresence>
