@@ -15,20 +15,28 @@ export async function POST(req: NextRequest) {
     // Stripe trabaja en centavos, así que multiplicamos por 100
     const amountInCents = Math.round(amount * 100);
 
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: amountInCents,
-      currency: "mxn",
-      description: description || "Compra en Carnicero & Grill",
-      receipt_email: customerEmail || undefined,
-      automatic_payment_methods: {
-        enabled: true,
-      },
-    });
+    let clientSecret = "mock_client_secret";
+      let paymentIntentId = "mock_intent_id";
+      if (stripe) {
+        const paymentIntent = await stripe.paymentIntents.create({
+          amount: amountInCents,
+          currency: "mxn",
+          description: description || "Compra en Carnicero & Grill",
+          receipt_email: customerEmail || undefined,
+          automatic_payment_methods: {
+            enabled: true,
+          },
+        });
+        clientSecret = paymentIntent.client_secret as string;
+        paymentIntentId = paymentIntent.id;
+      }
+      // Return the (real or mock) values
+      return NextResponse.json({
+        clientSecret,
+        paymentIntentId,
+      });
 
-    return NextResponse.json({
-      clientSecret: paymentIntent.client_secret,
-      paymentIntentId: paymentIntent.id,
-    });
+
   } catch (error: any) {
     console.error("Stripe PaymentIntent Error:", error);
     return NextResponse.json(

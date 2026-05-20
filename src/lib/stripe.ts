@@ -1,7 +1,6 @@
 import Stripe from "stripe";
 
 // Stripe server-side instance
-// Se usa la Secret Key para crear Payment Intents desde el backend
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
-  typescript: true,
-});
+// If no secret key is provided (e.g., during local development), export a null placeholder.
+const secretKey = process.env.STRIPE_SECRET_KEY;
+export const stripe = secretKey ? new Stripe(secretKey, { typescript: true }) : null;
