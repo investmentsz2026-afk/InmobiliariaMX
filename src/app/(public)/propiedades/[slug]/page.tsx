@@ -117,21 +117,21 @@ export default async function PropertyDetailPage(props: Props) {
             <PropertyImagesGallery images={property.images} title={property.title} />
 
             {/* Core Specs Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 py-6 border-t border-b border-gray-100">
-              <div className="p-4 bg-gray-50 text-center rounded-sm">
-                <Scale className="w-5 h-5 text-gold-400 mx-auto mb-2" />
-                <span className="block text-sm font-semibold text-obsidian">{getWeightText(property.m2Total)}</span>
-                <span className="text-[9px] uppercase tracking-widest text-gray-400 font-bold">Peso Aprox</span>
+            <div className="flex flex-row gap-2 sm:gap-4 py-4 sm:py-6 border-t border-b border-gray-100 w-full">
+              <div className="flex-grow flex-shrink basis-0 min-w-0 p-2 sm:p-4 bg-gray-50 text-center rounded-sm">
+                <Scale className="w-4 h-4 sm:w-5 sm:h-5 text-gold-400 mx-auto mb-1.5 sm:mb-2 flex-shrink-0" />
+                <span className="block text-xs sm:text-sm font-semibold text-obsidian truncate">{getWeightText(property.m2Total)}</span>
+                <span className="block text-[8px] sm:text-[9px] uppercase tracking-wider text-gray-400 font-bold mt-0.5">Peso Aprox</span>
               </div>
-              <div className="p-4 bg-gray-50 text-center rounded-sm">
-                <Layers className="w-5 h-5 text-gold-400 mx-auto mb-2" />
-                <span className="block text-sm font-semibold text-obsidian">{property.bedrooms ? `${property.bedrooms}"` : "Var."}</span>
-                <span className="text-[9px] uppercase tracking-widest text-gray-400 font-bold">Grosor</span>
+              <div className="flex-grow flex-shrink basis-0 min-w-0 p-2 sm:p-4 bg-gray-50 text-center rounded-sm">
+                <Layers className="w-4 h-4 sm:w-5 sm:h-5 text-gold-400 mx-auto mb-1.5 sm:mb-2 flex-shrink-0" />
+                <span className="block text-xs sm:text-sm font-semibold text-obsidian truncate">{property.bedrooms ? `${property.bedrooms}"` : "Var."}</span>
+                <span className="block text-[8px] sm:text-[9px] uppercase tracking-wider text-gray-400 font-bold mt-0.5">Grosor</span>
               </div>
-              <div className="p-4 bg-gray-50 text-center rounded-sm">
-                <Flame className="w-5 h-5 text-gold-400 mx-auto mb-2" />
-                <span className="block text-sm font-semibold text-obsidian">{property.parkingSpaces ? `${property.parkingSpaces} pers` : "Al gusto"}</span>
-                <span className="text-[9px] uppercase tracking-widest text-gray-400 font-bold">Sugerencia</span>
+              <div className="flex-grow flex-shrink basis-0 min-w-0 p-2 sm:p-4 bg-gray-50 text-center rounded-sm">
+                <Flame className="w-4 h-4 sm:w-5 sm:h-5 text-gold-400 mx-auto mb-1.5 sm:mb-2 flex-shrink-0" />
+                <span className="block text-xs sm:text-sm font-semibold text-obsidian truncate">{property.parkingSpaces ? `${property.parkingSpaces} pers` : "Al gusto"}</span>
+                <span className="block text-[8px] sm:text-[9px] uppercase tracking-wider text-gray-400 font-bold mt-0.5">Sugerencia</span>
               </div>
             </div>
 

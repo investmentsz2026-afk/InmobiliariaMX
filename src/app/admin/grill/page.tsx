@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Edit2, Trash2, Loader2, X, Check, Flame, Search } from "lucide-react";
+import { Plus, Edit2, Trash2, Loader2, X, Check, Flame, Search, Upload } from "lucide-react";
 import ConfirmModal from "@/components/admin/ConfirmModal";
 
 interface GrillProduct {
@@ -10,6 +10,7 @@ interface GrillProduct {
   description: string;
   price: number;
   category: "CORTE" | "PARRILLADA" | "PAPA" | "EMBUTIDO" | "BBQ" | "COMPLEMENTO";
+  imageUrl?: string | null;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -44,6 +45,8 @@ export default function AdminGrillPage() {
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState<"CORTE" | "PARRILLADA" | "PAPA" | "EMBUTIDO" | "BBQ" | "COMPLEMENTO">("CORTE");
   const [isActive, setIsActive] = useState(true);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   // UI filter state
   const [searchQuery, setSearchQuery] = useState("");
@@ -78,6 +81,7 @@ export default function AdminGrillPage() {
     setDescription("");
     setCategory("CORTE");
     setIsActive(true);
+    setImageUrl(null);
     setError("");
     setSuccessMsg("");
     setIsFormOpen(true);
@@ -90,6 +94,7 @@ export default function AdminGrillPage() {
     setDescription(product.description);
     setCategory(product.category);
     setIsActive(product.isActive);
+    setImageUrl(product.imageUrl || null);
     setError("");
     setSuccessMsg("");
     setIsFormOpen(true);
@@ -126,6 +131,39 @@ export default function AdminGrillPage() {
     }
   };
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setUploadingImage(true);
+    setError("");
+
+    try {
+      const formData = new FormData();
+      formData.append("files", files[0]);
+
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) {
+        const resData = await res.json();
+        throw new Error(resData.error || "Fallo en la carga de imagen");
+      }
+
+      const data = await res.json();
+      if (data.urls && data.urls.length > 0) {
+        setImageUrl(data.urls[0]);
+      }
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message || "Error al subir la imagen.");
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
@@ -137,6 +175,7 @@ export default function AdminGrillPage() {
       description,
       category,
       isActive,
+      imageUrl,
     };
 
     try {
@@ -268,6 +307,7 @@ export default function AdminGrillPage() {
           <table className="w-full text-left border-collapse min-w-[700px]">
             <thead>
               <tr className="border-b border-neutral-800 bg-black/40 text-[10px] text-neutral-500 uppercase tracking-widest font-bold">
+                <th className="py-4 px-6 w-16">Foto</th>
                 <th className="py-4 px-6">Platillo</th>
                 <th className="py-4 px-6">Categoría</th>
                 <th className="py-4 px-6">Precio (MXN)</th>
@@ -279,6 +319,15 @@ export default function AdminGrillPage() {
               {currentProducts.map((product) => {
                 return (
                   <tr key={product.id} className="hover:bg-neutral-850 transition-colors">
+                    <td className="py-4 px-6 w-16">
+                      <div className="w-12 h-12 rounded-sm overflow-hidden border border-neutral-800 bg-neutral-900 flex items-center justify-center relative">
+                        {product.imageUrl ? (
+                          <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <Flame className="w-5 h-5 text-neutral-600" />
+                        )}
+                      </div>
+                    </td>
                     <td className="py-4 px-6">
                       <div>
                         <p className="font-semibold text-neutral-100 text-sm">{product.name}</p>
@@ -398,6 +447,40 @@ export default function AdminGrillPage() {
               )}
 
               <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Image Upload Widget */}
+                <div className="space-y-2">
+                  <label className="block text-[9px] uppercase tracking-widest text-neutral-500 font-bold">Imagen del Platillo</label>
+                  {imageUrl ? (
+                    <div className="relative aspect-[16/9] sm:aspect-[21/9] border border-neutral-800 rounded-sm overflow-hidden group max-w-xl">
+                      <img src={imageUrl} alt="Platillo" className="w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <button
+                          type="button"
+                          onClick={() => setImageUrl(null)}
+                          className="px-4 py-2 bg-red-650 hover:bg-red-700 text-white text-xs uppercase font-bold tracking-wider rounded-sm transition-all flex items-center gap-1.5"
+                        >
+                          <Trash2 className="w-4 h-4" /> Eliminar Imagen
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="border-2 border-dashed border-neutral-800 hover:border-gold-400/25 p-6 text-center transition-colors rounded-sm relative max-w-xl">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        disabled={uploadingImage}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                      />
+                      <Upload className="w-8 h-8 text-neutral-600 mx-auto mb-2" />
+                      <span className="block text-xs text-neutral-400 font-semibold uppercase tracking-wider">
+                        {uploadingImage ? "Subiendo imagen..." : "Seleccionar Imagen"}
+                      </span>
+                      <span className="text-[10px] text-neutral-600 block mt-1">Formatos soportados: JPG, PNG. Relación rectangular recomendada.</span>
+                    </div>
+                  )}
+                </div>
+
                 {/* Basic info grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div>

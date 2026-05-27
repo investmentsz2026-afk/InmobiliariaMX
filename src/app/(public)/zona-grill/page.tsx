@@ -1,21 +1,25 @@
 import { Flame, Clock, MapPin, MessageCircle } from "lucide-react";
 import { Metadata } from "next";
 import GrillMenuInteractive from "@/components/public/GrillMenuInteractive";
+import GrillBackground from "@/components/public/GrillBackground";
 
 export const metadata: Metadata = {
-  title: "Menú Zona Grill | Carnicero & Grill",
+  title: "Menú Zona Grill | La Cava del Corte",
   description: "Disfruta de nuestros cortes preparados al carbón los fines de semana. Parrilladas, papas rellenas con extra carne, BBQ y complementos.",
 };
 
 export default function ZonaGrillPage() {
   return (
-    <div className="bg-[#0b0b0b] text-white min-h-screen -mt-24 pt-32 pb-24 font-sans selection:bg-gold-400 selection:text-black">
+    <div className="relative text-white min-h-screen -mt-24 pt-40 sm:pt-32 pb-24 font-sans selection:bg-gold-400 selection:text-black overflow-hidden bg-[#030406]">
+      {/* Animated Background */}
+      <GrillBackground />
+
       {/* Decorative Top Accent */}
       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-gold-600 via-gold-400 to-gold-600 z-50" />
 
       {/* Hero / Header Section */}
-      <div className="max-w-7xl mx-auto px-6 text-center mb-16 relative">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-48 bg-gold-400/5 rounded-full blur-3xl -z-10" />
+      <div className="max-w-7xl mx-auto px-6 text-center mb-16 relative z-10">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-48 bg-gold-400/10 rounded-full blur-3xl -z-10" />
         
         <span className="inline-flex items-center gap-2 px-3 py-1 bg-gold-400/10 border border-gold-400/20 text-gold-400 text-[10px] tracking-widest uppercase font-bold rounded-full mb-4">
           <Flame className="w-3.5 h-3.5" />
@@ -50,7 +54,7 @@ export default function ZonaGrillPage() {
       </div>
 
       {/* Interactive Grill Menu Grid */}
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
         <GrillMenuInteractive />
       </div>
     </div>

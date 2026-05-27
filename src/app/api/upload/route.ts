@@ -35,7 +35,26 @@ export async function POST(req: NextRequest) {
       // Sanitize name and create unique filename
       const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
       const cleanOriginalName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
-      const fileExtension = cleanOriginalName.split(".").pop();
+      let fileExtension = cleanOriginalName.split(".").pop()?.toLowerCase() || "";
+
+      // Fallback mapping based on MIME type if extension is missing/non-standard
+      const mimeToExt: Record<string, string> = {
+        "image/jpeg": "jpg",
+        "image/jpg": "jpg",
+        "image/png": "png",
+        "image/webp": "webp",
+        "image/gif": "gif",
+        "image/svg+xml": "svg",
+      };
+
+      if (!fileExtension || !["jpg", "jpeg", "png", "webp", "gif", "svg"].includes(fileExtension)) {
+        if (file.type && mimeToExt[file.type]) {
+          fileExtension = mimeToExt[file.type];
+        } else {
+          fileExtension = "jpg"; // Default fallback
+        }
+      }
+
       const filename = `${uniqueSuffix}.${fileExtension}`;
       const filePath = join(uploadDir, filename);
 

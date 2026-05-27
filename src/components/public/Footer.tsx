@@ -8,10 +8,20 @@ export default function Footer() {
         
         {/* Brand info */}
         <div className="space-y-6">
-          <Link href="/" className="inline-block">
-            <span className="font-serif text-2xl tracking-widest font-semibold text-white">
-              CARNICERO<span className="text-gold-400"> & GRILL</span>
-            </span>
+          <Link href="/" className="inline-block flex items-center space-x-2 group">
+            <img
+              src="/uploads/logo.png"
+              alt="La Cava del Corte Logo"
+              className="h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+            />
+            <div className="flex flex-col text-left">
+              <span className="font-serif text-lg tracking-[0.12em] font-bold text-white uppercase leading-none">
+                La Cava
+              </span>
+              <span className="font-serif text-[9px] tracking-[0.25em] font-semibold text-gold-400 uppercase mt-1 leading-none">
+                del Corte
+              </span>
+            </div>
           </Link>
           <p className="text-sm text-gray-500 leading-relaxed">
             Boutique de carnes premium con cortes de calidad internacional. Contamos con una zona de carne congelada fría para llevar a casa y una zona grill los fines de semana.
@@ -93,7 +103,7 @@ export default function Footer() {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 border-t border-white/5 pt-8 flex flex-col md:flex-row items-center justify-between text-xs text-gray-600">
-        <p>&copy; {new Date().getFullYear()} Carnicero & Grill. Todos los derechos reservados.</p>
+        <p>&copy; {new Date().getFullYear()} La Cava del Corte. Todos los derechos reservados.</p>
         <p className="mt-2 md:mt-0 tracking-widest">DISEÑO Y PASIÓN POR EL FUEGO</p>
       </div>
     </footer>

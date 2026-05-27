@@ -18,7 +18,7 @@ export default function Hero() {
       </div>
 
       {/* Content Container */}
-      <div className="relative z-10 max-w-5xl mx-auto px-6 text-center text-white flex flex-col items-center">
+      <div className="relative z-10 max-w-5xl mx-auto px-6 text-center text-white flex flex-col items-center pt-28 sm:pt-0">
         
         {/* Animated Accent Badge */}
         <motion.div
@@ -28,7 +28,7 @@ export default function Hero() {
           className="mb-6 flex items-center gap-2 px-4 py-1.5 bg-gold-400/15 backdrop-blur-md border border-gold-400/30 text-gold-400 text-[10px] font-bold tracking-widest uppercase rounded-full"
         >
           <Sparkles className="w-3.5 h-3.5" />
-          CARNICERÍA BOUTIQUE & ZONA GRILL
+          LA CAVA DEL CORTE | BOUTIQUE & ZONA GRILL
         </motion.div>
 
         {/* Impactful Title */}

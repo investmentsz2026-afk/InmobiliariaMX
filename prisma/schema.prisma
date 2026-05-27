@@ -141,6 +141,7 @@ model GrillProduct {
   description String
   price       Float
   category    GrillCategory
+  imageUrl    String?
   isActive    Boolean       @default(true)
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt

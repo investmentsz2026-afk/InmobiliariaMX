@@ -95,7 +95,7 @@ export default async function HomePage() {
               Calidad de Origen, Suavidad y Pasión por el Fuego
             </h2>
             <p className="text-sm text-gray-300 leading-relaxed font-light">
-              En **Carnicero & Grill** fusionamos dos mundos bajo una sola pasión: el fuego. Nuestro negocio integral te ofrece una **Zona de Carne Congelada Fría** con los cortes crudos premium más selectos de Sonora, empacados al alto vacío individualmente en origen. Esto asegura que la maduración y la frescura de la carne se mantengan intactas hasta tu asador.
+              En **La Cava del Corte** fusionamos dos mundos bajo una sola pasión: el fuego. Nuestro negocio integral te ofrece una **Zona de Carne Congelada Fría** con los cortes crudos premium más selectos de Sonora, empacados al alto vacío individualmente en origen. Esto asegura que la maduración y la frescura de la carne se mantengan intactas hasta tu asador.
             </p>
             <p className="text-sm text-gray-300 leading-relaxed font-light">
               Y si prefieres que nosotros hagamos el trabajo, los fines de semana encendemos las brasas en nuestra **Zona Grill**, ofreciendo parrilladas, papas rellenas y costillares BBQ cocinados a fuego lento con leña y carbón de mezquite, listos para comer o pedir a domicilio.

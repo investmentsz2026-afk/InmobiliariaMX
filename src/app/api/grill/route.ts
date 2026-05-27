@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { name, description, price, category, isActive } = body;
+    const { name, description, price, category, isActive, imageUrl } = body;
 
     const newProduct = await prisma.grillProduct.create({
       data: {
@@ -25,6 +25,7 @@ export async function POST(req: NextRequest) {
         price: Number(price),
         category,
         isActive: isActive !== undefined ? isActive : true,
+        imageUrl,
       },
     });
 
@@ -45,7 +46,7 @@ export async function PUT(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { name, description, price, category, isActive } = body;
+    const { name, description, price, category, isActive, imageUrl } = body;
 
     const updatedProduct = await prisma.grillProduct.update({
       where: { id },
@@ -55,6 +56,7 @@ export async function PUT(req: NextRequest) {
         price: price !== undefined ? Number(price) : undefined,
         category,
         isActive,
+        imageUrl,
       },
     });
 
