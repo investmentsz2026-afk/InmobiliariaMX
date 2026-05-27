@@ -20,9 +20,9 @@ export default function LoginPage() {
   // Redirect to dashboard if already authenticated
   useEffect(() => {
     if (status === "authenticated") {
-      router.push("/admin");
+      window.location.href = "/admin";
     }
-  }, [status, router]);
+  }, [status]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,7 +43,7 @@ export default function LoginPage() {
       } else {
         setIsEntering(true);
         setTimeout(() => {
-          router.push("/admin");
+          window.location.href = "/admin";
         }, 1500); // 1.5s delay to show the beautiful "Ingresando al Cpanel" animation
       }
     } catch (err) {
