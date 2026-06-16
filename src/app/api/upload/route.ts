@@ -45,11 +45,20 @@ export async function POST(req: NextRequest) {
         "image/webp": "webp",
         "image/gif": "gif",
         "image/svg+xml": "svg",
+        "video/mp4": "mp4",
+        "video/webm": "webm",
+        "video/quicktime": "mov",
+        "video/x-msvideo": "avi",
+        "video/ogg": "ogg",
       };
 
-      if (!fileExtension || !["jpg", "jpeg", "png", "webp", "gif", "svg"].includes(fileExtension)) {
+      const allowedExtensions = ["jpg", "jpeg", "png", "webp", "gif", "svg", "mp4", "webm", "mov", "avi", "ogg", "mkv"];
+
+      if (!fileExtension || !allowedExtensions.includes(fileExtension)) {
         if (file.type && mimeToExt[file.type]) {
           fileExtension = mimeToExt[file.type];
+        } else if (file.type && file.type.startsWith("video/")) {
+          fileExtension = "mp4";
         } else {
           fileExtension = "jpg"; // Default fallback
         }

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useCartStore } from "@/lib/cartStore";
-import { X, ShieldCheck, CheckCircle2, ArrowRight, MessageSquare, CreditCard, Send, Copy, Check } from "lucide-react";
+import { X, ShieldCheck, CheckCircle2, ArrowRight, MessageSquare, CreditCard, Send, Copy, Check, Upload, Trash2, Loader2, Camera, Eye } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { bankConfig } from "@/lib/paymentConfig";
 import { loadStripe } from "@stripe/stripe-js";
@@ -27,6 +27,8 @@ function CheckoutForm() {
   const [paymentMethod, setPaymentMethod] = useState<"TARJETA" | "SPEI">("TARJETA");
   const [copiedClabe, setCopiedClabe] = useState(false);
   const [error, setError] = useState("");
+  const [receiptUrl, setReceiptUrl] = useState("");
+  const [uploadingReceipt, setUploadingReceipt] = useState(false);
 
   // Flow State
   const [step, setStep] = useState<"form" | "processing" | "success">("form");
@@ -39,6 +41,41 @@ function CheckoutForm() {
   const subtotal = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
   // ---- Handlers ----
+
+  const handleReceiptChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingReceipt(true);
+    setError("");
+
+    try {
+      const formData = new FormData();
+      formData.append("files", file);
+
+      const res = await fetch("/api/upload/receipt", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) {
+        const resData = await res.json();
+        throw new Error(resData.error || "Fallo en la carga del comprobante");
+      }
+
+      const data = await res.json();
+      if (data.urls && data.urls.length > 0) {
+        setReceiptUrl(data.urls[0]);
+      } else {
+        throw new Error("No se devolvió URL del comprobante");
+      }
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message || "Error al subir comprobante. Intenta de nuevo.");
+    } finally {
+      setUploadingReceipt(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -124,6 +161,7 @@ function CheckoutForm() {
             quantity: item.quantity,
             weight: item.weight,
           })),
+          receiptUrl: paymentMethod === "SPEI" ? receiptUrl : undefined,
         }),
       });
 
@@ -168,7 +206,9 @@ function CheckoutForm() {
       `🛒 *PRODUCTOS COMPRADOS:*%0A${itemsText}%0A%0A` +
       `💰 *Monto Total:* *$${subtotal.toLocaleString("es-MX", { minimumFractionDigits: 2 })} MXN*%0A%0A` +
       (paymentMethod === "SPEI"
-        ? `⚠️ *Nota:* He realizado el pago por Transferencia SPEI. A continuación adjunto captura de mi comprobante de transferencia bancaria.`
+        ? (receiptUrl 
+           ? `✅ *Nota:* He realizado el pago por Transferencia SPEI y he adjuntado el comprobante digital en el sistema (${receiptUrl}).`
+           : `⚠️ *Nota:* He realizado el pago por Transferencia SPEI. A continuación adjunto captura de mi comprobante de transferencia bancaria.`)
         : `✅ *Nota:* Pago realizado exitosamente con tarjeta Stripe. El cobro ya fue acreditado.`);
 
     window.open(`https://wa.me/523222018003?text=${text}`, "_blank");
@@ -184,6 +224,7 @@ function CheckoutForm() {
     setPhone("");
     setAddress("");
     setPaymentMethod("TARJETA");
+    setReceiptUrl("");
     setError("");
     toggleCheckout(false);
   };
@@ -193,12 +234,12 @@ function CheckoutForm() {
     style: {
       base: {
         fontSize: "14px",
-        color: "#e5e5e5",
+        color: "#171717",
         fontFamily: "system-ui, -apple-system, sans-serif",
         "::placeholder": {
-          color: "#525252",
+          color: "#a3a3a3",
         },
-        iconColor: "#d4a844",
+        iconColor: "#b01e28",
       },
       invalid: {
         color: "#ef4444",
@@ -211,10 +252,10 @@ function CheckoutForm() {
   return (
     <>
       {/* Header */}
-      <div className="p-6 border-b border-white/5 flex items-center justify-between">
+      <div className="p-6 border-b border-neutral-250 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <ShieldCheck className="w-5 h-5 text-gold-400" />
-          <h3 className="font-serif text-lg font-semibold text-white tracking-wide">
+          <ShieldCheck className="w-5 h-5 text-[#b01e28]" />
+          <h3 className="font-serif text-lg font-semibold text-neutral-900 tracking-wide">
             {step === "success"
               ? "Pedido Confirmado"
               : paymentMethod === "TARJETA"
@@ -225,7 +266,7 @@ function CheckoutForm() {
         {step !== "processing" && (
           <button
             onClick={handleClose}
-            className="p-1.5 text-neutral-400 hover:text-white rounded-full hover:bg-white/5 transition-colors cursor-pointer"
+            className="p-1.5 text-neutral-400 hover:text-neutral-800 rounded-full hover:bg-neutral-100 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -233,7 +274,7 @@ function CheckoutForm() {
       </div>
 
       {/* Body */}
-      <div className="p-6 overflow-y-auto max-h-[75vh]">
+      <div className="p-6 overflow-y-auto max-h-[75vh] text-neutral-900">
         {step === "form" && (
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Method selector tabs */}
@@ -248,8 +289,8 @@ function CheckoutForm() {
                   }}
                   className={`py-2.5 px-3 border text-[10px] font-bold uppercase tracking-wider rounded-sm transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer ${
                     paymentMethod === "TARJETA"
-                      ? "border-gold-400 bg-gold-400/10 text-gold-400"
-                      : "border-neutral-800 bg-black/20 text-neutral-400 hover:text-neutral-200"
+                      ? "border-[#b01e28] bg-[#b01e28]/5 text-[#b01e28]"
+                      : "border-neutral-200 bg-white text-neutral-500 hover:text-neutral-900 hover:border-neutral-300"
                   }`}
                 >
                   <CreditCard className="w-3.5 h-3.5" />
@@ -263,8 +304,8 @@ function CheckoutForm() {
                   }}
                   className={`py-2.5 px-3 border text-[10px] font-bold uppercase tracking-wider rounded-sm transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer ${
                     paymentMethod === "SPEI"
-                      ? "border-gold-400 bg-gold-400/10 text-gold-400"
-                      : "border-neutral-800 bg-black/20 text-neutral-400 hover:text-neutral-200"
+                      ? "border-[#b01e28] bg-[#b01e28]/5 text-[#b01e28]"
+                      : "border-neutral-200 bg-white text-neutral-500 hover:text-neutral-900 hover:border-neutral-300"
                   }`}
                 >
                   <Send className="w-3.5 h-3.5" />
@@ -281,11 +322,11 @@ function CheckoutForm() {
                 <label className="block text-[9px] uppercase tracking-widest text-neutral-500 font-bold">
                   Datos de Tarjeta de Crédito / Débito
                 </label>
-                <div className="bg-black/40 border border-white/10 focus-within:border-gold-400 p-4 rounded-sm transition-colors duration-300">
+                <div className="bg-white border border-neutral-200 focus-within:border-[#b01e28] p-4 rounded-sm transition-colors duration-300">
                   <CardElement options={cardElementOptions} />
                 </div>
-                <p className="text-[9px] text-neutral-600 flex items-center gap-1.5">
-                  <ShieldCheck className="w-3 h-3 text-emerald-500" />
+                <p className="text-[9px] text-neutral-500 flex items-center gap-1.5 font-medium">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                   Cobro procesado de forma segura por Stripe. Tus datos nunca se almacenan en nuestros servidores.
                 </p>
               </div>
@@ -293,41 +334,99 @@ function CheckoutForm() {
 
             {/* SPEI bank details card */}
             {paymentMethod === "SPEI" && (
-              <div className="bg-black/40 border border-neutral-800 p-4 rounded-sm space-y-3 font-sans">
-                <div className="flex justify-between items-center pb-2 border-b border-white/5">
-                  <span className="text-[10px] uppercase font-bold tracking-widest text-gold-400">Datos para Transferencia (SPEI)</span>
-                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                </div>
-
-                <div className="grid grid-cols-3 gap-y-2 text-xs">
-                  <span className="text-neutral-500 font-bold uppercase text-[9px]">Banco:</span>
-                  <span className="col-span-2 text-neutral-200 font-semibold">{bankConfig.banco}</span>
-
-                  <span className="text-neutral-500 font-bold uppercase text-[9px]">Cuenta:</span>
-                  <span className="col-span-2 text-neutral-200 font-semibold">{bankConfig.cuenta}</span>
-
-                  <span className="text-neutral-500 font-bold uppercase text-[9px] self-center">CLABE:</span>
-                  <div className="col-span-2 flex items-center justify-between text-neutral-200 font-semibold bg-neutral-950 px-2 py-1 rounded-xs border border-neutral-800 font-mono text-[11px]">
-                    <span>{bankConfig.clabe}</span>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        navigator.clipboard.writeText(bankConfig.clabe.replace(/\s/g, ""));
-                        setCopiedClabe(true);
-                        setTimeout(() => setCopiedClabe(false), 2000);
-                      }}
-                      className="text-gold-400 hover:text-gold-300 ml-2 cursor-pointer"
-                    >
-                      {copiedClabe ? <Check className="w-3.5 h-3.5 text-green-400" /> : <Copy className="w-3.5 h-3.5" />}
-                    </button>
+              <div className="space-y-4">
+                <div className="bg-neutral-50 border border-neutral-200 p-4 rounded-sm space-y-3 font-sans">
+                  <div className="flex justify-between items-center pb-2 border-b border-neutral-200/80">
+                    <span className="text-[10px] uppercase font-bold tracking-widest text-[#b01e28]">Datos para Transferencia (SPEI)</span>
+                    <ShieldCheck className="w-4 h-4 text-emerald-600" />
                   </div>
 
-                  <span className="text-neutral-500 font-bold uppercase text-[9px]">Beneficiario:</span>
-                  <span className="col-span-2 text-neutral-200 font-semibold">{bankConfig.beneficiario}</span>
+                  <div className="grid grid-cols-3 gap-y-2 text-xs">
+                    <span className="text-neutral-500 font-bold uppercase text-[9px]">Banco:</span>
+                    <span className="col-span-2 text-neutral-850 font-semibold">{bankConfig.banco}</span>
+
+                    <span className="text-neutral-500 font-bold uppercase text-[9px]">Cuenta:</span>
+                    <span className="col-span-2 text-neutral-850 font-semibold">{bankConfig.cuenta}</span>
+
+                    <span className="text-neutral-500 font-bold uppercase text-[9px] self-center">CLABE:</span>
+                    <div className="col-span-2 flex items-center justify-between text-neutral-850 font-semibold bg-white px-2 py-1 rounded-xs border border-neutral-200 font-mono text-[11px]">
+                      <span>{bankConfig.clabe}</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(bankConfig.clabe.replace(/\s/g, ""));
+                          setCopiedClabe(true);
+                          setTimeout(() => setCopiedClabe(false), 2000);
+                        }}
+                        className="text-[#b01e28] hover:text-[#91181f] ml-2 cursor-pointer border-none bg-transparent"
+                      >
+                        {copiedClabe ? <Check className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5" />}
+                      </button>
+                    </div>
+
+                    <span className="text-neutral-500 font-bold uppercase text-[9px]">Beneficiario:</span>
+                    <span className="col-span-2 text-neutral-850 font-semibold">{bankConfig.beneficiario}</span>
+                  </div>
+                  <p className="text-[9px] text-neutral-550 leading-normal uppercase font-semibold">
+                    * Realiza la transferencia y luego envía el comprobante por WhatsApp para validar tu pedido.
+                  </p>
                 </div>
-                <p className="text-[9px] text-neutral-500 leading-normal uppercase">
-                  * Realiza la transferencia y luego envía el comprobante por WhatsApp para validar tu pedido.
-                </p>
+
+                {/* Receipt Uploader */}
+                <div className="p-4 border border-dashed border-neutral-300 rounded-sm bg-neutral-50/50 space-y-3 text-left">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] uppercase font-bold tracking-widest text-neutral-500">Comprobante de Pago (Opcional)</span>
+                    <span className="text-[9px] text-neutral-400 italic">Formatos: JPG, PNG</span>
+                  </div>
+
+                  {uploadingReceipt ? (
+                    <div className="flex items-center justify-center py-4 gap-2 text-xs text-neutral-500 font-medium">
+                      <Loader2 className="w-4 h-4 text-[#b01e28] animate-spin" />
+                      Subiendo archivo...
+                    </div>
+                  ) : receiptUrl ? (
+                    <div className="relative flex items-center gap-3 p-2 bg-white border border-neutral-200 rounded-sm">
+                      <img
+                        src={receiptUrl}
+                        alt="Comprobante de Pago"
+                        className="w-10 h-10 object-cover rounded-xs border border-neutral-200"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[10px] text-emerald-650 font-bold flex items-center gap-1">
+                          <Check className="w-3 h-3" />
+                          ¡Comprobante Cargado!
+                        </p>
+                        <p className="text-[9px] text-neutral-400 truncate">El comprobante se adjuntará a tu orden.</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setReceiptUrl("")}
+                        className="p-1 text-neutral-400 hover:text-red-650 hover:bg-neutral-100 rounded-xs transition-colors cursor-pointer border-none bg-transparent"
+                        title="Eliminar comprobante"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        id="receipt-file-input"
+                        onChange={handleReceiptChange}
+                        className="hidden"
+                      />
+                      <label
+                        htmlFor="receipt-file-input"
+                        className="flex flex-col items-center justify-center py-4 border border-dashed border-neutral-300 hover:border-[#b01e28] bg-white hover:bg-red-50/5 text-neutral-500 hover:text-[#b01e28] rounded-xs cursor-pointer transition-all gap-1.5"
+                      >
+                        <Camera className="w-5 h-5 animate-pulse" />
+                        <span className="text-xs font-semibold">Subir Foto o Captura de Pantalla</span>
+                        <span className="text-[9px] text-neutral-400">Presiona aquí para seleccionar tu comprobante</span>
+                      </label>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
 
@@ -335,7 +434,7 @@ function CheckoutForm() {
             <div className="space-y-4">
               {/* Name field */}
               <div>
-                <label className="block text-[10px] uppercase tracking-widest text-neutral-400 font-bold mb-1.5">
+                <label className="block text-[10px] uppercase tracking-widest text-neutral-500 font-bold mb-1.5">
                   {paymentMethod === "TARJETA" ? "Nombre del Titular" : "Nombre Completo del Cliente"}
                 </label>
                 <input
@@ -344,61 +443,61 @@ function CheckoutForm() {
                   value={cardName}
                   onChange={(e) => setCardName(e.target.value)}
                   placeholder="Ej. JHOSMELL MENDOZA"
-                  className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white uppercase"
+                  className="w-full bg-white border border-neutral-200 focus:border-[#b01e28] py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-neutral-800 uppercase font-medium"
                 />
               </div>
 
               {/* Contact Info (Grid) */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[10px] uppercase tracking-widest text-neutral-400 font-bold mb-1.5">Correo Electrónico</label>
+                  <label className="block text-[10px] uppercase tracking-widest text-neutral-500 font-bold mb-1.5">Correo Electrónico</label>
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="ejemplo@correo.com"
-                    className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white"
+                    className="w-full bg-white border border-neutral-200 focus:border-[#b01e28] py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-neutral-800 font-medium"
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] uppercase tracking-widest text-neutral-400 font-bold mb-1.5">WhatsApp / Celular</label>
+                  <label className="block text-[10px] uppercase tracking-widest text-neutral-500 font-bold mb-1.5">WhatsApp / Celular</label>
                   <input
                     type="tel"
                     required
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="Ej. 322 201 8003"
-                    className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white font-mono"
+                    className="w-full bg-white border border-neutral-200 focus:border-[#b01e28] py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-neutral-800 font-mono font-medium"
                   />
                 </div>
               </div>
 
               {/* Delivery Address */}
               <div>
-                <label className="block text-[10px] uppercase tracking-widest text-neutral-400 font-bold mb-1.5">Dirección Completa de Entrega</label>
+                <label className="block text-[10px] uppercase tracking-widest text-neutral-500 font-bold mb-1.5">Dirección Completa de Entrega</label>
                 <textarea
                   required
                   rows={2}
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   placeholder="Calle, Número, Colonia, Referencias y Municipio de entrega"
-                  className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white resize-none"
+                  className="w-full bg-white border border-neutral-200 focus:border-[#b01e28] py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-neutral-800 resize-none font-medium"
                 />
               </div>
             </div>
 
             {/* Error Box */}
             {error && (
-              <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-sm">
+              <div className="p-3 bg-red-50 border border-red-200 text-red-650 text-xs rounded-sm font-semibold">
                 {error}
               </div>
             )}
 
             {/* Subtotal Banner */}
-            <div className="p-3 bg-neutral-900/60 border border-white/5 rounded-sm flex items-center justify-between text-xs">
-              <span className="text-neutral-400 uppercase tracking-wider">Total del Pedido</span>
-              <span className="font-serif text-gold-400 font-bold text-sm">
+            <div className="p-3 bg-neutral-50 border border-neutral-200/80 rounded-sm flex items-center justify-between text-xs font-semibold">
+              <span className="text-neutral-500 uppercase tracking-wider">Total del Pedido</span>
+              <span className="font-serif text-[#b01e28] font-bold text-sm">
                 ${subtotal.toLocaleString("es-MX", { minimumFractionDigits: 2 })} MXN
               </span>
             </div>
@@ -407,7 +506,7 @@ function CheckoutForm() {
             <button
               type="submit"
               disabled={paymentMethod === "TARJETA" && !stripe}
-              className="w-full py-4 bg-gold-400 hover:bg-gold-500 text-obsidian text-xs font-bold tracking-widest uppercase transition-all duration-300 rounded-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-4 bg-[#b01e28] hover:bg-[#91181f] text-white text-xs font-bold tracking-widest uppercase transition-all duration-300 rounded-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed border-none shadow-md"
             >
               {paymentMethod === "TARJETA" ? `Pagar $${subtotal.toLocaleString("es-MX", { minimumFractionDigits: 2 })} MXN` : "Confirmar Pedido SPEI"}
               <ArrowRight className="w-4 h-4" />
@@ -419,13 +518,13 @@ function CheckoutForm() {
         {step === "processing" && (
           <div className="flex flex-col items-center justify-center py-16 text-center space-y-6">
             <div className="relative w-14 h-14">
-              <div className="absolute inset-0 rounded-full border-4 border-white/10 border-t-gold-400 animate-spin" />
+              <div className="absolute inset-0 rounded-full border-4 border-neutral-100 border-t-[#b01e28] animate-spin" />
             </div>
             <div className="space-y-1.5">
-              <h4 className="font-serif text-lg font-medium text-white tracking-wide">
+              <h4 className="font-serif text-lg font-semibold text-neutral-900 tracking-wide">
                 {paymentMethod === "TARJETA" ? "Procesando Cobro con Stripe..." : "Registrando Pedido en el Sistema..."}
               </h4>
-              <p className="text-xs text-neutral-400 max-w-xs leading-relaxed">
+              <p className="text-xs text-neutral-500 max-w-xs leading-relaxed">
                 Por favor no cierres la ventana. Estamos completando tu solicitud de forma segura.
               </p>
             </div>
@@ -440,46 +539,46 @@ function CheckoutForm() {
               animate={{ scale: 1, opacity: 1 }}
               transition={{ type: "spring", stiffness: 200, damping: 15 }}
             >
-              <CheckCircle2 className="w-16 h-16 text-green-400" />
+              <CheckCircle2 className="w-16 h-16 text-green-600" />
             </motion.div>
 
             <div className="space-y-1.5">
-              <h4 className="font-serif text-2xl font-bold text-white tracking-wide">
+              <h4 className="font-serif text-2xl font-bold text-neutral-900 tracking-wide">
                 {paymentMethod === "TARJETA" ? "¡Pago Exitoso!" : "¡Pedido Registrado!"}
               </h4>
-              <p className="text-xs text-neutral-400">
-                Tu orden se ha generado correctamente. Folio de Compra: <strong className="text-gold-400 font-mono">{orderNumber}</strong>
+              <p className="text-xs text-neutral-500 font-medium">
+                Tu orden se ha generado correctamente. Folio de Compra: <strong className="text-[#b01e28] font-mono">{orderNumber}</strong>
               </p>
               {paymentMethod === "TARJETA" && (
-                <p className="text-[10px] text-emerald-400 font-semibold mt-1">
+                <p className="text-[10px] text-emerald-650 font-bold mt-1">
                   ✓ El cobro de ${subtotal.toLocaleString("es-MX", { minimumFractionDigits: 2 })} MXN fue acreditado exitosamente por Stripe.
                 </p>
               )}
             </div>
 
             {/* Receipt Details Box */}
-            <div className="w-full bg-neutral-900 border border-white/5 rounded-sm p-5 text-left text-xs space-y-3 font-light">
-              <h5 className="font-semibold uppercase tracking-wider text-neutral-400 pb-1.5 border-b border-white/5 text-[9px] flex justify-between">
+            <div className="w-full bg-neutral-50 border border-neutral-200/80 rounded-sm p-5 text-left text-xs space-y-3 font-light text-neutral-800">
+              <h5 className="font-semibold uppercase tracking-wider text-neutral-500 pb-1.5 border-b border-neutral-200/80 text-[9px] flex justify-between">
                 <span>Resumen de Pedido</span>
-                <span className="text-gold-400">{paymentMethod === "TARJETA" ? "Tarjeta (Stripe)" : "SPEI"}</span>
+                <span className="text-[#b01e28] font-bold">{paymentMethod === "TARJETA" ? "Tarjeta (Stripe)" : "SPEI"}</span>
               </h5>
               <div className="max-h-[120px] overflow-y-auto space-y-2 pr-1">
                 {items.map((item) => (
-                  <div key={item.id} className="flex justify-between items-center text-neutral-300">
+                  <div key={item.id} className="flex justify-between items-center text-neutral-700">
                     <span>
                       {item.quantity}x {item.title}
                     </span>
-                    <span className="font-semibold text-neutral-200">
+                    <span className="font-semibold text-neutral-900">
                       ${(item.price * item.quantity).toLocaleString("es-MX", { minimumFractionDigits: 2 })} MXN
                     </span>
                   </div>
                 ))}
               </div>
-              <div className="border-t border-white/5 pt-2 flex justify-between items-center text-sm font-semibold text-white">
+              <div className="border-t border-neutral-200/80 pt-2 flex justify-between items-center text-sm font-semibold text-neutral-900">
                 <span>Total del Pedido</span>
-                <span className="font-serif text-gold-400">${subtotal.toLocaleString("es-MX", { minimumFractionDigits: 2 })} MXN</span>
+                <span className="font-serif text-[#b01e28] font-bold">${subtotal.toLocaleString("es-MX", { minimumFractionDigits: 2 })} MXN</span>
               </div>
-              <div className="text-[10px] text-neutral-400 pt-1 leading-normal border-t border-white/5 mt-2">
+              <div className="text-[10px] text-neutral-500 pt-1 leading-normal border-t border-neutral-200/80 mt-2">
                 <strong>Dirección de envío:</strong> {address}
               </div>
             </div>
@@ -488,7 +587,7 @@ function CheckoutForm() {
             <div className="w-full space-y-3 pt-2">
               <button
                 onClick={handleWhatsAppSend}
-                className="w-full py-3.5 bg-[#25D366] hover:bg-[#1ebd54] text-white text-xs font-bold tracking-widest uppercase transition-all duration-300 rounded-sm flex items-center justify-center gap-2 shadow-lg cursor-pointer"
+                className="w-full py-3.5 bg-[#25D366] hover:bg-[#1ebd54] text-white text-xs font-bold tracking-widest uppercase transition-all duration-300 rounded-sm flex items-center justify-center gap-2 shadow-md cursor-pointer border-none"
               >
                 <MessageSquare className="w-4 h-4" />
                 Enviar Comprobante al WhatsApp
@@ -496,7 +595,7 @@ function CheckoutForm() {
 
               <button
                 onClick={handleClose}
-                className="w-full py-3 bg-transparent border border-white/10 hover:border-gold-400 text-neutral-300 hover:text-gold-400 text-xs font-semibold tracking-widest uppercase transition-all duration-300 rounded-sm cursor-pointer"
+                className="w-full py-3 bg-white border border-neutral-200 hover:border-[#b01e28] text-neutral-600 hover:text-[#b01e28] text-xs font-semibold tracking-widest uppercase transition-all duration-300 rounded-sm cursor-pointer"
               >
                 Cerrar y Regresar
               </button>
@@ -524,7 +623,7 @@ export default function CheckoutModal() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.6 }}
           exit={{ opacity: 0 }}
-          className="absolute inset-0 bg-black/80 backdrop-blur-md"
+          className="absolute inset-0 bg-black/50 backdrop-blur-xs"
         />
 
         {/* Modal container wrapped in Stripe Elements provider */}
@@ -532,17 +631,17 @@ export default function CheckoutModal() {
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.95, opacity: 0 }}
-          className="relative w-full max-w-lg bg-[#111111] border border-white/10 rounded-sm overflow-hidden shadow-2xl z-10 flex flex-col my-8"
+          className="relative w-full max-w-lg bg-white border border-neutral-200 rounded-sm overflow-hidden shadow-2xl z-10 flex flex-col my-8"
         >
           <Elements
             stripe={stripePromise}
             options={{
               appearance: {
-                theme: "night",
+                theme: "stripe",
                 variables: {
-                  colorPrimary: "#d4a844",
-                  colorBackground: "#111111",
-                  colorText: "#e5e5e5",
+                  colorPrimary: "#b01e28",
+                  colorBackground: "#ffffff",
+                  colorText: "#171717",
                   fontFamily: "system-ui, -apple-system, sans-serif",
                 },
               },

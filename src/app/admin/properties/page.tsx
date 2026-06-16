@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Edit2, Trash2, Loader2, Upload, X, Check, Star, Search } from "lucide-react";
+import { Plus, Edit2, Trash2, Loader2, Upload, X, Check, Star, Search, Film, BookOpen, MessageSquare } from "lucide-react";
 import ConfirmModal from "@/components/admin/ConfirmModal";
 import { parseDescription, serializeDescription } from "@/lib/utils";
 
@@ -25,10 +25,16 @@ interface Property {
   bedrooms: number | null;
   bathrooms: number | null;
   parkingSpaces: number | null;
-  type: "CASA" | "TERRENO" | "DEPARTAMENTO" | "PROYECTO";
+  type: string;
   status: "DISPONIBLE" | "RESERVADO" | "VENDIDO";
   featured: boolean;
   images: PropertyImage[];
+}
+
+interface CustomCategory {
+  id: string;
+  name: string;
+  target: string;
 }
 
 export default function AdminPropertiesPage() {
@@ -40,6 +46,13 @@ export default function AdminPropertiesPage() {
   const [successMsg, setSuccessMsg] = useState("");
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+
+  // Category management state
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  const [categories, setCategories] = useState<CustomCategory[]>([]);
+  const [newCategoryName, setNewCategoryName] = useState("");
+  const [addingCat, setAddingCat] = useState(false);
+  const [catError, setCatError] = useState("");
 
   // UI filter state
   const [searchQuery, setSearchQuery] = useState("");
@@ -62,13 +75,207 @@ export default function AdminPropertiesPage() {
   const [bedrooms, setBedrooms] = useState("");
   const [bathrooms, setBathrooms] = useState("");
   const [parkingSpaces, setParkingSpaces] = useState("");
-  const [type, setType] = useState<"CASA" | "TERRENO" | "DEPARTAMENTO" | "PROYECTO">("CASA");
+  const [type, setType] = useState<string>("");
   const [status, setStatus] = useState<"DISPONIBLE" | "RESERVADO" | "VENDIDO">("DISPONIBLE");
   const [featured, setFeatured] = useState(false);
   const [propertyImages, setPropertyImages] = useState<PropertyImage[]>([]);
   const [uploadingImages, setUploadingImages] = useState(false);
-  
 
+  // Store Content Modal State
+  const [isContentModalOpen, setIsContentModalOpen] = useState(false);
+  const [contentTab, setContentTab] = useState<"video" | "about" | "testimonials">("video");
+  const [loadingContent, setLoadingContent] = useState(false);
+  const [savingContent, setSavingContent] = useState(false);
+
+  // Video Section Fields
+  const [videoTag, setVideoTag] = useState("");
+  const [videoTitle, setVideoTitle] = useState("");
+  const [videoDescription, setVideoDescription] = useState("");
+  const [videoUrl, setVideoUrl] = useState("");
+  const [videoPosterUrl, setVideoPosterUrl] = useState("");
+  const [uploadingPoster, setUploadingPoster] = useState(false);
+  const [uploadingVideo, setUploadingVideo] = useState(false);
+
+  // About Section Fields
+  const [aboutTag, setAboutTag] = useState("");
+  const [aboutTitle, setAboutTitle] = useState("");
+  const [aboutParagraph1, setAboutParagraph1] = useState("");
+  const [aboutParagraph2, setAboutParagraph2] = useState("");
+  const [aboutStat1Value, setAboutStat1Value] = useState("");
+  const [aboutStat1Label, setAboutStat1Label] = useState("");
+  const [aboutStat2Value, setAboutStat2Value] = useState("");
+  const [aboutStat2Label, setAboutStat2Label] = useState("");
+  const [aboutImageUrl, setAboutImageUrl] = useState("");
+  const [uploadingAboutImage, setUploadingAboutImage] = useState(false);
+
+  // Testimonials Section Fields
+  const [storeTestimonials, setStoreTestimonials] = useState<any[]>([]);
+  const [isTestimonialFormOpen, setIsTestimonialFormOpen] = useState(false);
+  const [editingTestimonialIndex, setEditingTestimonialIndex] = useState<number | null>(null);
+
+  // Testimonial Editor Fields
+  const [testimonialText, setTestimonialText] = useState("");
+  const [testimonialAuthor, setTestimonialAuthor] = useState("");
+  const [testimonialRole, setTestimonialRole] = useState("");
+
+  const fetchStoreContent = async () => {
+    setLoadingContent(true);
+    try {
+      const res = await fetch("/api/store/content");
+      if (res.ok) {
+        const data = await res.json();
+        
+        // Load video section
+        setVideoTag(data.videoSection?.tag || "");
+        setVideoTitle(data.videoSection?.title || "");
+        setVideoDescription(data.videoSection?.description || "");
+        setVideoUrl(data.videoSection?.videoUrl || "");
+        setVideoPosterUrl(data.videoSection?.posterUrl || "");
+
+        // Load about section
+        setAboutTag(data.aboutSection?.tag || "");
+        setAboutTitle(data.aboutSection?.title || "");
+        setAboutParagraph1(data.aboutSection?.paragraph1 || "");
+        setAboutParagraph2(data.aboutSection?.paragraph2 || "");
+        setAboutStat1Value(data.aboutSection?.stat1Value || "");
+        setAboutStat1Label(data.aboutSection?.stat1Label || "");
+        setAboutStat2Value(data.aboutSection?.stat2Value || "");
+        setAboutStat2Label(data.aboutSection?.stat2Label || "");
+        setAboutImageUrl(data.aboutSection?.imageUrl || "");
+
+        // Load testimonials
+        setStoreTestimonials(data.testimonials || []);
+      }
+    } catch (err) {
+      console.error("Error loading store content:", err);
+    } finally {
+      setLoadingContent(false);
+    }
+  };
+
+  const uploadImageFile = async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append("files", file);
+
+    const res = await fetch("/api/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!res.ok) {
+      const resData = await res.json();
+      throw new Error(resData.error || "Fallo en la carga de imagen");
+    }
+
+    const data = await res.json();
+    if (data.urls && data.urls.length > 0) {
+      return data.urls[0];
+    }
+    throw new Error("No se devolvió URL de imagen");
+  };
+
+  const handleSaveStoreContent = async () => {
+    setSavingContent(true);
+    setError("");
+    const body = {
+      videoSection: {
+        tag: videoTag,
+        title: videoTitle,
+        description: videoDescription,
+        videoUrl,
+        posterUrl: videoPosterUrl,
+      },
+      aboutSection: {
+        tag: aboutTag,
+        title: aboutTitle,
+        paragraph1: aboutParagraph1,
+        paragraph2: aboutParagraph2,
+        stat1Value: aboutStat1Value,
+        stat1Label: aboutStat1Label,
+        stat2Value: aboutStat2Value,
+        stat2Label: aboutStat2Label,
+        imageUrl: aboutImageUrl,
+      },
+      testimonials: storeTestimonials,
+    };
+
+    try {
+      const res = await fetch("/api/store/content", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      if (res.ok) {
+        setSuccessMsg("Contenido de Store actualizado con éxito.");
+        setIsContentModalOpen(false);
+        setTimeout(() => setSuccessMsg(""), 3000);
+      } else {
+        const data = await res.json();
+        setError(data.error || "Error al guardar contenido.");
+      }
+    } catch (err) {
+      console.error("Error saving store content:", err);
+      setError("Error de conexión al guardar contenido.");
+    } finally {
+      setSavingContent(false);
+    }
+  };
+
+  const handleOpenAddTestimonial = () => {
+    setEditingTestimonialIndex(null);
+    setTestimonialText("");
+    setTestimonialAuthor("");
+    setTestimonialRole("");
+    setIsTestimonialFormOpen(true);
+  };
+
+  const handleOpenEditTestimonial = (index: number) => {
+    const item = storeTestimonials[index];
+    setEditingTestimonialIndex(index);
+    setTestimonialText(item.text || "");
+    setTestimonialAuthor(item.author || "");
+    setTestimonialRole(item.role || "");
+    setIsTestimonialFormOpen(true);
+  };
+
+  const handleSaveTestimonial = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newItem = {
+      id: editingTestimonialIndex !== null ? storeTestimonials[editingTestimonialIndex].id : Date.now(),
+      text: testimonialText,
+      author: testimonialAuthor,
+      role: testimonialRole,
+    };
+
+    if (editingTestimonialIndex !== null) {
+      const updated = [...storeTestimonials];
+      updated[editingTestimonialIndex] = newItem;
+      setStoreTestimonials(updated);
+    } else {
+      setStoreTestimonials([...storeTestimonials, newItem]);
+    }
+    setIsTestimonialFormOpen(false);
+  };
+
+  const handleDeleteTestimonial = (index: number) => {
+    if (window.confirm("¿Está seguro de eliminar este testimonio?")) {
+      const updated = storeTestimonials.filter((_, idx) => idx !== index);
+      setStoreTestimonials(updated);
+    }
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch("/api/categories?target=STORE");
+      if (response.ok) {
+        const data = await response.json();
+        setCategories(data);
+      }
+    } catch (err) {
+      console.error("Error loading categories:", err);
+    }
+  };
 
   const fetchProperties = async () => {
     setLoading(true);
@@ -87,7 +294,56 @@ export default function AdminPropertiesPage() {
 
   useEffect(() => {
     fetchProperties();
+    fetchCategories();
+    fetchStoreContent();
   }, []);
+
+  const handleAddCategory = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newCategoryName.trim()) return;
+    setAddingCat(true);
+    setCatError("");
+    try {
+      const res = await fetch("/api/categories", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: newCategoryName, target: "STORE" }),
+      });
+      if (res.ok) {
+        setNewCategoryName("");
+        await fetchCategories();
+      } else {
+        const data = await res.json();
+        setCatError(data.error || "Error al agregar categoría");
+      }
+    } catch (err) {
+      console.error(err);
+      setCatError("Error de red al agregar categoría");
+    } finally {
+      setAddingCat(false);
+    }
+  };
+
+  const handleDeleteCategory = async (id: string) => {
+    if (!window.confirm("¿Está seguro de eliminar esta categoría? Esto no afectará a los productos existentes.")) {
+      return;
+    }
+    setCatError("");
+    try {
+      const res = await fetch(`/api/categories?id=${id}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        await fetchCategories();
+      } else {
+        const data = await res.json();
+        setCatError(data.error || "Error al eliminar categoría");
+      }
+    } catch (err) {
+      console.error(err);
+      setCatError("Error de red al eliminar categoría");
+    }
+  };
 
   const slugify = (text: string) => {
     return text
@@ -122,7 +378,7 @@ export default function AdminPropertiesPage() {
     setBedrooms("");
     setBathrooms("");
     setParkingSpaces("");
-    setType("CASA");
+    setType(categories[0]?.name || "");
     setStatus("DISPONIBLE");
     setFeatured(false);
     setPropertyImages([]);
@@ -327,13 +583,32 @@ export default function AdminPropertiesPage() {
           <p className="text-xs text-neutral-500 mt-1 uppercase tracking-widest">Crear, Editar y Eliminar Productos</p>
         </div>
         
-        <button
-          onClick={handleOpenCreate}
-          className="px-5 py-3 bg-gold-400 hover:bg-gold-500 text-obsidian text-xs font-semibold tracking-widest uppercase transition-all duration-300 rounded-sm flex items-center justify-center gap-2 shadow-lg"
-        >
-          <Plus className="w-4 h-4" />
-          Nuevo Producto
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => {
+              fetchStoreContent();
+              setIsContentModalOpen(true);
+            }}
+            className="px-5 py-3 border border-neutral-800 hover:border-neutral-700 hover:bg-neutral-900 text-white text-xs font-semibold tracking-widest uppercase transition-all duration-300 rounded-sm flex items-center justify-center gap-2"
+          >
+            Contenido Store
+          </button>
+          <button
+            type="button"
+            onClick={() => setIsCategoryModalOpen(true)}
+            className="px-5 py-3 border border-neutral-800 hover:border-neutral-700 hover:bg-neutral-900 text-white text-xs font-semibold tracking-widest uppercase transition-all duration-300 rounded-sm flex items-center justify-center gap-2"
+          >
+            Gestionar Categorías
+          </button>
+          <button
+            onClick={handleOpenCreate}
+            className="px-5 py-3 bg-gold-400 hover:bg-gold-500 text-obsidian text-xs font-semibold tracking-widest uppercase transition-all duration-300 rounded-sm flex items-center justify-center gap-2 shadow-lg"
+          >
+            <Plus className="w-4 h-4" />
+            Nuevo Producto
+          </button>
+        </div>
       </div>
 
       {/* Filtros y Búsqueda */}
@@ -364,10 +639,9 @@ export default function AdminPropertiesPage() {
               className="bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white min-w-[180px]"
             >
               <option value="TODOS">Todas las Categorías</option>
-              <option value="CASA">Cortes de Res (Carne Fría)</option>
-              <option value="TERRENO">Paquetes</option>
-              <option value="DEPARTAMENTO">Embutidos</option>
-              <option value="PROYECTO">Zona Grill</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.name}>{cat.name}</option>
+              ))}
             </select>
           </div>
         </div>
@@ -419,7 +693,7 @@ export default function AdminPropertiesPage() {
                       </div>
                     </td>
                     <td className="py-4 px-6 uppercase tracking-wider font-semibold text-[10px]">
-                      {{ CASA: "Cortes de Res", TERRENO: "Paquetes", DEPARTAMENTO: "Embutidos", PROYECTO: "Zona Grill" }[prop.type] || prop.type}
+                      {prop.type}
                     </td>
                     <td className="py-4 px-6 font-serif font-bold text-neutral-200">
                       {new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 0 }).format(prop.price)}
@@ -624,13 +898,14 @@ export default function AdminPropertiesPage() {
                     <label className="block text-[9px] uppercase tracking-widest text-neutral-500 mb-2 font-bold">Categoría del Producto</label>
                     <select
                       value={type}
-                      onChange={(e) => setType(e.target.value as any)}
+                      onChange={(e) => setType(e.target.value)}
                       className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white"
+                      required
                     >
-                      <option value="CASA">Cortes de Res (Carne Fría)</option>
-                      <option value="TERRENO">Paquetes y Parrilladas</option>
-                      <option value="DEPARTAMENTO">Embutidos Artesanales</option>
-                      <option value="PROYECTO">Especialidades Grill</option>
+                      <option value="" disabled>Seleccionar Categoría</option>
+                      {categories.map((cat) => (
+                        <option key={cat.id} value={cat.name}>{cat.name}</option>
+                      ))}
                     </select>
                   </div>
 
@@ -844,6 +1119,593 @@ export default function AdminPropertiesPage() {
               </form>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Category Management Modal */}
+      {isCategoryModalOpen && (
+        <div className="fixed inset-0 z-[60] bg-black/75 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-[#111111] border border-neutral-800 p-6 rounded-sm shadow-2xl relative animate-in zoom-in-95 duration-200 text-white">
+            <button
+              onClick={() => setIsCategoryModalOpen(false)}
+              className="absolute right-4 top-4 text-neutral-500 hover:text-white"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <h3 className="font-serif text-xl font-semibold text-white mb-6 flex items-center gap-2">
+              <Star className="w-5 h-5 text-gold-400" />
+              Administrar Categorías Boutique
+            </h3>
+            
+            {/* Add Category Form */}
+            <form onSubmit={handleAddCategory} className="flex gap-2 mb-6">
+              <input
+                type="text"
+                required
+                placeholder="Nueva categoría..."
+                value={newCategoryName}
+                onChange={(e) => setNewCategoryName(e.target.value)}
+                className="flex-1 bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white"
+              />
+              <button
+                type="submit"
+                disabled={addingCat}
+                className="px-4 py-2 bg-gold-400 hover:bg-gold-500 disabled:bg-neutral-800 disabled:text-neutral-500 text-obsidian text-xs font-bold tracking-widest uppercase rounded-sm flex items-center gap-1 transition-all"
+              >
+                {addingCat ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Plus className="w-3.5 h-3.5" />}
+                Agregar
+              </button>
+            </form>
+
+            {catError && (
+              <p className="text-[11px] text-red-400 mb-4 bg-red-500/10 border border-red-500/20 p-2 rounded-sm">{catError}</p>
+            )}
+
+            {/* List of categories */}
+            <div className="max-h-60 overflow-y-auto space-y-2 pr-1 border-t border-neutral-800 pt-4">
+              {categories.length === 0 ? (
+                <p className="text-center text-xs text-neutral-500 py-4">No hay categorías creadas.</p>
+              ) : (
+                categories.map((cat) => (
+                  <div key={cat.id} className="flex items-center justify-between bg-black/20 p-2.5 border border-neutral-850 rounded-xs hover:border-neutral-800 transition-colors">
+                    <span className="text-xs text-neutral-200">{cat.name}</span>
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteCategory(cat.id)}
+                      className="p-1 text-neutral-500 hover:text-red-400 hover:bg-red-500/10 rounded-xs transition-colors"
+                      title="Eliminar categoría"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
+            
+            <div className="mt-6 pt-4 border-t border-neutral-800 flex justify-end">
+              <button
+                onClick={() => setIsCategoryModalOpen(false)}
+                className="px-4 py-2 bg-neutral-800 hover:bg-neutral-700 text-white text-xs font-semibold tracking-widest uppercase transition-colors rounded-sm"
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Store Content Management Modal */}
+      {isContentModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-end font-sans text-white">
+          <div className="w-full max-w-4xl bg-[#111111] h-full overflow-y-auto border-l border-neutral-800 p-8 flex flex-col justify-between animate-in slide-in-from-right duration-350">
+            <div>
+              {/* Header */}
+              <div className="flex items-center justify-between pb-6 border-b border-neutral-800 mb-6">
+                <div>
+                  <h2 className="font-serif text-2xl font-semibold text-gold-400">
+                    Administrar Contenido de Store
+                  </h2>
+                  <p className="text-[10px] text-neutral-500 uppercase tracking-widest mt-1">
+                    Edita el Video, la sección Sobre Nosotros y los Testimonios de la Tienda
+                  </p>
+                </div>
+                <button
+                  onClick={() => setIsContentModalOpen(false)}
+                  className="p-2 text-neutral-500 hover:text-white"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              {/* Tabs */}
+              <div className="flex border-b border-neutral-800 mb-6 gap-6 overflow-x-auto pb-1">
+                <button
+                  type="button"
+                  onClick={() => setContentTab("video")}
+                  className={`pb-3 text-xs font-bold uppercase tracking-widest border-b-2 transition-all flex items-center gap-2 shrink-0 ${
+                    contentTab === "video"
+                      ? "border-gold-400 text-gold-400"
+                      : "border-transparent text-neutral-400 hover:text-white"
+                  }`}
+                >
+                  <Film className="w-4 h-4" />
+                  Experiencia Sensorial
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setContentTab("about")}
+                  className={`pb-3 text-xs font-bold uppercase tracking-widest border-b-2 transition-all flex items-center gap-2 shrink-0 ${
+                    contentTab === "about"
+                      ? "border-gold-400 text-gold-400"
+                      : "border-transparent text-neutral-400 hover:text-white"
+                  }`}
+                >
+                  <BookOpen className="w-4 h-4" />
+                  Concepto Integral
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setContentTab("testimonials")}
+                  className={`pb-3 text-xs font-bold uppercase tracking-widest border-b-2 transition-all flex items-center gap-2 shrink-0 ${
+                    contentTab === "testimonials"
+                      ? "border-gold-400 text-gold-400"
+                      : "border-transparent text-neutral-400 hover:text-white"
+                  }`}
+                >
+                  <MessageSquare className="w-4 h-4" />
+                  Testimonios
+                </button>
+              </div>
+
+              {loadingContent ? (
+                <div className="flex flex-col items-center justify-center py-20 gap-2">
+                  <Loader2 className="w-8 h-8 text-gold-400 animate-spin" />
+                  <span className="text-xs text-neutral-500 uppercase tracking-widest">Cargando contenido...</span>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  {/* TAB: VIDEO */}
+                  {contentTab === "video" && (
+                    <div className="space-y-6">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                          <label className="block text-[9px] uppercase tracking-widest text-neutral-500 mb-2 font-bold">Tag Superior</label>
+                          <input
+                            type="text"
+                            value={videoTag}
+                            onChange={(e) => setVideoTag(e.target.value)}
+                            placeholder="Ej. EXPERIENCIA SENSORIAL"
+                            className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[9px] uppercase tracking-widest text-neutral-500 mb-2 font-bold">Título de la Sección</label>
+                          <input
+                            type="text"
+                            value={videoTitle}
+                            onChange={(e) => setVideoTitle(e.target.value)}
+                            placeholder="Ej. El Arte del Fuego & La Brasa"
+                            className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-[9px] uppercase tracking-widest text-neutral-500 mb-2 font-bold">Descripción Corta</label>
+                        <textarea
+                          rows={3}
+                          value={videoDescription}
+                          onChange={(e) => setVideoDescription(e.target.value)}
+                          placeholder="Descripción breve..."
+                          className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white resize-none"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                          <label className="block text-[9px] uppercase tracking-widest text-neutral-500 mb-2 font-bold">Video de la Experiencia (MP4/WebM)</label>
+                          {videoUrl ? (
+                            <div className="relative aspect-video border border-neutral-800 rounded-sm overflow-hidden group">
+                              <video src={videoUrl} className="w-full h-full object-cover" controls />
+                              <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <button
+                                  type="button"
+                                  onClick={() => setVideoUrl("")}
+                                  className="px-4 py-2 bg-red-650 hover:bg-red-700 text-white text-xs uppercase font-bold tracking-wider rounded-sm transition-all flex items-center gap-1.5"
+                                >
+                                  <Trash2 className="w-4 h-4" /> Eliminar Video
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="border-2 border-dashed border-neutral-800 hover:border-gold-400/25 p-6 text-center transition-colors rounded-sm relative">
+                              <input
+                                type="file"
+                                accept="video/*"
+                                onChange={async (e) => {
+                                  const files = e.target.files;
+                                  if (!files || files.length === 0) return;
+                                  setUploadingVideo(true);
+                                  try {
+                                    const url = await uploadImageFile(files[0]);
+                                    setVideoUrl(url);
+                                  } catch (err: any) {
+                                    alert(err.message || "Error al subir video");
+                                  } finally {
+                                    setUploadingVideo(false);
+                                  }
+                                }}
+                                disabled={uploadingVideo}
+                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                              />
+                              <Film className="w-8 h-8 text-neutral-600 mx-auto mb-2" />
+                              <span className="block text-xs text-neutral-400 font-semibold uppercase tracking-wider">
+                                {uploadingVideo ? "Subiendo video..." : "Seleccionar Video"}
+                              </span>
+                              <span className="text-[10px] text-neutral-600 block mt-1">Formatos: MP4, WebM</span>
+                            </div>
+                          )}
+                        </div>
+
+                        <div>
+                          <label className="block text-[9px] uppercase tracking-widest text-neutral-500 mb-2 font-bold">Miniatura / Poster del Video</label>
+                          {videoPosterUrl ? (
+                            <div className="relative aspect-video border border-neutral-800 rounded-sm overflow-hidden group">
+                              <img src={videoPosterUrl} alt="Poster Preview" className="w-full h-full object-cover" />
+                              <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <button
+                                  type="button"
+                                  onClick={() => setVideoPosterUrl("")}
+                                  className="px-4 py-2 bg-red-650 hover:bg-red-700 text-white text-xs uppercase font-bold tracking-wider rounded-sm transition-all flex items-center gap-1.5"
+                                >
+                                  <Trash2 className="w-4 h-4" /> Eliminar Poster
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="border-2 border-dashed border-neutral-800 hover:border-gold-400/25 p-6 text-center transition-colors rounded-sm relative">
+                              <input
+                                type="file"
+                                accept="image/*"
+                                onChange={async (e) => {
+                                  const files = e.target.files;
+                                  if (!files || files.length === 0) return;
+                                  setUploadingPoster(true);
+                                  try {
+                                    const url = await uploadImageFile(files[0]);
+                                    setVideoPosterUrl(url);
+                                  } catch (err: any) {
+                                    alert(err.message || "Error al subir poster");
+                                  } finally {
+                                    setUploadingPoster(false);
+                                  }
+                                }}
+                                disabled={uploadingPoster}
+                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                              />
+                              <Upload className="w-8 h-8 text-neutral-600 mx-auto mb-2" />
+                              <span className="block text-xs text-neutral-400 font-semibold uppercase tracking-wider">
+                                {uploadingPoster ? "Subiendo miniatura..." : "Seleccionar Miniatura"}
+                              </span>
+                              <span className="text-[10px] text-neutral-600 block mt-1">Formatos: JPG, PNG, WebP</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* TAB: ABOUT US */}
+                  {contentTab === "about" && (
+                    <div className="space-y-6">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                          <label className="block text-[9px] uppercase tracking-widest text-neutral-500 mb-2 font-bold">Tag Superior</label>
+                          <input
+                            type="text"
+                            value={aboutTag}
+                            onChange={(e) => setAboutTag(e.target.value)}
+                            placeholder="Ej. CONCEPTO INTEGRAL"
+                            className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[9px] uppercase tracking-widest text-neutral-500 mb-2 font-bold">Título de la Historia</label>
+                          <input
+                            type="text"
+                            value={aboutTitle}
+                            onChange={(e) => setAboutTitle(e.target.value)}
+                            placeholder="Ej. Calidad de Origen, Suavidad y Pasión"
+                            className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                          <label className="block text-[9px] uppercase tracking-widest text-neutral-500 mb-2 font-bold">Primer Párrafo</label>
+                          <textarea
+                            rows={4}
+                            value={aboutParagraph1}
+                            onChange={(e) => setAboutParagraph1(e.target.value)}
+                            placeholder="Texto del primer párrafo..."
+                            className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white resize-none"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[9px] uppercase tracking-widest text-neutral-500 mb-2 font-bold">Segundo Párrafo</label>
+                          <textarea
+                            rows={4}
+                            value={aboutParagraph2}
+                            onChange={(e) => setAboutParagraph2(e.target.value)}
+                            placeholder="Texto del segundo párrafo..."
+                            className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white resize-none"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        {/* Stat 1 */}
+                        <div className="p-4 bg-black/20 border border-neutral-850 rounded-sm space-y-3">
+                          <h4 className="text-[10px] text-gold-400 uppercase tracking-widest font-black">Métrica 1</h4>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div>
+                              <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Valor</label>
+                              <input
+                                type="text"
+                                value={aboutStat1Value}
+                                onChange={(e) => setAboutStat1Value(e.target.value)}
+                                placeholder="Ej. 100%"
+                                className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-2 text-xs outline-none transition-colors rounded-xs text-white"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Etiqueta</label>
+                              <input
+                                type="text"
+                                value={aboutStat1Label}
+                                onChange={(e) => setAboutStat1Label(e.target.value)}
+                                placeholder="Ej. Ganado de Sonora"
+                                className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-2 text-xs outline-none transition-colors rounded-xs text-white"
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Stat 2 */}
+                        <div className="p-4 bg-black/20 border border-neutral-850 rounded-sm space-y-3">
+                          <h4 className="text-[10px] text-gold-400 uppercase tracking-widest font-black">Métrica 2</h4>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div>
+                              <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Valor</label>
+                              <input
+                                type="text"
+                                value={aboutStat2Value}
+                                onChange={(e) => setAboutStat2Value(e.target.value)}
+                                placeholder="Ej. Alto Vacío"
+                                className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-2 text-xs outline-none transition-colors rounded-xs text-white"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Etiqueta</label>
+                              <input
+                                type="text"
+                                value={aboutStat2Label}
+                                onChange={(e) => setAboutStat2Label(e.target.value)}
+                                placeholder="Ej. Frescura Garantizada"
+                                className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-2 text-xs outline-none transition-colors rounded-xs text-white"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Image Lateral */}
+                      <div>
+                        <label className="block text-[9px] uppercase tracking-widest text-neutral-500 mb-2 font-bold">Imagen Lateral</label>
+                        {aboutImageUrl ? (
+                          <div className="relative aspect-[4/3] max-w-md border border-neutral-800 rounded-sm overflow-hidden group">
+                            <img src={aboutImageUrl} alt="Nosotros Preview" className="w-full h-full object-cover" />
+                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                              <button
+                                type="button"
+                                onClick={() => setAboutImageUrl("")}
+                                className="px-4 py-2 bg-red-650 hover:bg-red-700 text-white text-xs uppercase font-bold tracking-wider rounded-sm transition-all flex items-center gap-1.5"
+                              >
+                                <Trash2 className="w-4 h-4" /> Eliminar Imagen
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="border-2 border-dashed border-neutral-800 hover:border-gold-400/25 p-6 text-center transition-colors rounded-sm relative max-w-md">
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={async (e) => {
+                                const files = e.target.files;
+                                if (!files || files.length === 0) return;
+                                setUploadingAboutImage(true);
+                                try {
+                                  const url = await uploadImageFile(files[0]);
+                                  setAboutImageUrl(url);
+                                } catch (err: any) {
+                                  alert(err.message || "Error al subir imagen");
+                                } finally {
+                                  setUploadingAboutImage(false);
+                                }
+                              }}
+                              disabled={uploadingAboutImage}
+                              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                            />
+                            <Upload className="w-8 h-8 text-neutral-600 mx-auto mb-2" />
+                            <span className="block text-xs text-neutral-400 font-semibold uppercase tracking-wider">
+                              {uploadingAboutImage ? "Subiendo imagen..." : "Seleccionar Imagen"}
+                            </span>
+                            <span className="text-[10px] text-neutral-600 block mt-1">Formatos: JPG, PNG, WebP</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* TAB: TESTIMONIALS */}
+                  {contentTab === "testimonials" && (
+                    <div className="space-y-6">
+                      <div className="flex items-center justify-between border-b border-neutral-800 pb-4">
+                        <h4 className="text-[10px] text-gold-400 uppercase tracking-widest font-black">Testimonios de Clientes</h4>
+                        <button
+                          type="button"
+                          onClick={handleOpenAddTestimonial}
+                          className="px-4 py-2 bg-gold-400 hover:bg-gold-500 text-obsidian text-[10px] font-bold tracking-widest uppercase rounded-sm flex items-center gap-1.5"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          Agregar Testimonio
+                        </button>
+                      </div>
+
+                      {/* List testimonials */}
+                      <div className="grid grid-cols-1 gap-4">
+                        {storeTestimonials.length === 0 ? (
+                          <p className="text-center text-xs text-neutral-500 py-8">No hay testimonios. Agrega uno nuevo.</p>
+                        ) : (
+                          storeTestimonials.map((item, index) => (
+                            <div key={item.id || index} className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-black/20 p-4 border border-neutral-850 rounded-sm gap-4 hover:border-neutral-800 transition-colors">
+                              <div className="overflow-hidden space-y-1">
+                                <p className="text-xs text-neutral-300 italic font-serif">"{item.text}"</p>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-xs text-gold-400 font-semibold">{item.author}</span>
+                                  <span className="text-neutral-600 text-[10px]">|</span>
+                                  <span className="text-[10px] text-neutral-500 uppercase tracking-wider">{item.role}</span>
+                                </div>
+                              </div>
+                              <div className="flex gap-2 self-end sm:self-center shrink-0">
+                                <button
+                                  type="button"
+                                  onClick={() => handleOpenEditTestimonial(index)}
+                                  className="p-1.5 border border-neutral-800 hover:border-neutral-700 bg-neutral-900/60 text-neutral-400 hover:text-gold-400 rounded-xs transition-all"
+                                  title="Editar"
+                                >
+                                  <Edit2 className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeleteTestimonial(index)}
+                                  className="p-1.5 border border-neutral-800 hover:border-neutral-700 bg-neutral-900/60 text-neutral-400 hover:text-red-400 rounded-xs transition-all"
+                                  title="Eliminar"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Footer actions */}
+            <div className="pt-6 border-t border-neutral-800 flex gap-4 mt-8">
+              <button
+                type="button"
+                onClick={handleSaveStoreContent}
+                disabled={savingContent || loadingContent}
+                className="flex-1 py-3.5 bg-gold-400 hover:bg-gold-500 disabled:bg-neutral-800 disabled:text-neutral-500 text-obsidian text-xs font-semibold tracking-widest uppercase transition-all rounded-sm flex items-center justify-center font-bold"
+              >
+                {savingContent ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Guardando Todo...
+                  </>
+                ) : (
+                  "Guardar Contenido Store"
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsContentModalOpen(false)}
+                className="px-6 py-3.5 border border-neutral-800 hover:border-neutral-700 text-xs font-semibold tracking-widest uppercase transition-colors rounded-sm"
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Testimonial Editor Sub-Modal */}
+      {isTestimonialFormOpen && (
+        <div className="fixed inset-0 z-[60] bg-black/80 backdrop-blur-xs flex items-center justify-center p-4 font-sans text-white">
+          <form onSubmit={handleSaveTestimonial} className="w-full max-w-lg bg-[#111111] border border-neutral-800 p-6 rounded-sm shadow-2xl relative animate-in zoom-in-95 duration-200">
+            <button
+              type="button"
+              onClick={() => setIsTestimonialFormOpen(false)}
+              className="absolute right-4 top-4 text-neutral-500 hover:text-white"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            
+            <h3 className="font-serif text-xl font-semibold text-gold-400 mb-6 border-b border-neutral-800 pb-3">
+              {editingTestimonialIndex !== null ? "Editar Testimonio" : "Nuevo Testimonio"}
+            </h3>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Contenido del Testimonio</label>
+                <textarea
+                  rows={4}
+                  required
+                  value={testimonialText}
+                  onChange={(e) => setTestimonialText(e.target.value)}
+                  placeholder="Excelente calidad..."
+                  className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-3 text-xs outline-none transition-colors rounded-xs text-white resize-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Autor</label>
+                  <input
+                    type="text"
+                    required
+                    value={testimonialAuthor}
+                    onChange={(e) => setTestimonialAuthor(e.target.value)}
+                    placeholder="Ej. Sofía Galván"
+                    className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-3 text-xs outline-none transition-colors rounded-xs text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Rol / Relación</label>
+                  <input
+                    type="text"
+                    required
+                    value={testimonialRole}
+                    onChange={(e) => setTestimonialRole(e.target.value)}
+                    placeholder="Ej. Cliente Boutique"
+                    className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-3 text-xs outline-none transition-colors rounded-xs text-white"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 pt-4 border-t border-neutral-800 flex justify-end gap-3">
+              <button
+                type="submit"
+                className="px-4 py-2 bg-gold-400 hover:bg-gold-500 text-obsidian text-xs font-bold uppercase rounded-sm"
+              >
+                Confirmar
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsTestimonialFormOpen(false)}
+                className="px-4 py-2 bg-neutral-800 hover:bg-neutral-700 text-white text-xs font-bold uppercase rounded-sm"
+              >
+                Cancelar
+              </button>
+            </div>
+          </form>
         </div>
       )}
     </div>

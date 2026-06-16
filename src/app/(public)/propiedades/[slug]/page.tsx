@@ -53,12 +53,7 @@ export default async function PropertyDetailPage(props: Props) {
     }).format(value);
   };
 
-  const typeLabels = {
-    CASA: "Corte de Res (Carne Fría)",
-    TERRENO: "Paquete y Parrillada",
-    DEPARTAMENTO: "Embutido Artesanal",
-    PROYECTO: "Especialidad Grill",
-  };
+
 
   const qualityLabels: Record<number, string> = {
     1: "U.S. Choice",
@@ -86,12 +81,12 @@ export default async function PropertyDetailPage(props: Props) {
   };
 
   return (
-    <section className="py-12 bg-white font-sans">
+    <section className="py-12 bg-[#edf2f6] font-sans">
       <div className="max-w-7xl mx-auto px-6">
         {/* Back Link */}
         <Link
-          href="/#catalogo"
-          className="inline-flex items-center text-xs tracking-widest uppercase text-gray-500 hover:text-gold-500 mb-8 transition-colors duration-300 font-bold"
+          href="/store#catalogo"
+          className="inline-flex items-center text-xs tracking-widest uppercase text-gray-500 hover:text-[#b01e28] mb-8 transition-colors duration-300 font-bold"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Volver al catálogo
@@ -100,10 +95,10 @@ export default async function PropertyDetailPage(props: Props) {
         {/* Main Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Left Column: Title, Gallery, Specs, Description */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="lg:col-span-2 space-y-8 bg-white border border-neutral-200 p-6 sm:p-8 rounded-sm shadow-md">
             <div>
-              <span className="px-3 py-1 bg-gold-50 border border-gold-200 text-gold-600 text-[10px] tracking-widest uppercase font-bold rounded-xs">
-                {typeLabels[property.type]}
+              <span className="px-3 py-1 bg-red-50 border border-red-200 text-red-700 text-[10px] tracking-widest uppercase font-bold rounded-xs">
+                {property.type}
               </span>
               <h1 className="font-serif text-3xl sm:text-5xl font-semibold tracking-tight text-obsidian mt-4">
                 {property.title}
@@ -119,17 +114,17 @@ export default async function PropertyDetailPage(props: Props) {
             {/* Core Specs Grid */}
             <div className="flex flex-row gap-2 sm:gap-4 py-4 sm:py-6 border-t border-b border-gray-100 w-full">
               <div className="flex-grow flex-shrink basis-0 min-w-0 p-2 sm:p-4 bg-gray-50 text-center rounded-sm">
-                <Scale className="w-4 h-4 sm:w-5 sm:h-5 text-gold-400 mx-auto mb-1.5 sm:mb-2 flex-shrink-0" />
+                <Scale className="w-4 h-4 sm:w-5 sm:h-5 text-[#b01e28] mx-auto mb-1.5 sm:mb-2 flex-shrink-0" />
                 <span className="block text-xs sm:text-sm font-semibold text-obsidian truncate">{getWeightText(property.m2Total)}</span>
                 <span className="block text-[8px] sm:text-[9px] uppercase tracking-wider text-gray-400 font-bold mt-0.5">Peso Aprox</span>
               </div>
               <div className="flex-grow flex-shrink basis-0 min-w-0 p-2 sm:p-4 bg-gray-50 text-center rounded-sm">
-                <Layers className="w-4 h-4 sm:w-5 sm:h-5 text-gold-400 mx-auto mb-1.5 sm:mb-2 flex-shrink-0" />
+                <Layers className="w-4 h-4 sm:w-5 sm:h-5 text-[#b01e28] mx-auto mb-1.5 sm:mb-2 flex-shrink-0" />
                 <span className="block text-xs sm:text-sm font-semibold text-obsidian truncate">{property.bedrooms ? `${property.bedrooms}"` : "Var."}</span>
                 <span className="block text-[8px] sm:text-[9px] uppercase tracking-wider text-gray-400 font-bold mt-0.5">Grosor</span>
               </div>
               <div className="flex-grow flex-shrink basis-0 min-w-0 p-2 sm:p-4 bg-gray-50 text-center rounded-sm">
-                <Flame className="w-4 h-4 sm:w-5 sm:h-5 text-gold-400 mx-auto mb-1.5 sm:mb-2 flex-shrink-0" />
+                <Flame className="w-4 h-4 sm:w-5 sm:h-5 text-[#b01e28] mx-auto mb-1.5 sm:mb-2 flex-shrink-0" />
                 <span className="block text-xs sm:text-sm font-semibold text-obsidian truncate">{property.parkingSpaces ? `${property.parkingSpaces} pers` : "Al gusto"}</span>
                 <span className="block text-[8px] sm:text-[9px] uppercase tracking-wider text-gray-400 font-bold mt-0.5">Sugerencia</span>
               </div>
@@ -147,7 +142,7 @@ export default async function PropertyDetailPage(props: Props) {
           {/* Right Column: Pricing & Shopping/Grill Customizer Actions */}
           <div className="space-y-6 lg:sticky lg:top-28 h-fit">
             {/* Main Price display */}
-            <div className="p-6 bg-gray-50 border border-gray-100 rounded-sm">
+            <div className="p-6 bg-white border border-neutral-200 rounded-sm shadow-md">
               <span className="text-[10px] uppercase text-gray-400 tracking-wider block mb-1">Precio por unidad</span>
               <p className="font-serif text-3xl font-bold text-obsidian">
                 {formatPrice(property.price)} <span className="text-xs font-sans font-normal text-gray-500">MXN</span>

@@ -4,38 +4,50 @@ import { useState } from "react";
 import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function Testimonials() {
-  const reviews = [
+interface TestimonialData {
+  text: string;
+  author: string;
+  role: string;
+}
+
+interface TestimonialsProps {
+  reviews?: TestimonialData[];
+}
+
+export default function Testimonials({ reviews }: TestimonialsProps) {
+  const defaultReviews = [
     {
-      text: "La experiencia de compra de nuestra residencia fue impecable. El equipo de Elegancia entendió a la perfección nuestros requerimientos estéticos y espaciales. La asesoría legal fue transparente en todo momento.",
+      text: "Los cortes de carne fría empacados al vacío son extraordinarios. El Ribeye de Sonora tiene un marmoleado perfecto y la frescura es inigualable. Ideal para mis parrilladas de fin de semana.",
       author: "Sofía Galván",
-      role: "Propietaria en Cumbres de Autor",
+      role: "Cliente Boutique Premium",
     },
     {
-      text: "Invertir en el proyecto de Zona Grill ha sido una de las mejores decisiones de mi portafolio patrimonial. El nivel de amenidades, el diseño del paisaje y la plusvalía generada en pre-venta superaron todas mis expectativas.",
+      text: "Probé el costillar BBQ de la Zona Grill el domingo pasado y quedé fascinado. La carne se desprende del hueso y el toque ahumado con mezquite es simplemente espectacular. Volveré sin duda.",
       author: "Alejandro Maldonado",
-      role: "Inversionista Lote 12 - Zona Grill",
+      role: "Comensal Zona Grill",
     },
     {
-      text: "Excelente servicio de acompañamiento financiero. Lograron gestionar las autorizaciones notariales de nuestro loft minimalista en tiempo récord. El trato de los asesores es de un nivel ejecutivo insuperable.",
+      text: "La atención personalizada y la calidad del producto son de primer nivel. Me armaron un paquete asador para mi evento corporativo y todos los invitados quedaron maravillados con la chistorra y el Sirloin.",
       author: "Dra. Elena Ruiz",
-      role: "Propietaria Loft Condesa",
+      role: "Cliente Corporativo",
     },
   ];
+
+  const activeReviews = reviews && reviews.length > 0 ? reviews : defaultReviews;
 
   const [activeIndex, setActiveIndex] = useState(0);
 
   const handleNext = () => {
-    setActiveIndex((prev) => (prev + 1) % reviews.length);
+    setActiveIndex((prev) => (prev + 1) % activeReviews.length);
   };
 
   const handlePrev = () => {
-    setActiveIndex((prev) => (prev - 1 + reviews.length) % reviews.length);
+    setActiveIndex((prev) => (prev - 1 + activeReviews.length) % activeReviews.length);
   };
 
   return (
-    <div className="relative max-w-4xl mx-auto px-6 py-12 text-center text-white">
-      <Quote className="w-12 h-12 text-gold-400/30 mx-auto mb-6" />
+    <div className="relative max-w-4xl mx-auto px-6 py-12 text-center text-neutral-800">
+      <Quote className="w-12 h-12 text-[#b01e28]/15 mx-auto mb-6" />
       
       <div className="min-h-[220px] sm:min-h-[160px] flex items-center justify-center">
         <AnimatePresence mode="wait">
@@ -47,15 +59,15 @@ export default function Testimonials() {
             transition={{ duration: 0.4 }}
             className="space-y-6"
           >
-            <p className="font-serif text-lg sm:text-2xl italic leading-relaxed text-gray-200">
-              "{reviews[activeIndex].text}"
+            <p className="font-serif text-lg sm:text-2xl italic leading-relaxed text-neutral-800">
+              "{activeReviews[activeIndex]?.text}"
             </p>
             <div>
-              <h4 className="text-sm font-semibold tracking-wider text-gold-400">
-                {reviews[activeIndex].author}
+              <h4 className="text-sm font-bold tracking-wider text-[#b01e28]">
+                {activeReviews[activeIndex]?.author}
               </h4>
-              <p className="text-[10px] uppercase tracking-widest text-gray-500 mt-1">
-                {reviews[activeIndex].role}
+              <p className="text-[10px] uppercase tracking-widest text-neutral-450 mt-1 font-semibold">
+                {activeReviews[activeIndex]?.role}
               </p>
             </div>
           </motion.div>
@@ -66,17 +78,17 @@ export default function Testimonials() {
       <div className="flex justify-center items-center space-x-6 mt-8">
         <button
           onClick={handlePrev}
-          className="p-2 border border-white/10 hover:border-gold-400 hover:text-gold-400 text-white transition-all duration-300 rounded-full"
+          className="p-2 border border-neutral-200 hover:border-[#b01e28] hover:text-[#b01e28] text-neutral-600 transition-all duration-300 rounded-full cursor-pointer"
           aria-label="Anterior testimonio"
         >
           <ChevronLeft className="w-4 h-4" />
         </button>
-        <span className="text-xs text-gray-500 tracking-widest">
-          {activeIndex + 1} / {reviews.length}
+        <span className="text-xs text-neutral-400 tracking-widest font-mono font-semibold">
+          {activeIndex + 1} / {activeReviews.length}
         </span>
         <button
           onClick={handleNext}
-          className="p-2 border border-white/10 hover:border-gold-400 hover:text-gold-400 text-white transition-all duration-300 rounded-full"
+          className="p-2 border border-neutral-200 hover:border-[#b01e28] hover:text-[#b01e28] text-neutral-600 transition-all duration-300 rounded-full cursor-pointer"
           aria-label="Siguiente testimonio"
         >
           <ChevronRight className="w-4 h-4" />

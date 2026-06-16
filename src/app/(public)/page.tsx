@@ -1,241 +1,371 @@
-import { prisma } from "@/lib/prisma";
-import Hero from "@/components/public/Hero";
-import ProductCatalogHome from "@/components/public/ProductCatalogHome";
+import { Flame, Clock, MapPin, MessageCircle, Gift } from "lucide-react";
+import { Metadata } from "next";
+import GrillMenuInteractive from "@/components/public/GrillMenuInteractive";
+import GrillBackground from "@/components/public/GrillBackground";
+import GrillCarousel from "@/components/public/GrillCarousel";
 import HomeContactForm from "@/components/public/HomeContactForm";
-import Testimonials from "@/components/public/Testimonials";
-import { ArrowRight, Weight, Flame, ShieldAlert, Award } from "lucide-react";
-import Link from "next/link";
+import GrillTestimonials from "@/components/public/GrillTestimonials";
+import { prisma } from "@/lib/prisma";
 
-// Disable Route Segment Caching to show new properties/products added via the admin panel instantly
-export const revalidate = 0;
+export const metadata: Metadata = {
+  title: "Menú Zona Grill | La Cava del Corte",
+  description: "Disfruta de nuestros cortes preparados al carbón los fines de semana. Parrilladas, papas rellenas con extra carne, BBQ y complementos.",
+};
 
-export default async function HomePage() {
-  // Retrieve all cuts/products from the DB
-  const properties = await prisma.property.findMany({
-    include: { images: true },
-    orderBy: { createdAt: "desc" },
+export default async function ZonaGrillPage() {
+  const setting = await prisma.systemSetting.findUnique({
+    where: { key: "grill_content" },
   });
 
+  const content = setting ? (setting.value as any) : null;
+
+  const videoSection = content?.videoSection || {
+    tag: "Experiencia Sensorial",
+    title: "El Arte del Fuego en Vivo",
+    description: "Mira cómo se encienden nuestras brasas de mezquite natural y cómo preparamos cada corte premium al momento para asegurar la jugosidad y el término perfecto.",
+    videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-barbecue-steaks-cooking-on-grill-42284-large.mp4",
+    posterUrl: "https://images.unsplash.com/photo-1544025162-d76694265947?w=1200&auto=format&fit=crop&q=80",
+  };
+
+  const aboutSection = content?.aboutSection || {
+    tag: "Nuestra Historia",
+    title: "Calidad de Origen y Pasión por el Carbón de Mezquite",
+    paragraph1: "En La Cava del Corte encendemos las brasas con un propósito claro: ofrecerte la experiencia definitiva de asado. No es solo comida, es un ritual. Cada fin de semana, seleccionamos exclusivamente los cortes más finos de res de Sonora, madurados artesanalmente y cocinados lentamente a fuego vivo con leña y carbón de mezquite 100% natural.",
+    paragraph2: "Nuestros maestros parrilleros controlan la temperatura y el humo para obtener cortes increíblemente tiernos, con ese aroma inconfundible y costras caramelizadas que despiertan pasiones. Si buscas el verdadero sabor de la alta parrilla gourmet, estás en el lugar correcto.",
+    stat1Value: "Sonora",
+    stat1Label: "Cortes Premium de Origen",
+    stat2Value: "100%",
+    stat2Label: "Leña de Mezquite Natural",
+    imageUrl: "https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=800&auto=format&fit=crop&q=80",
+  };
+
+  const carouselSlides = content?.carouselSlides || [];
+
+  const promotions = content?.promotions || [
+    {
+      tag: "Sábados y Domingos",
+      value: "GRATIS",
+      title: "Papas Rellenas Especiales",
+      description: "En la compra de cualquier Parrillada Familiar, llévate una papa rellena con extra carne de tu elección.",
+    },
+    {
+      tag: "Pedido Online",
+      value: "10% OFF",
+      title: "Descuento por WhatsApp",
+      description: "Menciona el código ZONAGRILL10 al ordenar por WhatsApp y obtén 10% en cortes para llevar.",
+    },
+    {
+      tag: "Exclusivo Domingo",
+      value: "$349",
+      title: "Domingos de Costillar BBQ",
+      description: "Llévate un costillar de cerdo BBQ completo, ahumado a la leña, listo para servir por solo $349.",
+    },
+  ];
+
+  const testimonials = content?.testimonials || [];
+
   return (
-    <div className="flex flex-col bg-neutral-900 text-white">
-      {/* 1. HERO SECTION */}
-      <Hero />
+    <div className="relative text-white min-h-screen -mt-24 pt-28 sm:pt-24 pb-20 font-sans selection:bg-red-650 selection:text-white overflow-hidden bg-[#050000]">
+      {/* Animated Background */}
+      <GrillBackground />
 
-      {/* 1.5. VIDEO PROMOCIONAL */}
-      <section className="py-20 bg-neutral-950 border-b border-white/5">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center max-w-3xl mx-auto mb-12">
-            <span className="text-xs uppercase tracking-widest text-gold-400 font-bold">EXPERIENCIA SENSORIAL</span>
-            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight mt-2 text-white">
-              El Arte del Fuego & La Brasa
-            </h2>
-            <p className="text-xs text-gray-400 mt-3 max-w-lg mx-auto font-light leading-relaxed">
-              Mira cómo seleccionamos cada pieza y encendemos las brasas de mezquite para ofrecerte la máxima jugosidad y el sabor auténtico de la parrilla.
-            </p>
-          </div>
+      {/* Decorative Top Accent */}
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-red-600 via-yellow-500 to-red-600 z-50" />
 
-          <div className="relative aspect-video w-full max-w-4xl mx-auto rounded-sm overflow-hidden border border-white/10 shadow-2xl bg-black group">
-            {/* Overlay gradient */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent z-10 pointer-events-none" />
-            
-            <video
-              autoPlay
-              loop
-              muted
-              playsInline
-              controls
-              poster="https://images.unsplash.com/photo-1544025162-d76694265947?w=1200&auto=format&fit=crop&q=80"
-              className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-500"
-            >
-              <source
-                src="https://assets.mixkit.co/videos/preview/mixkit-barbecue-steaks-cooking-on-grill-42284-large.mp4"
-                type="video/mp4"
-              />
-              Tu navegador no soporta reproducción de video.
-            </video>
-
-            {/* Decorative frame overlay */}
-            <div className="absolute inset-0 border border-gold-400/20 m-4 pointer-events-none rounded-xs z-20" />
-          </div>
-        </div>
-      </section>
-
-      {/* 2. CORTES DESTACADOS (CARNE FRÍA) */}
-      <section id="catalogo" className="py-24 bg-obsidian border-b border-white/5">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <span className="text-xs uppercase tracking-widest text-gold-400 font-bold">SELECCIÓN BOUTIQUE</span>
-            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight mt-2 text-white">
-              Nuestro Menú & Productos
-            </h2>
-            <p className="text-xs text-gray-400 mt-3 max-w-md mx-auto font-light leading-relaxed">
-              Cortes premium de Sonora empacados al vacío y especialidades preparadas al carbón. Pide directo por WhatsApp y coordina la entrega.
-            </p>
-          </div>
-
-          <ProductCatalogHome products={properties as any} />
-        </div>
-      </section>
-
-      {/* 3. NUESTRO MODELO INTEGRAL (SOBRE NOSOTROS) */}
-      <section id="nosotros" className="py-24 bg-neutral-900 border-b border-white/5">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-          <div className="relative aspect-[4/3] rounded-sm overflow-hidden shadow-2xl">
-            <img
-              src="https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=800&auto=format&fit=crop&q=80"
-              alt="Selección premium de cortes marmoleados de res"
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 border border-gold-400/25 m-4 rounded-xs pointer-events-none" />
-          </div>
-
-          <div className="space-y-6">
-            <span className="text-xs uppercase tracking-widest text-gold-400 font-bold">CONCEPTO INTEGRAL</span>
-            <h2 className="font-serif text-3xl sm:text-4xl font-semibold tracking-tight text-white leading-tight">
-              Calidad de Origen, Suavidad y Pasión por el Fuego
-            </h2>
-            <p className="text-sm text-gray-300 leading-relaxed font-light">
-              En **La Cava del Corte** fusionamos dos mundos bajo una sola pasión: el fuego. Nuestro negocio integral te ofrece una **Zona de Carne Congelada Fría** con los cortes crudos premium más selectos de Sonora, empacados al alto vacío individualmente en origen. Esto asegura que la maduración y la frescura de la carne se mantengan intactas hasta tu asador.
-            </p>
-            <p className="text-sm text-gray-300 leading-relaxed font-light">
-              Y si prefieres que nosotros hagamos el trabajo, los fines de semana encendemos las brasas en nuestra **Zona Grill**, ofreciendo parrilladas, papas rellenas y costillares BBQ cocinados a fuego lento con leña y carbón de mezquite, listos para comer o pedir a domicilio.
-            </p>
-            <div className="pt-6 grid grid-cols-2 gap-6 border-t border-white/10">
-              <div>
-                <span className="font-serif text-3xl font-bold text-gold-400">100%</span>
-                <p className="text-[10px] uppercase text-gray-400 tracking-widest mt-1">Ganado de Sonora</p>
-              </div>
-              <div>
-                <span className="font-serif text-3xl font-bold text-gold-400">Alto Vacío</span>
-                <p className="text-[10px] uppercase text-gray-400 tracking-widest mt-1">Frescura Garantizada</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 4. NUESTRAS LÍNEAS DE SERVICIO */}
-      <section className="py-24 bg-obsidian border-b border-white/5">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center max-w-2xl mx-auto mb-20">
-            <span className="text-xs uppercase tracking-widest text-gold-400 font-bold">NUESTRO NEGOCIO</span>
-            <h2 className="font-serif text-3xl sm:text-4xl font-semibold tracking-tight mt-2 text-white">
-              Servicios Gastronómicos de Alto Nivel
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {/* Carne Congelada */}
-            <div className="p-8 border border-white/5 hover:border-gold-400/20 bg-white/5 hover:bg-neutral-900 transition-all duration-300 rounded-sm group">
-              <Weight className="w-8 h-8 text-gold-400 mb-6 group-hover:scale-110 transition-transform" />
-              <h3 className="font-serif text-lg font-semibold text-white mb-3">Carne Congelada Fría</h3>
-              <p className="text-xs text-gray-400 leading-relaxed font-light">
-                Cortes individuales premium de res (Ribeye, Sirloin, T-Bone, Costillar) al alto vacío y congelados para conservar sus jugos y frescura.
-              </p>
-            </div>
-            {/* Zona Grill */}
-            <div className="p-8 border border-white/5 hover:border-gold-400/20 bg-white/5 hover:bg-neutral-900 transition-all duration-300 rounded-sm group">
-              <Flame className="w-8 h-8 text-gold-400 mb-6 group-hover:scale-110 transition-transform" />
-              <h3 className="font-serif text-lg font-semibold text-white mb-3">Zona Grill Caliente</h3>
-              <p className="text-xs text-gray-400 leading-relaxed font-light">
-                Asado al carbón los fines de semana. Parrilladas familiares, papas rellenas con carne, y complementos calientes recién salidos del fuego.
-              </p>
-            </div>
-            {/* Embutidos */}
-            <div className="p-8 border border-white/5 hover:border-gold-400/20 bg-white/5 hover:bg-neutral-900 transition-all duration-300 rounded-sm group">
-              <Award className="w-8 h-8 text-gold-400 mb-6 group-hover:scale-110 transition-transform" />
-              <h3 className="font-serif text-lg font-semibold text-white mb-3">Embutidos Artesanales</h3>
-              <p className="text-xs text-gray-400 leading-relaxed font-light">
-                Elaboración artesanal de chorizo argentino, chistorra y chorizo de cerdo de receta tradicional para acompañar cada reunión.
-              </p>
-            </div>
-            {/* Pedidos */}
-            <div className="p-8 border border-white/5 hover:border-gold-400/20 bg-white/5 hover:bg-neutral-900 transition-all duration-300 rounded-sm group">
-              <ShieldAlert className="w-8 h-8 text-gold-400 mb-6 group-hover:scale-110 transition-transform" />
-              <h3 className="font-serif text-lg font-semibold text-white mb-3">Eventos y Pedidos</h3>
-              <p className="text-xs text-gray-400 leading-relaxed font-light">
-                Cotización de paquetes asadores para eventos corporativos y familiares. Coordinamos la entrega a domicilio lista para tu asador.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 5. GALERÍA VISUAL */}
-      <section className="py-12 bg-neutral-900 border-b border-white/5">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 min-h-[220px]">
-            <div className="relative overflow-hidden group rounded-sm aspect-[4/3] sm:aspect-auto">
-              <img src="https://images.unsplash.com/photo-1603048297172-c92544798d5a?w=600&auto=format&fit=crop&q=80" alt="Ribeye marmoleado de Sonora" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                <span className="text-xs text-white uppercase tracking-widest">Ribeye Sonorense</span>
-              </div>
-            </div>
-            <div className="relative overflow-hidden group rounded-sm aspect-[4/3] sm:aspect-auto">
-              <img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=600&auto=format&fit=crop&q=80" alt="Costillas en asador al carbón" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                <span className="text-xs text-white uppercase tracking-widest">Costillar en Asador</span>
-              </div>
-            </div>
-            <div className="relative overflow-hidden group rounded-sm aspect-[4/3] sm:aspect-auto">
-              <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&auto=format&fit=crop&q=80" alt="Brasas de mezquite encendidas con carne" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                <span className="text-xs text-white uppercase tracking-widest">Brasas de Mezquite</span>
-              </div>
-            </div>
-            <div className="relative overflow-hidden group rounded-sm aspect-[4/3] sm:aspect-auto">
-              <img src="https://images.unsplash.com/photo-1558030006-450675393462?w=600&auto=format&fit=crop&q=80" alt="T-Bone grueso al fuego directo" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                <span className="text-xs text-white uppercase tracking-widest">T-Bone al Fuego</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 6. TESTIMONIOS */}
-      <section className="py-24 bg-obsidian border-b border-white/5">
-        <Testimonials />
-      </section>
-
-      {/* 7. CONTACTO + FORMULARIO */}
-      <section id="contacto" className="py-24 bg-neutral-900 text-white relative">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+      {/* Premium Cover / Hero Section */}
+      <div className="max-w-7xl mx-auto px-6 pt-8 pb-10 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+        {/* Left Side: Captivating Texts */}
+        <div className="lg:col-span-5 space-y-4 text-left lg:pt-2">
+          <span className="inline-flex items-center gap-2 px-3 py-1 bg-red-600/10 border border-red-500/20 text-red-500 text-[10px] tracking-widest uppercase font-bold rounded-full">
+            <Flame className="w-3.5 h-3.5 animate-pulse text-red-500" />
+            Experiencia de Asado Real
+          </span>
+          <h1 className="font-serif text-5xl sm:text-6xl font-extrabold tracking-tight text-white leading-tight">
+            Restaurante <br />
+            <span className="text-amber-500 drop-shadow-[0_2px_10px_rgba(217,119,6,0.2)]">Zona Grill</span>
+          </h1>
+          <p className="text-neutral-300 text-sm leading-relaxed font-light">
+            En **La Cava del Corte** encendemos las brasas de mezquite cada fin de semana. Preparamos parrilladas selectas, costillares caramelizados y papas rellenas con carne premium al carbón natural, listos para deleitar tu paladar.
+          </p>
           
-          <div>
-            <span className="text-xs uppercase tracking-widest text-gold-400 font-bold">CONTACTO & PEDIDOS</span>
-            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight mt-2 text-white">
-              ¿Listo para encender el fuego?
-            </h2>
-            <p className="text-sm text-gray-400 mt-6 leading-relaxed max-w-md">
-              Envíanos un mensaje para cotizar paquetes de asado, coordinar un pedido de cortes fríos empacados al vacío o apartar tu parrillada caliente para el fin de semana.
+          {/* Action Buttons */}
+          <div className="flex flex-wrap gap-4 pt-2">
+            <a
+              href="#menu-section"
+              className="px-6 py-3 bg-red-700 hover:bg-red-600 text-white border border-amber-600/20 text-xs font-bold tracking-widest uppercase transition-all duration-300 rounded-sm shadow-md hover:shadow-red-900/40 flex items-center justify-center cursor-pointer"
+            >
+              Ver Menú del Asador
+            </a>
+            <a
+              href="https://wa.me/523222018003?text=Hola,%20quisiera%20hacer%20un%20pedido%20o%20reservar%20de%20la%20Zona%20Grill."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-6 py-3 bg-transparent border border-amber-500 text-amber-500 hover:bg-amber-500 hover:text-black text-xs font-bold tracking-widest uppercase transition-all duration-300 rounded-sm flex items-center justify-center"
+            >
+              Pedir por WhatsApp
+            </a>
+          </div>
+
+          {/* Quick Details List */}
+          <div className="pt-6 border-t border-red-950/40 grid grid-cols-2 gap-4 text-xs">
+            <div>
+              <span className="block text-[9px] uppercase tracking-wider text-amber-500/70 font-bold">Horarios</span>
+              <span className="text-neutral-200 font-medium">Sábados y Domingos: 14:00 - 19:00</span>
+            </div>
+            <div>
+              <span className="block text-[9px] uppercase tracking-wider text-amber-500/70 font-bold">Ubicación</span>
+              <span className="text-neutral-200 font-medium">Valle Oriente, Monterrey</span>
+            </div>
+          </div>
+
+          {/* Callout / Marketing Text */}
+          <div className="pt-4 border-t border-red-950/20 text-left">
+            <p className="font-serif italic text-xs md:text-sm text-amber-400/90 font-medium leading-relaxed">
+              "Seleccionamos exclusivamente cortes de alta gama, madurados artesanalmente y asados al fuego vivo de mezquite natural. La verdadera experiencia gourmet de la alta parrilla."
             </p>
-            <div className="mt-12 space-y-6">
+          </div>
+        </div>
+
+        {/* Right Side: Visual Image Grid Showcase */}
+        <div className="lg:col-span-7 grid grid-cols-12 gap-4">
+          {/* Main Large Image */}
+          <div className="col-span-8 relative aspect-[4/3] rounded-sm overflow-hidden border border-amber-500/20 shadow-lg group">
+            <img
+              src="https://images.unsplash.com/photo-1544025162-d76694265947?w=800&auto=format&fit=crop&q=80"
+              alt="Corte prime asándose en la parrilla"
+              className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
+            <span className="absolute bottom-3 left-3 px-2 py-0.5 bg-red-700/90 text-white text-[9px] font-bold uppercase tracking-widest rounded-xs">
+              Al Carbón de Mezquite
+            </span>
+          </div>
+
+          {/* Two Stacked Small Images */}
+          <div className="col-span-4 flex flex-col gap-4">
+            <div className="flex-1 relative aspect-[4/3] sm:aspect-square rounded-sm overflow-hidden border border-amber-500/20 shadow-md group">
+              <img
+                src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&auto=format&fit=crop&q=80"
+                alt="Brasas de carbón caliente"
+                className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+              />
+            </div>
+            <div className="flex-1 relative aspect-[4/3] sm:aspect-square rounded-sm overflow-hidden border border-amber-500/20 shadow-md group">
+              <img
+                src="https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=600&auto=format&fit=crop&q=80"
+                alt="Costillares a la barbacoa preparados"
+                className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+              />
+            </div>
+          </div>
+
+          {/* Bottom Banner Image (Cozy Restaurant/Prep) */}
+          <div className="col-span-12 relative aspect-[21/9] rounded-sm overflow-hidden border border-amber-500/20 shadow-md group">
+            <img
+              src="https://images.unsplash.com/photo-1558030006-450675393462?w=1000&auto=format&fit=crop&q=80"
+              alt="Preparación y sazón del corte al fuego"
+              className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-transparent pointer-events-none" />
+            <div className="absolute bottom-3 left-4 text-white text-left">
+              <span className="block text-[8px] uppercase tracking-widest text-amber-500 font-bold">100% Calidad Sonora</span>
+              <span className="font-serif text-sm font-semibold">Sabor e Ingredientes de Origen</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Welcome Video & Promotions Section */}
+      <section className="max-w-7xl mx-auto px-6 py-16 relative z-10 border-t border-amber-500/10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          {/* Left: Interactive Video Player */}
+          <div className="lg:col-span-7 space-y-4">
+            <div className="text-left mb-6">
+              <span className="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[10px] tracking-widest uppercase font-bold rounded-full">
+                <Flame className="w-3.5 h-3.5 animate-pulse text-amber-500" />
+                {videoSection.tag}
+              </span>
+              <h2 className="font-serif text-3xl sm:text-4xl font-extrabold tracking-tight text-white mt-2 leading-tight">
+                {videoSection.title}
+              </h2>
+              <p className="text-neutral-300 text-sm mt-3 font-light leading-relaxed">
+                {videoSection.description}
+              </p>
+            </div>
+
+            <div className="relative aspect-video w-full rounded-sm overflow-hidden border border-amber-500/25 shadow-[0_10px_40px_rgba(217,119,6,0.15)] bg-black group">
+              {/* Overlay gradient */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10 pointer-events-none" />
+              
+              <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                controls
+                poster={videoSection.posterUrl}
+                className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-500"
+              >
+                <source
+                  src={videoSection.videoUrl}
+                  type="video/mp4"
+                />
+                Tu navegador no soporta reproducción de video.
+              </video>
+
+              {/* Decorative amber frame */}
+              <div className="absolute inset-0 border border-amber-500/20 m-4 pointer-events-none rounded-xs z-20" />
+            </div>
+          </div>
+
+          {/* Right: Weekend Promotions Panel */}
+          <div className="lg:col-span-5 space-y-6">
+            <div className="border border-amber-500/20 bg-[#0a0707] p-8 rounded-sm shadow-xl relative overflow-hidden">
+              {/* Glow accent */}
+              <div className="absolute top-0 right-0 w-24 h-24 bg-red-600/10 rounded-full blur-2xl pointer-events-none" />
+              
+              <h3 className="font-serif text-lg tracking-wider text-amber-500 uppercase font-bold mb-6 border-b border-amber-500/10 pb-3 flex items-center gap-2">
+                <Gift className="w-5 h-5 text-amber-500" />
+                Promociones del Fin de Semana
+              </h3>
+
+              <div className="space-y-4">
+                {promotions.map((promo: any, index: number) => {
+                  const isAmberBadge = index === 1;
+                  return (
+                    <div key={index} className="p-4 bg-white/[0.02] border border-white/5 hover:border-amber-500/30 transition-all duration-300 rounded-sm group">
+                      <div className="flex justify-between items-start">
+                        <span className={`px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest rounded-xs ${
+                          isAmberBadge 
+                            ? "bg-amber-500 text-black" 
+                            : "bg-red-600/90 text-white"
+                        }`}>
+                          {promo.tag}
+                        </span>
+                        <span className="text-amber-500 font-serif font-bold text-xs">{promo.value}</span>
+                      </div>
+                      <h4 className="text-neutral-200 text-sm font-semibold mt-2 group-hover:text-amber-500 transition-colors">
+                        {promo.title}
+                      </h4>
+                      <p className="text-neutral-400 text-xs mt-1 font-light whitespace-pre-line leading-relaxed">
+                        {promo.description}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Modern Animated Image Carousel */}
+      <GrillCarousel slides={carouselSlides} />
+
+      {/* Interactive Grill Menu Grid */}
+      <div id="menu-section" className="max-w-7xl mx-auto px-6 relative z-10 pt-12 border-t border-amber-500/10">
+        <GrillMenuInteractive />
+      </div>
+
+      {/* Sobre Nosotros Section */}
+      <section id="nosotros" className="max-w-7xl mx-auto px-6 relative z-10 py-24 border-t border-amber-500/10 bg-[#0a0707]/90 mt-16 rounded-sm shadow-2xl border border-amber-500/5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+          <div className="space-y-6">
+            <span className="inline-flex items-center gap-2 px-3 py-1 bg-red-600/10 border border-red-500/20 text-red-500 text-[10px] tracking-widest uppercase font-bold rounded-full">
+              {aboutSection.tag}
+            </span>
+            <h2 className="font-serif text-3xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight">
+              {aboutSection.title}
+            </h2>
+            <p className="text-neutral-300 text-sm leading-relaxed font-light">
+              {aboutSection.paragraph1}
+            </p>
+            <p className="text-neutral-300 text-sm leading-relaxed font-light">
+              {aboutSection.paragraph2}
+            </p>
+            <div className="pt-6 grid grid-cols-2 gap-6 border-t border-red-950/40">
+              <div>
+                <span className="font-serif text-3xl font-extrabold text-amber-500">{aboutSection.stat1Value}</span>
+                <p className="text-[10px] uppercase text-neutral-400 tracking-widest mt-1">{aboutSection.stat1Label}</p>
+              </div>
+              <div>
+                <span className="font-serif text-3xl font-extrabold text-amber-500">{aboutSection.stat2Value}</span>
+                <p className="text-[10px] uppercase text-neutral-400 tracking-widest mt-1">{aboutSection.stat2Label}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="relative aspect-[4/3] rounded-sm overflow-hidden border border-amber-500/20 shadow-2xl group">
+            <img
+              src={aboutSection.imageUrl}
+              alt="Cortes de carne en la parrilla caliente"
+              className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+            <div className="absolute bottom-4 left-4 border-l-2 border-amber-500 pl-3">
+              <span className="block text-[8px] uppercase tracking-widest text-amber-500 font-bold">Maestros del Asador</span>
+              <span className="text-white text-xs font-semibold">El Secreto de la Cocción Perfecta</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonios Section */}
+      <GrillTestimonials reviews={testimonials} />
+
+      {/* Contacto Section */}
+      <section id="contacto" className="max-w-7xl mx-auto px-6 relative z-10 py-24 border-t border-amber-500/10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-start">
+          <div className="space-y-6">
+            <span className="inline-flex items-center gap-2 px-3 py-1 bg-red-600/10 border border-red-500/20 text-red-500 text-[10px] tracking-widest uppercase font-bold rounded-full">
+              Ponte en Contacto
+            </span>
+            <h2 className="font-serif text-3xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight">
+              ¿Listo para encender <br />
+              <span className="text-amber-500">las brasas?</span>
+            </h2>
+            <p className="text-neutral-300 text-sm leading-relaxed font-light">
+              Escríbenos para programar tu pedido, reservar paquetes de asado familiar o cotizar servicios de parrilladas completas a domicilio para tus eventos corporativos y reuniones privadas.
+            </p>
+            
+            <div className="pt-8 space-y-6">
               <div className="flex items-center space-x-4">
-                <div className="p-3 bg-white/5 rounded-full text-gold-400">
+                <div className="p-3 bg-red-600/10 border border-red-500/20 rounded-full text-amber-500 shadow-md">
                   <Flame className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-[10px] text-gray-500 uppercase tracking-widest">Pedidos Directos</h4>
-                  <p className="text-sm text-white font-medium">WhatsApp: 322 201 8003</p>
+                  <h4 className="text-[10px] text-neutral-400 uppercase tracking-widest font-bold">Pedidos y Cotizaciones</h4>
+                  <p className="text-sm text-neutral-200 font-semibold">WhatsApp: 322 201 8003</p>
                 </div>
               </div>
               <div className="flex items-center space-x-4">
-                <div className="p-3 bg-white/5 rounded-full text-gold-400">
-                  <Award className="w-5 h-5" />
+                <div className="p-3 bg-red-600/10 border border-red-500/20 rounded-full text-amber-500 shadow-md">
+                  <Clock className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-[10px] text-gray-500 uppercase tracking-widest">Horarios de Asador (Grill)</h4>
-                  <p className="text-sm text-white font-medium">Sábados y Domingos: 14:00 - 19:00</p>
+                  <h4 className="text-[10px] text-neutral-400 uppercase tracking-widest font-bold">Horario Zona Grill</h4>
+                  <p className="text-sm text-neutral-200 font-semibold">Sábados y Domingos: 14:00 - 19:00</p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-4">
+                <div className="p-3 bg-red-600/10 border border-red-500/20 rounded-full text-amber-500 shadow-md">
+                  <MapPin className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="text-[10px] text-neutral-400 uppercase tracking-widest font-bold">Ubicación</h4>
+                  <p className="text-sm text-neutral-200 font-semibold">Valle Oriente, Monterrey</p>
                 </div>
               </div>
             </div>
           </div>
-
-          <div className="bg-obsidian border border-white/5 p-8 rounded-sm">
-            <HomeContactForm />
+          
+          <div className="bg-[#0c0c0c]/80 border border-amber-500/20 p-8 rounded-sm shadow-2xl relative">
+            {/* Ambient fire glow */}
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-red-600/10 to-amber-500/10 rounded-sm blur-md opacity-75 pointer-events-none" />
+            <div className="relative z-10">
+              <HomeContactForm />
+            </div>
           </div>
-
         </div>
       </section>
     </div>

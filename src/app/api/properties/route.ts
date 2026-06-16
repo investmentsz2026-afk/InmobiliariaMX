@@ -2,12 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { PropertyType, PropertyStatus } from "@prisma/client";
+import { PropertyStatus } from "@prisma/client";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const search = searchParams.get("search") || undefined;
-  const type = searchParams.get("type") as PropertyType || undefined;
+  const type = searchParams.get("type") || undefined;
   const status = searchParams.get("status") as PropertyStatus || undefined;
   const featured = searchParams.get("featured") === "true" ? true : undefined;
   const minPrice = searchParams.get("minPrice") ? parseFloat(searchParams.get("minPrice")!) : undefined;

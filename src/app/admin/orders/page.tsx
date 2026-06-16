@@ -16,7 +16,9 @@ import {
   ListFilter,
   DollarSign,
   Check,
-  X
+  X,
+  RefreshCw,
+  Eye
 } from "lucide-react";
 
 interface OrderItem {
@@ -38,6 +40,7 @@ interface Order {
   total: number;
   status: "PAGADO" | "ENTREGADO";
   items: OrderItem[];
+  receiptUrl?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -132,21 +135,32 @@ export default function AdminOrdersPage() {
           </p>
         </div>
 
-        {/* Filter buttons */}
-        <div className="flex bg-neutral-950 p-1 rounded-sm border border-neutral-850 self-start sm:self-auto">
-          {(["TODOS", "PAGADO", "ENTREGADO"] as const).map((opt) => (
-            <button
-              key={opt}
-              onClick={() => setFilter(opt)}
-              className={`px-4 py-2 text-[10px] font-bold uppercase tracking-wider transition-all rounded-xs cursor-pointer ${
-                filter === opt
-                  ? "bg-gold-400 text-obsidian"
-                  : "text-neutral-400 hover:text-white"
-              }`}
-            >
-              {opt === "TODOS" ? "Todos" : opt === "PAGADO" ? "Por Entregar" : "Entregados"}
-            </button>
-          ))}
+        {/* Filter and Reload buttons */}
+        <div className="flex items-center gap-3 self-start sm:self-auto">
+          <button
+            onClick={fetchOrders}
+            disabled={loading}
+            className="p-2.5 bg-neutral-950 hover:bg-neutral-900 border border-neutral-850 hover:border-gold-400/30 text-neutral-400 hover:text-white rounded-sm transition-all cursor-pointer flex items-center justify-center disabled:opacity-50"
+            title="Actualizar listado"
+          >
+            <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin text-gold-400" : ""}`} />
+          </button>
+
+          <div className="flex bg-neutral-950 p-1 rounded-sm border border-neutral-850">
+            {(["TODOS", "PAGADO", "ENTREGADO"] as const).map((opt) => (
+              <button
+                key={opt}
+                onClick={() => setFilter(opt)}
+                className={`px-4 py-2 text-[10px] font-bold uppercase tracking-wider transition-all rounded-xs cursor-pointer ${
+                  filter === opt
+                    ? "bg-gold-400 text-obsidian"
+                    : "text-neutral-400 hover:text-white"
+                }`}
+              >
+                {opt === "TODOS" ? "Todos" : opt === "PAGADO" ? "Por Entregar" : "Entregados"}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -228,6 +242,18 @@ export default function AdminOrdersPage() {
                   </div>
 
                   <div className="flex items-center gap-3">
+                    {order.receiptUrl && (
+                      <a
+                        href={order.receiptUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-3 py-2 bg-neutral-900 hover:bg-neutral-850 border border-neutral-800 hover:border-gold-400/30 text-neutral-400 hover:text-white text-[10px] font-bold uppercase tracking-wider rounded-sm flex items-center gap-1.5 cursor-pointer transition-colors"
+                      >
+                        <Eye className="w-3.5 h-3.5 text-gold-400" />
+                        Ver Comprobante
+                      </a>
+                    )}
+
                     {order.status === "PAGADO" ? (
                       <button
                         type="button"

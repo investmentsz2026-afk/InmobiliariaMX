@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { name, email, phone, address, paymentMethod, total, items } = body;
+    const { name, email, phone, address, paymentMethod, total, items, receiptUrl } = body;
 
     if (!name || !email || !phone || !address || !paymentMethod || total === undefined || !items) {
       return NextResponse.json({ error: "Faltan campos obligatorios" }, { status: 400 });
@@ -59,6 +59,7 @@ export async function POST(req: NextRequest) {
         total: parseFloat(total),
         status: OrderStatus.PAGADO,
         items, // Store items directly as JSON array
+        receiptUrl: receiptUrl || null,
       },
     });
 

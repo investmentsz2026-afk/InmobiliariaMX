@@ -1,4 +1,4 @@
-import { PrismaClient, PropertyType, PropertyStatus } from "@prisma/client";
+import { PrismaClient, PropertyStatus } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 import * as bcrypt from "bcryptjs";
@@ -10,7 +10,7 @@ const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
-  console.log("Seeding started...");
+  console.log("Store Seeding started...");
 
   // Clear existing data
   await prisma.visit.deleteMany();
@@ -18,8 +18,24 @@ async function main() {
   await prisma.propertyImage.deleteMany();
   await prisma.property.deleteMany();
   await prisma.user.deleteMany();
+  await prisma.customCategory.deleteMany({ where: { target: "STORE" } });
 
-  // 1. Create Admin User
+  // 1. Seed Store categories
+  const storeCategories = [
+    { name: "Cortes de Res", target: "STORE" },
+    { name: "Paquetes y Parrilladas", target: "STORE" },
+    { name: "Embutidos", target: "STORE" },
+    { name: "Especialidades Grill", target: "STORE" },
+  ];
+
+  for (const cat of storeCategories) {
+    await prisma.customCategory.create({
+      data: cat,
+    });
+  }
+  console.log("Store categories created.");
+
+  // 2. Create Admin User
   const hashedPassword = bcrypt.hashSync("admin123", 10);
   const admin = await prisma.user.create({
     data: {
@@ -31,7 +47,7 @@ async function main() {
   });
   console.log("Admin user created:", admin.email);
 
-  // 2. Create Meat Products
+  // 3. Create Meat Products
   const propertiesData = [
     {
       title: "Ribeye Sonora Premium",
@@ -46,7 +62,7 @@ async function main() {
       bedrooms: 1.5, // 1.5 pulgadas
       bathrooms: 4, // Sonora Premium
       parkingSpaces: 2, // 2 personas
-      type: PropertyType.CASA, // Cortes de Res
+      type: "Cortes de Res",
       status: PropertyStatus.DISPONIBLE,
       featured: true,
       images: [
@@ -66,7 +82,7 @@ async function main() {
       bedrooms: 2.0, // 2 pulgadas
       bathrooms: 4, // Sonora Premium
       parkingSpaces: 4, // 4 personas
-      type: PropertyType.CASA, // Cortes de Res
+      type: "Cortes de Res",
       status: PropertyStatus.DISPONIBLE,
       featured: true,
       images: [
@@ -86,7 +102,7 @@ async function main() {
       bedrooms: 0,
       bathrooms: 3, // Wagyu/Premium grade
       parkingSpaces: 6, // 6 personas
-      type: PropertyType.TERRENO, // Paquetes y Parrilladas
+      type: "Paquetes y Parrilladas",
       status: PropertyStatus.DISPONIBLE,
       featured: true,
       images: [
@@ -106,7 +122,7 @@ async function main() {
       bedrooms: 0,
       bathrooms: 2, // Prime Quality
       parkingSpaces: 3, // 3 personas
-      type: PropertyType.DEPARTAMENTO, // Embutidos Artesanales
+      type: "Embutidos",
       status: PropertyStatus.DISPONIBLE,
       featured: false,
       images: [
@@ -126,7 +142,7 @@ async function main() {
       bedrooms: 0,
       bathrooms: 4, // Sonora Premium
       parkingSpaces: 1, // 1 persona
-      type: PropertyType.PROYECTO, // Especialidades Grill
+      type: "Especialidades Grill",
       status: PropertyStatus.DISPONIBLE,
       featured: false,
       images: [
@@ -148,7 +164,7 @@ async function main() {
     console.log(`Product '${createdProperty.title}' created.`);
   }
 
-  console.log("Seeding completed successfully.");
+  console.log("Store Seeding completed successfully.");
 }
 
 main()
@@ -158,4 +174,5 @@ main()
   })
   .finally(async () => {
     await prisma.$disconnect();
+    pool.end();
   });

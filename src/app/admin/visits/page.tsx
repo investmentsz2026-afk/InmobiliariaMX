@@ -204,7 +204,7 @@ export default function AdminVisitsPage() {
                       {visit.property.title}
                     </p>
                     {visit.notes && (
-                      <div className="p-3 bg-neutral-900 border border-neutral-800 rounded-sm text-xs text-neutral-300 font-light leading-relaxed">
+                      <div className="p-3 bg-neutral-900 border border-neutral-800 rounded-sm text-xs text-neutral-300 font-light leading-relaxed whitespace-pre-wrap">
                         <strong>Nota:</strong> {visit.notes}
                       </div>
                     )}

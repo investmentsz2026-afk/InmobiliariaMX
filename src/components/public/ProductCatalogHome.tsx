@@ -21,7 +21,7 @@ interface Product {
   m2Total: number;
   bedrooms: number | null;
   bathrooms: number | null;
-  type: "CASA" | "TERRENO" | "DEPARTAMENTO" | "PROYECTO";
+  type: string;
   status: "DISPONIBLE" | "RESERVADO" | "VENDIDO";
   featured: boolean;
   images: ImageProps[];
@@ -31,17 +31,28 @@ interface ProductCatalogHomeProps {
   products: Product[];
 }
 
-type TabType = "ALL" | "CASA" | "TERRENO" | "DEPARTAMENTO" | "PROYECTO";
+const getCategoryIcon = (catName: string) => {
+  const norm = catName.toLowerCase().trim();
+  if (norm.includes("corte") || norm.includes("res") || norm.includes("carne")) return Beef;
+  if (norm.includes("paquete") || norm.includes("parrillada")) return UtensilsCrossed;
+  if (norm.includes("embutido") || norm.includes("chorizo") || norm.includes("chistorra")) return Award;
+  if (norm.includes("especialidad") || norm.includes("grill") || norm.includes("brasa") || norm.includes("caliente")) return Flame;
+  return Sparkles;
+};
 
 export default function ProductCatalogHome({ products }: ProductCatalogHomeProps) {
-  const [activeTab, setActiveTab] = useState<TabType>("ALL");
+  const [activeTab, setActiveTab] = useState<string>("ALL");
+
+  // Get unique categories from products list
+  const uniqueTypes = Array.from(new Set(products.map((p) => p.type))).filter(Boolean);
 
   const tabs = [
-    { id: "ALL" as const, label: "Todos", icon: Sparkles },
-    { id: "CASA" as const, label: "Cortes de Res", icon: Beef },
-    { id: "TERRENO" as const, label: "Paquetes & Parrilladas", icon: UtensilsCrossed },
-    { id: "DEPARTAMENTO" as const, label: "Embutidos", icon: Award },
-    { id: "PROYECTO" as const, label: "Especialidades Grill", icon: Flame },
+    { id: "ALL", label: "Todos", icon: Sparkles },
+    ...uniqueTypes.map((t) => ({
+      id: t,
+      label: t,
+      icon: getCategoryIcon(t),
+    })),
   ];
 
   const filteredProducts = activeTab === "ALL" 
@@ -51,7 +62,7 @@ export default function ProductCatalogHome({ products }: ProductCatalogHomeProps
   return (
     <div className="space-y-12">
       {/* Category Tabs */}
-      <div className="flex flex-wrap justify-center gap-2 border-b border-white/5 pb-6">
+      <div className="flex flex-wrap justify-center gap-2 border-b border-neutral-200/80 pb-6">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -61,8 +72,8 @@ export default function ProductCatalogHome({ products }: ProductCatalogHomeProps
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-2 px-5 py-3 text-xs uppercase tracking-wider font-semibold border rounded-sm transition-all duration-350 cursor-pointer ${
                 isActive
-                  ? "border-gold-400 bg-gold-400/10 text-gold-400 font-bold"
-                  : "border-white/5 bg-white/5 text-neutral-400 hover:text-white hover:border-white/10"
+                  ? "border-[#b01e28] bg-[#b01e28]/5 text-[#b01e28] font-bold"
+                  : "border-neutral-200 bg-white text-neutral-500 hover:text-neutral-900 hover:border-neutral-350"
               }`}
             >
               <Icon className="w-4 h-4" />
@@ -74,7 +85,7 @@ export default function ProductCatalogHome({ products }: ProductCatalogHomeProps
 
       {/* Products Grid */}
       {filteredProducts.length === 0 ? (
-        <div className="text-center py-20 border border-dashed border-white/10 rounded-sm bg-black/20">
+        <div className="text-center py-20 border border-dashed border-neutral-200 rounded-sm bg-white shadow-sm">
           <p className="text-sm text-neutral-500 font-light max-w-md mx-auto">
             Pronto tendremos más productos disponibles en esta categoría. Pregunta en tienda o escríbenos por WhatsApp.
           </p>

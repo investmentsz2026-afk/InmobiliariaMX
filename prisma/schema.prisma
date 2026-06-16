@@ -11,12 +11,7 @@ enum Role {
   USER
 }
 
-enum PropertyType {
-  CASA
-  TERRENO
-  DEPARTAMENTO
-  PROYECTO
-}
+// Removed PropertyType enum
 
 enum PropertyStatus {
   DISPONIBLE
@@ -61,7 +56,7 @@ model Property {
   bedrooms       Int?
   bathrooms      Int?
   parkingSpaces  Int?
-  type           PropertyType
+  type           String
   status         PropertyStatus  @default(DISPONIBLE)
   featured       Boolean         @default(false)
   createdAt      DateTime        @default(now())
@@ -122,17 +117,9 @@ model Order {
   total         Float
   status        OrderStatus @default(PAGADO)
   items         Json        // Detalle de los productos (nombre, peso, cantidad, etc.)
+  receiptUrl    String?     // URL del comprobante de transferencia SPEI
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
-}
-
-enum GrillCategory {
-  CORTE
-  PARRILLADA
-  PAPA
-  EMBUTIDO
-  BBQ
-  COMPLEMENTO
 }
 
 model GrillProduct {
@@ -140,9 +127,26 @@ model GrillProduct {
   name        String
   description String
   price       Float
-  category    GrillCategory
+  category    String
   imageUrl    String?
   isActive    Boolean       @default(true)
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
+}
+
+model CustomCategory {
+  id        String   @id @default(uuid())
+  name      String
+  target    String   // "GRILL" or "STORE"
+  createdAt DateTime @default(now())
+  
+  @@unique([name, target])
+}
+
+model SystemSetting {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

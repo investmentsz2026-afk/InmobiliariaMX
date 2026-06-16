@@ -1,10 +1,18 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { Beef, MessageSquare, CalendarRange, ArrowRight, Clock, Eye } from "lucide-react";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
 export const revalidate = 0;
 
 export default async function AdminDashboardPage() {
+  const session = await getServerSession(authOptions);
+  if (!session || (session.user as any)?.role !== "ADMIN") {
+    redirect("/admin/orders");
+  }
+
   // Aggregate stats on the server
   const [totalProperties, totalLeads, newLeadsCount, pendingVisitsCount, recentLeads, upcomingVisits] = await Promise.all([
     prisma.property.count(),

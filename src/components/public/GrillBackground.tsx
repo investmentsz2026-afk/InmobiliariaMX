@@ -36,7 +36,15 @@ export default function GrillBackground() {
   }, []);
 
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 bg-gradient-to-b from-[#030407] via-[#090705] to-[#040406]">
+    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 bg-[#080000]">
+      {/* Grill Texture Background */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-25 mix-blend-luminosity"
+        style={{ backgroundImage: `url('https://images.unsplash.com/photo-1544025162-d76694265947?w=1200&auto=format&fit=crop&q=80')` }}
+      />
+      {/* Deep crimson / burgundy gradient vignette overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-red-950/85 via-[#080000]/95 to-black" />
+
       {/* Moving Glowing Orbs */}
       {/* Animated Gold Glow 1 (Top Right) */}
       <motion.div
@@ -50,7 +58,7 @@ export default function GrillBackground() {
           repeat: Infinity,
           ease: "easeInOut",
         }}
-        className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-[#d4af37]/18 rounded-full blur-[140px]"
+        className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-red-600/15 rounded-full blur-[140px]"
       />
 
       {/* Animated Deep Blue Glow 2 (Middle Left) */}
@@ -65,7 +73,7 @@ export default function GrillBackground() {
           repeat: Infinity,
           ease: "easeInOut",
         }}
-        className="absolute top-[15%] left-[-15%] w-[600px] h-[600px] bg-blue-950/30 rounded-full blur-[170px]"
+        className="absolute top-[15%] left-[-15%] w-[600px] h-[600px] bg-amber-500/10 rounded-full blur-[170px]"
       />
 
       {/* Animated Gold/Amber Glow 3 (Lower Right) */}
@@ -80,7 +88,7 @@ export default function GrillBackground() {
           repeat: Infinity,
           ease: "easeInOut",
         }}
-        className="absolute bottom-[10%] right-[-10%] w-[550px] h-[550px] bg-[#d4af37]/14 rounded-full blur-[150px]"
+        className="absolute bottom-[10%] right-[-10%] w-[550px] h-[550px] bg-red-700/12 rounded-full blur-[150px]"
       />
 
       {/* Animated Deep Navy Glow 4 (Bottom Left) */}
@@ -95,7 +103,7 @@ export default function GrillBackground() {
           repeat: Infinity,
           ease: "easeInOut",
         }}
-        className="absolute bottom-[-10%] left-[5%] w-[600px] h-[600px] bg-blue-900/22 rounded-full blur-[180px]"
+        className="absolute bottom-[-10%] left-[5%] w-[600px] h-[600px] bg-amber-400/8 rounded-full blur-[180px]"
       />
 
       {/* Floating Grill Embers / Sparks (Fixed position to float dynamically over viewport) */}

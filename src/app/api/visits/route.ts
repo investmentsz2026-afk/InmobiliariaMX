@@ -41,6 +41,31 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Faltan campos obligatorios" }, { status: 400 });
     }
 
+    let finalPropertyId = propertyId;
+
+    if (propertyId === "zona-grill") {
+      let property = await prisma.property.findUnique({
+        where: { slug: "zona-grill-pedidos" },
+      });
+      if (!property) {
+        property = await prisma.property.create({
+          data: {
+            title: "Pedido Zona Grill",
+            slug: "zona-grill-pedidos",
+            description: "Contenedor para todos los pedidos realizados desde el carrito de Zona Grill",
+            price: 0,
+            location: "Zona Grill",
+            city: "Puerto Vallarta",
+            state: "Jalisco",
+            m2Total: 0,
+            type: "SERVICIO",
+            status: "DISPONIBLE",
+          },
+        });
+      }
+      finalPropertyId = property.id;
+    }
+
     const visit = await prisma.visit.create({
       data: {
         name,
@@ -49,7 +74,7 @@ export async function POST(req: NextRequest) {
         date: new Date(date),
         time,
         notes: notes || "",
-        propertyId,
+        propertyId: finalPropertyId,
         status: VisitStatus.PENDIENTE,
       },
     });

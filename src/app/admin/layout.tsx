@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import {
   LayoutDashboard,
@@ -15,27 +15,48 @@ import {
   X,
   User,
   ExternalLink,
-  ShoppingBag
+  ShoppingBag,
+  Users
 } from "lucide-react";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const { data: session, status } = useSession();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const menuItems = [
-    { label: "Resumen", href: "/admin", icon: LayoutDashboard },
-    { label: "Productos", href: "/admin/properties", icon: Beef },
-    { label: "Zona Grill", href: "/admin/grill", icon: Flame },
-    { label: "Compras / Pagos", href: "/admin/orders", icon: ShoppingBag },
-    { label: "Mensajes de Clientes", href: "/admin/leads", icon: MessageSquare },
-    { label: "Agenda de Pedidos", href: "/admin/visits", icon: CalendarDays },
+  const userRole = (session?.user as any)?.role || "USER";
+
+  // Redirigir a trabajadores si intentan entrar a páginas administrativas no permitidas
+  useEffect(() => {
+    if (status === "authenticated") {
+      const role = (session?.user as any)?.role || "USER";
+      if (role === "USER") {
+        const allowedPaths = ["/admin/orders", "/admin/profile", "/admin/visits"];
+        const isAllowed = allowedPaths.some(path => pathname === path || pathname.startsWith(path + "/"));
+        if (!isAllowed) {
+          router.push("/admin/orders");
+        }
+      }
+    }
+  }, [status, session, pathname, router]);
+
+  const allMenuItems = [
+    { label: "Resumen", href: "/admin", icon: LayoutDashboard, roles: ["ADMIN"] },
+    { label: "Productos", href: "/admin/properties", icon: Beef, roles: ["ADMIN"] },
+    { label: "Zona Grill", href: "/admin/grill", icon: Flame, roles: ["ADMIN"] },
+    { label: "Compras / Pagos", href: "/admin/orders", icon: ShoppingBag, roles: ["ADMIN", "USER"] },
+    { label: "Mensajes de Clientes", href: "/admin/leads", icon: MessageSquare, roles: ["ADMIN"] },
+    { label: "Agenda de Pedidos", href: "/admin/visits", icon: CalendarDays, roles: ["ADMIN", "USER"] },
+    { label: "Usuarios", href: "/admin/users", icon: Users, roles: ["ADMIN"] },
   ];
+
+  const menuItems = allMenuItems.filter(item => item.roles.includes(userRole));
 
   return (
     <div className="flex min-h-screen bg-neutral-900 text-neutral-100 font-sans">
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex flex-col w-64 bg-black border-r border-neutral-800 p-6 justify-between shrink-0">
+      <aside className="hidden md:flex flex-col w-64 bg-black border-r border-neutral-800 p-6 justify-between shrink-0 sticky top-0 h-screen overflow-y-auto">
         <div className="space-y-8">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
@@ -69,15 +90,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         {/* Sidebar Footer */}
         <div className="space-y-4 pt-6 border-t border-neutral-800">
-          <div className="flex items-center space-x-3 px-2 py-1">
-            <div className="p-2 bg-neutral-800 rounded-full text-gold-400">
-              <User className="w-4 h-4" />
+          <Link
+            href="/admin/profile"
+            className="flex items-center space-x-3 px-2 py-2 hover:bg-neutral-900 rounded-md transition-all group cursor-pointer"
+          >
+            <div className="w-10 h-10 bg-neutral-850 border border-neutral-800 group-hover:border-gold-400 rounded-full flex items-center justify-center text-gold-400 group-hover:bg-neutral-800 transition-all shrink-0">
+              <User className="w-5 h-5 group-hover:scale-110 transition-transform" />
             </div>
             <div className="overflow-hidden">
-              <p className="text-[10px] text-neutral-500 uppercase tracking-wider">Sesión Activa</p>
-              <p className="text-xs font-semibold truncate text-neutral-200">{session?.user?.email}</p>
+              <p className="text-[9px] text-neutral-500 uppercase tracking-wider group-hover:text-gold-400 transition-colors font-bold">Mi Perfil</p>
+              <p className="text-xs font-semibold truncate text-neutral-200 group-hover:text-white transition-colors">{session?.user?.name || "Administrador"}</p>
             </div>
-          </div>
+          </Link>
 
           <Link
             href="/"
@@ -139,15 +163,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </nav>
 
           <div className="space-y-4 pt-6 border-t border-neutral-800">
-            <div className="flex items-center space-x-3 px-2 py-1">
-              <div className="p-2 bg-neutral-800 rounded-full text-gold-400">
-                <User className="w-4 h-4" />
+            <Link
+              href="/admin/profile"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center space-x-3 px-2 py-2 hover:bg-neutral-950 rounded-md transition-all group"
+            >
+              <div className="w-10 h-10 bg-neutral-900 border border-neutral-800 group-hover:border-gold-400 rounded-full flex items-center justify-center text-gold-400 shrink-0">
+                <User className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-[10px] text-neutral-500 uppercase tracking-wider">Sesión Activa</p>
-                <p className="text-xs font-semibold text-neutral-200">{session?.user?.email}</p>
+                <p className="text-[9px] text-neutral-500 uppercase tracking-wider font-bold">Mi Perfil</p>
+                <p className="text-xs font-semibold text-neutral-200">{session?.user?.name || "Administrador"}</p>
               </div>
-            </div>
+            </Link>
 
             <button
               onClick={() => signOut({ callbackUrl: "/" })}
