@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { writeFile, mkdir } from "fs/promises";
-import { join } from "path";
-import { existsSync } from "fs";
+import { put } from "@vercel/blob";
 
 export async function POST(req: NextRequest) {
-  // Guard clause to ensure only authenticated users upload images
+  // Guard clause to ensure only authenticated users upload files
   const session = await getServerSession(authOptions);
   if (!session) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
@@ -22,16 +20,7 @@ export async function POST(req: NextRequest) {
 
     const uploadedUrls: string[] = [];
 
-    // Ensure the uploads folder exists inside public
-    const uploadDir = join(process.cwd(), "public", "uploads");
-    if (!existsSync(uploadDir)) {
-      await mkdir(uploadDir, { recursive: true });
-    }
-
     for (const file of files) {
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-
       // Sanitize name and create unique filename
       const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
       const cleanOriginalName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
@@ -65,15 +54,22 @@ export async function POST(req: NextRequest) {
       }
 
       const filename = `${uniqueSuffix}.${fileExtension}`;
-      const filePath = join(uploadDir, filename);
 
-      await writeFile(filePath, buffer);
-      uploadedUrls.push(`/uploads/${filename}`);
+      // Upload to Vercel Blob
+      const blob = await put(filename, file, {
+        access: "public",
+        addRandomSuffix: false,
+      });
+
+      uploadedUrls.push(blob.url);
     }
 
     return NextResponse.json({ urls: uploadedUrls }, { status: 200 });
   } catch (error: any) {
     console.error("Upload error:", error);
-    return NextResponse.json({ error: "Fallo en la subida de imágenes" }, { status: 500 });
+    return NextResponse.json(
+      { error: error?.message || "Fallo en la subida de archivos. Verifica que BLOB_READ_WRITE_TOKEN esté configurado." },
+      { status: 500 }
+    );
   }
 }

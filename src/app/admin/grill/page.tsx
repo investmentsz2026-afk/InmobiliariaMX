@@ -422,15 +422,25 @@ export default function AdminGrillPage() {
     });
 
     if (!res.ok) {
-      const resData = await res.json();
-      throw new Error(resData.error || "Fallo en la carga de imagen");
+      let errorMsg = "Fallo en la subida del archivo";
+      try {
+        const resData = await res.json();
+        errorMsg = resData.error || errorMsg;
+      } catch {
+        // Response body is not JSON (e.g. Vercel "Request Entity Too Large")
+        try {
+          const textBody = await res.text();
+          if (textBody) errorMsg = textBody.slice(0, 200);
+        } catch { /* ignore */ }
+      }
+      throw new Error(errorMsg);
     }
 
     const data = await res.json();
     if (data.urls && data.urls.length > 0) {
       return data.urls[0];
     }
-    throw new Error("No se devolvió URL de imagen");
+    throw new Error("No se devolvió URL del archivo");
   };
 
   const handleSaveContent = async () => {

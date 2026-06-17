@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import { join } from "path";
-import { existsSync } from "fs";
+import { put } from "@vercel/blob";
 
 export async function POST(req: NextRequest) {
   try {
@@ -14,12 +12,6 @@ export async function POST(req: NextRequest) {
 
     const uploadedUrls: string[] = [];
 
-    // Ensure the uploads folder exists inside public
-    const uploadDir = join(process.cwd(), "public", "uploads");
-    if (!existsSync(uploadDir)) {
-      await mkdir(uploadDir, { recursive: true });
-    }
-
     for (const file of files) {
       // Validate it's an image
       if (!file.type.startsWith("image/")) {
@@ -30,9 +22,6 @@ export async function POST(req: NextRequest) {
       if (file.size > 10 * 1024 * 1024) {
         return NextResponse.json({ error: "El comprobante excede el tamaño máximo permitido de 10MB." }, { status: 400 });
       }
-
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
 
       // Sanitize name and create unique filename
       const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
@@ -57,16 +46,23 @@ export async function POST(req: NextRequest) {
         }
       }
 
-      const filename = `${uniqueSuffix}.${fileExtension}`;
-      const filePath = join(uploadDir, filename);
+      const filename = `receipts/${uniqueSuffix}.${fileExtension}`;
 
-      await writeFile(filePath, buffer);
-      uploadedUrls.push(`/uploads/${filename}`);
+      // Upload to Vercel Blob
+      const blob = await put(filename, file, {
+        access: "public",
+        addRandomSuffix: false,
+      });
+
+      uploadedUrls.push(blob.url);
     }
 
     return NextResponse.json({ urls: uploadedUrls }, { status: 200 });
   } catch (error: any) {
     console.error("Receipt upload error:", error);
-    return NextResponse.json({ error: "Fallo en la subida del comprobante" }, { status: 500 });
+    return NextResponse.json(
+      { error: error?.message || "Fallo en la subida del comprobante" },
+      { status: 500 }
+    );
   }
 }
