@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Plus, Edit2, Trash2, Loader2, Upload, X, Check, Star, Search, Film, BookOpen, MessageSquare, Image as ImageIcon, LayoutGrid, Tag } from "lucide-react";
 import ConfirmModal from "@/components/admin/ConfirmModal";
 import { parseDescription, serializeDescription } from "@/lib/utils";
+import { upload } from "@vercel/blob/client";
 
 interface PropertyImage {
   id?: string;
@@ -214,34 +215,16 @@ export default function AdminPropertiesPage() {
   };
 
   const uploadImageFile = async (file: File): Promise<string> => {
-    const formData = new FormData();
-    formData.append("files", file);
-
-    const res = await fetch("/api/upload", {
-      method: "POST",
-      body: formData,
-    });
-
-    if (!res.ok) {
-      let errorMsg = "Fallo en la subida del archivo";
-      try {
-        const resData = await res.json();
-        errorMsg = resData.error || errorMsg;
-      } catch {
-        // Response body is not JSON (e.g. Vercel "Request Entity Too Large")
-        try {
-          const textBody = await res.text();
-          if (textBody) errorMsg = textBody.slice(0, 200);
-        } catch { /* ignore */ }
-      }
-      throw new Error(errorMsg);
+    try {
+      const blob = await upload(file.name, file, {
+        access: "public",
+        handleUploadUrl: "/api/upload",
+      });
+      return blob.url;
+    } catch (err: any) {
+      console.error("Client upload error:", err);
+      throw new Error(err.message || "Fallo en la subida del archivo");
     }
-
-    const data = await res.json();
-    if (data.urls && data.urls.length > 0) {
-      return data.urls[0];
-    }
-    throw new Error("No se devolvió URL del archivo");
   };
 
   const handleSaveStoreContent = async () => {
@@ -634,23 +617,17 @@ export default function AdminPropertiesPage() {
     setError("");
 
     try {
-      const formData = new FormData();
+      const newUrls: string[] = [];
       for (let i = 0; i < files.length; i++) {
-        formData.append("files", files[i]);
+        const file = files[i];
+        const blob = await upload(file.name, file, {
+          access: "public",
+          handleUploadUrl: "/api/upload",
+        });
+        newUrls.push(blob.url);
       }
 
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!res.ok) {
-        const resData = await res.json();
-        throw new Error(resData.error || "Fallo en la carga de imagen");
-      }
-
-      const data = await res.json();
-      const newImages = data.urls.map((url: string, index: number) => ({
+      const newImages = newUrls.map((url: string, index: number) => ({
         url,
         isMain: propertyImages.length === 0 && index === 0,
       }));
