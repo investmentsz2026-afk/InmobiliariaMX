@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { ChevronLeft, ChevronRight, Quote, Star } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Star, MessageSquare } from "lucide-react";
+import { motion } from "framer-motion";
+import SectionDivider from "./SectionDivider";
 
 interface TestimonialData {
   text: string;
@@ -12,17 +12,25 @@ interface TestimonialData {
 
 interface GrillTestimonialsProps {
   reviews?: TestimonialData[];
+  title?: string;
+  buttonText?: string;
+  buttonLink?: string;
 }
 
-export default function GrillTestimonials({ reviews }: GrillTestimonialsProps) {
+export default function GrillTestimonials({
+  reviews,
+  title = "LO QUE DICEN NUESTROS CLIENTES",
+  buttonText = "Ver más reseñas",
+  buttonLink = "https://wa.me/523222018003?text=Hola,%20quisiera%20enviar%20una%20reseña%20sobre%20mi%20experiencia%20en%20la%20Zona%20Grill.",
+}: GrillTestimonialsProps) {
   const defaultReviews = [
     {
-      text: "El costillar BBQ de leña de mezquite de los domingos es insuperable. Se deshace en la boca, caramelizado a la perfección. La mejor alta parrilla gourmet de la ciudad.",
+      text: "El costillar BBQ de leña de mezquite de los domingos es insuperable. Se deshace en la boca, caramelizado a la perfección. La mejor alta parrilla gourmet.",
       author: "Carlos Villalobos",
       role: "Cliente de Fin de Semana",
     },
     {
-      text: "Las Papas Rellenas Especiales con extra carne son una joya. Pedimos por WhatsApp cada sábado y el servicio es muy rápido y la comida llega caliente.",
+      text: "Las Papas Rellenas Especiales con extra carne son una joya. Pedimos por WhatsApp cada sábado y el servicio es muy rápido y caliente.",
       author: "Mariana G. Treviño",
       role: "Comensal Frecuente",
     },
@@ -34,80 +42,64 @@ export default function GrillTestimonials({ reviews }: GrillTestimonialsProps) {
   ];
 
   const activeReviews = reviews && reviews.length > 0 ? reviews : defaultReviews;
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  const handleNext = () => {
-    setActiveIndex((prev) => (prev + 1) % activeReviews.length);
-  };
-
-  const handlePrev = () => {
-    setActiveIndex((prev) => (prev - 1 + activeReviews.length) % activeReviews.length);
-  };
 
   return (
-    <section className="max-w-4xl mx-auto px-6 py-16 text-center relative z-10 border-t border-amber-500/10">
-      <div className="flex flex-col items-center mb-8">
-        <span className="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[10px] tracking-widest uppercase font-bold rounded-full mb-3">
-          <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-          Testimonios de Clientes
-        </span>
-        <h2 className="font-serif text-3xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight">
-          La Opinión de <span className="text-amber-500 drop-shadow-[0_2px_10px_rgba(217,119,6,0.2)]">Nuestros Comensales</span>
-        </h2>
+    <section className="max-w-7xl mx-auto px-6 py-16 text-center relative z-10 border-t border-amber-500/10">
+      {/* Golden Section Divider */}
+      <SectionDivider title={title} />
+
+      {/* Grid Layout of 3 Columns */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+        {activeReviews.slice(0, 3).map((review, idx) => (
+          <motion.div
+            key={idx}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: idx * 0.1 }}
+            className="bg-[#0c0c0c] border border-amber-500/10 hover:border-amber-500/30 p-6 sm:p-8 rounded-sm shadow-xl flex flex-col justify-between text-left relative overflow-hidden transition-all duration-300 group"
+          >
+            {/* Ambient fire glow inside card */}
+            <div className="absolute top-0 right-0 w-24 h-24 bg-red-650/[0.02] rounded-full blur-2xl pointer-events-none" />
+            
+            <div className="space-y-4">
+              {/* 5 Golden Stars */}
+              <div className="flex items-center gap-1 select-none">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
+                ))}
+              </div>
+
+              {/* Quote text */}
+              <p className="font-serif text-sm sm:text-base italic leading-relaxed text-neutral-100">
+                "{review.text}"
+              </p>
+            </div>
+
+            {/* Author info */}
+            <div className="mt-6 border-t border-neutral-900 pt-4">
+              <h4 className="text-xs font-bold tracking-widest text-gold-400 uppercase">
+                — {review.author}
+              </h4>
+              <p className="text-[9px] uppercase tracking-widest text-neutral-500 mt-1 font-semibold">
+                {review.role}
+              </p>
+            </div>
+          </motion.div>
+        ))}
       </div>
 
-      <div className="bg-[#0b0808]/90 border border-amber-500/15 p-8 sm:p-12 rounded-sm shadow-2xl relative overflow-hidden">
-        {/* Glow accent */}
-        <div className="absolute top-0 right-0 w-32 h-32 bg-red-650/5 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-32 h-32 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
-
-        <Quote className="w-12 h-12 text-amber-500/10 mx-auto mb-6" />
-
-        <div className="min-h-[160px] flex items-center justify-center">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeIndex}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.3 }}
-              className="space-y-6"
-            >
-              <p className="font-serif text-lg sm:text-xl md:text-2xl italic leading-relaxed text-neutral-250">
-                "{activeReviews[activeIndex]?.text}"
-              </p>
-              <div>
-                <h4 className="text-sm font-bold tracking-wider text-amber-500 uppercase">
-                  {activeReviews[activeIndex]?.author}
-                </h4>
-                <p className="text-[10px] uppercase tracking-widest text-neutral-500 mt-1 font-semibold">
-                  {activeReviews[activeIndex]?.role}
-                </p>
-              </div>
-            </motion.div>
-          </AnimatePresence>
-        </div>
-
-        {/* Navigation Buttons */}
-        <div className="flex justify-center items-center space-x-6 mt-8 relative z-25">
-          <button
-            onClick={handlePrev}
-            className="p-2 border border-amber-500/20 hover:border-amber-500 text-neutral-400 hover:text-amber-500 hover:bg-amber-500/5 transition-all duration-300 rounded-full cursor-pointer bg-black/20"
-            aria-label="Anterior testimonio"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-          <span className="text-xs text-neutral-500 tracking-widest font-mono font-semibold">
-            {activeIndex + 1} / {activeReviews.length}
-          </span>
-          <button
-            onClick={handleNext}
-            className="p-2 border border-amber-500/20 hover:border-amber-500 text-neutral-400 hover:text-amber-500 hover:bg-amber-500/5 transition-all duration-300 rounded-full cursor-pointer bg-black/20"
-            aria-label="Siguiente testimonio"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
+      {/* Golden Outline Button */}
+      <div className="mt-10">
+        <a
+          href={buttonLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-transparent border border-amber-500/60 hover:border-amber-500 text-gold-400 hover:text-black hover:bg-amber-500 text-xs font-bold tracking-widest uppercase transition-all duration-300 rounded-sm cursor-pointer"
+        >
+          <MessageSquare className="w-4 h-4" />
+          {buttonText}
+        </a>
       </div>
     </section>
   );

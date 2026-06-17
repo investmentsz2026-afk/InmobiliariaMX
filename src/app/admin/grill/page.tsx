@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Edit2, Trash2, Loader2, X, Check, Flame, Search, Upload, Film, BookOpen, Image as ImageIcon, Eye, Gift, Star } from "lucide-react";
+import { Plus, Edit2, Trash2, Loader2, X, Check, Flame, Search, Upload, Film, BookOpen, Image as ImageIcon, Eye, Gift, Star, HelpCircle } from "lucide-react";
 import ConfirmModal from "@/components/admin/ConfirmModal";
 
 interface GrillProduct {
@@ -58,9 +58,26 @@ export default function AdminGrillPage() {
 
   // Grill Content Modal State
   const [isContentModalOpen, setIsContentModalOpen] = useState(false);
-  const [contentTab, setContentTab] = useState<"video" | "about" | "carousel" | "testimonials">("video");
+  const [contentTab, setContentTab] = useState<"hero" | "menu" | "video" | "about" | "carousel" | "testimonials" | "how" | "titles">("hero");
   const [loadingContent, setLoadingContent] = useState(false);
   const [savingContent, setSavingContent] = useState(false);
+
+  // Hero Slide Section Fields
+  const [heroSlides, setHeroSlides] = useState<any[]>([]);
+  const [isHeroSlideFormOpen, setIsHeroSlideFormOpen] = useState(false);
+  const [editingHeroSlideIndex, setEditingHeroSlideIndex] = useState<number | null>(null);
+
+  // Hero Slide Editor Fields
+  const [heroSlideTag, setHeroSlideTag] = useState("");
+  const [heroSlideTitle, setHeroSlideTitle] = useState("");
+  const [heroSlideDescription, setHeroSlideDescription] = useState("");
+  const [heroSlideMediaType, setHeroSlideMediaType] = useState<"IMAGE" | "VIDEO">("IMAGE");
+  const [heroSlideMediaUrl, setHeroSlideMediaUrl] = useState("");
+  const [uploadingHeroMedia, setUploadingHeroMedia] = useState(false);
+
+  // Delete Hero Slide Confirmation states
+  const [isDeleteHeroSlideConfirmOpen, setIsDeleteHeroSlideConfirmOpen] = useState(false);
+  const [pendingDeleteHeroSlideIndex, setPendingDeleteHeroSlideIndex] = useState<number | null>(null);
 
   // Video Section Fields
   const [videoTag, setVideoTag] = useState("");
@@ -107,6 +124,51 @@ export default function AdminGrillPage() {
     { tag: "", value: "", title: "", description: "" },
     { tag: "", value: "", title: "", description: "" },
   ]);
+
+  // Video Section - Callout Fields
+  const [videoCalloutTag, setVideoCalloutTag] = useState("");
+  const [videoCalloutTitle, setVideoCalloutTitle] = useState("");
+  const [videoCalloutDesc, setVideoCalloutDesc] = useState("");
+  const [videoCalloutStat1Value, setVideoCalloutStat1Value] = useState("");
+  const [videoCalloutStat1Label, setVideoCalloutStat1Label] = useState("");
+  const [videoCalloutStat2Value, setVideoCalloutStat2Value] = useState("");
+  const [videoCalloutStat2Label, setVideoCalloutStat2Label] = useState("");
+
+  // How It Works Fields
+  const [howItWorksTitle, setHowItWorksTitle] = useState("");
+  const [step1Title, setStep1Title] = useState("");
+  const [step1Desc, setStep1Desc] = useState("");
+  const [step2Title, setStep2Title] = useState("");
+  const [step2Desc, setStep2Desc] = useState("");
+  const [step3Title, setStep3Title] = useState("");
+  const [step3Desc, setStep3Desc] = useState("");
+  const [step4Title, setStep4Title] = useState("");
+  const [step4Desc, setStep4Desc] = useState("");
+  const [step5Title, setStep5Title] = useState("");
+  const [step5Desc, setStep5Desc] = useState("");
+
+  // Section Titles Fields
+  const [favoritesTitle, setFavoritesTitle] = useState("");
+  const [favoritesButtonText, setFavoritesButtonText] = useState("");
+  const [promotionsTitle, setPromotionsTitle] = useState("");
+  const [promotionsButtonText, setPromotionsButtonText] = useState("");
+
+  // Selected Favorite Product IDs Fields
+  const [favoriteProduct1Id, setFavoriteProduct1Id] = useState("");
+  const [favoriteProduct2Id, setFavoriteProduct2Id] = useState("");
+  const [favoriteProduct3Id, setFavoriteProduct3Id] = useState("");
+  const [favoriteProduct4Id, setFavoriteProduct4Id] = useState("");
+
+  // Testimonials Settings Fields
+  const [testimonialsTitle, setTestimonialsTitle] = useState("");
+  const [testimonialsButtonText, setTestimonialsButtonText] = useState("");
+  const [testimonialsButtonLink, setTestimonialsButtonLink] = useState("");
+
+  // Modal Sub-Form Error States
+  const [slideFormError, setSlideFormError] = useState("");
+  const [heroSlideFormError, setHeroSlideFormError] = useState("");
+  const [testimonialFormError, setTestimonialFormError] = useState("");
+  const [contentFormError, setContentFormError] = useState("");
 
   const handlePromoChange = (index: number, field: string, val: string) => {
     setPromotions(prev => {
@@ -260,6 +322,13 @@ export default function AdminGrillPage() {
         setVideoDescription(data.videoSection?.description || "");
         setVideoUrl(data.videoSection?.videoUrl || "");
         setVideoPosterUrl(data.videoSection?.posterUrl || "");
+        setVideoCalloutTag(data.videoSection?.calloutTag || "");
+        setVideoCalloutTitle(data.videoSection?.calloutTitle || "");
+        setVideoCalloutDesc(data.videoSection?.calloutDesc || "");
+        setVideoCalloutStat1Value(data.videoSection?.calloutStat1Value || "");
+        setVideoCalloutStat1Label(data.videoSection?.calloutStat1Label || "");
+        setVideoCalloutStat2Value(data.videoSection?.calloutStat2Value || "");
+        setVideoCalloutStat2Label(data.videoSection?.calloutStat2Label || "");
 
         // Load about section
         setAboutTag(data.aboutSection?.tag || "");
@@ -301,6 +370,40 @@ export default function AdminGrillPage() {
 
         // Load testimonials
         setGrillTestimonials(data.testimonials || []);
+
+        // Load heroSlides
+        setHeroSlides(data.heroSlides || []);
+
+        // Load howItWorksSection
+        setHowItWorksTitle(data.howItWorksSection?.title || "");
+        setStep1Title(data.howItWorksSection?.step1Title || "");
+        setStep1Desc(data.howItWorksSection?.step1Desc || "");
+        setStep2Title(data.howItWorksSection?.step2Title || "");
+        setStep2Desc(data.howItWorksSection?.step2Desc || "");
+        setStep3Title(data.howItWorksSection?.step3Title || "");
+        setStep3Desc(data.howItWorksSection?.step3Desc || "");
+        setStep4Title(data.howItWorksSection?.step4Title || "");
+        setStep4Desc(data.howItWorksSection?.step4Desc || "");
+        setStep5Title(data.howItWorksSection?.step5Title || "");
+        setStep5Desc(data.howItWorksSection?.step5Desc || "");
+
+        // Load favoritesSection
+        setFavoritesTitle(data.favoritesSection?.title || "");
+        setFavoritesButtonText(data.favoritesSection?.buttonText || "");
+        const favIds = data.favoritesSection?.productIds || [];
+        setFavoriteProduct1Id(favIds[0] || "");
+        setFavoriteProduct2Id(favIds[1] || "");
+        setFavoriteProduct3Id(favIds[2] || "");
+        setFavoriteProduct4Id(favIds[3] || "");
+
+        // Load promotionsTitleSection
+        setPromotionsTitle(data.promotionsTitleSection?.title || "");
+        setPromotionsButtonText(data.promotionsTitleSection?.buttonText || "");
+
+        // Load testimonialsSection
+        setTestimonialsTitle(data.testimonialsSection?.title || "");
+        setTestimonialsButtonText(data.testimonialsSection?.buttonText || "");
+        setTestimonialsButtonLink(data.testimonialsSection?.buttonLink || "");
       }
     } catch (err) {
       console.error("Error loading grill content:", err);
@@ -333,6 +436,7 @@ export default function AdminGrillPage() {
   const handleSaveContent = async () => {
     setSavingContent(true);
     setError("");
+    setContentFormError("");
     const body = {
       videoSection: {
         tag: videoTag,
@@ -340,6 +444,13 @@ export default function AdminGrillPage() {
         description: videoDescription,
         videoUrl,
         posterUrl: videoPosterUrl,
+        calloutTag: videoCalloutTag,
+        calloutTitle: videoCalloutTitle,
+        calloutDesc: videoCalloutDesc,
+        calloutStat1Value: videoCalloutStat1Value,
+        calloutStat1Label: videoCalloutStat1Label,
+        calloutStat2Value: videoCalloutStat2Value,
+        calloutStat2Label: videoCalloutStat2Label,
       },
       aboutSection: {
         tag: aboutTag,
@@ -355,6 +466,39 @@ export default function AdminGrillPage() {
       carouselSlides,
       promotions,
       testimonials: grillTestimonials,
+      heroSlides,
+      howItWorksSection: {
+        title: howItWorksTitle,
+        step1Title,
+        step1Desc,
+        step2Title,
+        step2Desc,
+        step3Title,
+        step3Desc,
+        step4Title,
+        step4Desc,
+        step5Title,
+        step5Desc,
+      },
+      favoritesSection: {
+        title: favoritesTitle,
+        buttonText: favoritesButtonText,
+        productIds: [
+          favoriteProduct1Id,
+          favoriteProduct2Id,
+          favoriteProduct3Id,
+          favoriteProduct4Id
+        ],
+      },
+      promotionsTitleSection: {
+        title: promotionsTitle,
+        buttonText: promotionsButtonText,
+      },
+      testimonialsSection: {
+        title: testimonialsTitle,
+        buttonText: testimonialsButtonText,
+        buttonLink: testimonialsButtonLink,
+      },
     };
 
     try {
@@ -387,6 +531,7 @@ export default function AdminGrillPage() {
     setSlideSubtitle("");
     setSlideDescription("");
     setSlideImage("");
+    setSlideFormError("");
     setIsSlideFormOpen(true);
   };
 
@@ -398,13 +543,14 @@ export default function AdminGrillPage() {
     setSlideSubtitle(slide.subtitle || "");
     setSlideDescription(slide.description || "");
     setSlideImage(slide.image || "");
+    setSlideFormError("");
     setIsSlideFormOpen(true);
   };
 
   const handleSaveSlide = (e: React.FormEvent) => {
     e.preventDefault();
     if (!slideImage) {
-      alert("Por favor, suba una imagen para la diapositiva.");
+      setSlideFormError("Por favor, suba una imagen para la diapositiva.");
       return;
     }
     const newSlide = {
@@ -429,6 +575,68 @@ export default function AdminGrillPage() {
   const handleDeleteSlide = (index: number) => {
     setPendingDeleteSlideIndex(index);
     setIsDeleteSlideConfirmOpen(true);
+  };
+
+  const handleOpenAddHeroSlide = () => {
+    setEditingHeroSlideIndex(null);
+    setHeroSlideTag("");
+    setHeroSlideTitle("");
+    setHeroSlideDescription("");
+    setHeroSlideMediaType("IMAGE");
+    setHeroSlideMediaUrl("");
+    setHeroSlideFormError("");
+    setIsHeroSlideFormOpen(true);
+  };
+
+  const handleOpenEditHeroSlide = (index: number) => {
+    const slide = heroSlides[index];
+    setEditingHeroSlideIndex(index);
+    setHeroSlideTag(slide.tag || "");
+    setHeroSlideTitle(slide.title || "");
+    setHeroSlideDescription(slide.description || "");
+    setHeroSlideMediaType(slide.mediaType || "IMAGE");
+    setHeroSlideMediaUrl(slide.mediaUrl || "");
+    setHeroSlideFormError("");
+    setIsHeroSlideFormOpen(true);
+  };
+
+  const handleSaveHeroSlide = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!heroSlideMediaUrl) {
+      setHeroSlideFormError(`Por favor, suba una ${heroSlideMediaType === "IMAGE" ? "imagen" : "un video"} para la diapositiva.`);
+      return;
+    }
+    const newSlide = {
+      id: editingHeroSlideIndex !== null ? heroSlides[editingHeroSlideIndex].id : Date.now(),
+      tag: heroSlideTag,
+      title: heroSlideTitle,
+      description: heroSlideDescription,
+      mediaType: heroSlideMediaType,
+      mediaUrl: heroSlideMediaUrl,
+    };
+
+    if (editingHeroSlideIndex !== null) {
+      const updated = [...heroSlides];
+      updated[editingHeroSlideIndex] = newSlide;
+      setHeroSlides(updated);
+    } else {
+      setHeroSlides([...heroSlides, newSlide]);
+    }
+    setIsHeroSlideFormOpen(false);
+  };
+
+  const handleDeleteHeroSlide = (index: number) => {
+    setPendingDeleteHeroSlideIndex(index);
+    setIsDeleteHeroSlideConfirmOpen(true);
+  };
+
+  const confirmDeleteHeroSlide = () => {
+    if (pendingDeleteHeroSlideIndex !== null) {
+      const updated = heroSlides.filter((_, idx) => idx !== pendingDeleteHeroSlideIndex);
+      setHeroSlides(updated);
+    }
+    setIsDeleteHeroSlideConfirmOpen(false);
+    setPendingDeleteHeroSlideIndex(null);
   };
 
   useEffect(() => {
@@ -1018,6 +1226,18 @@ export default function AdminGrillPage() {
         cancelLabel="Cancelar"
       />
 
+      {/* Confirm Hero Slide Deletion Modal */}
+      <ConfirmModal
+        isOpen={isDeleteHeroSlideConfirmOpen}
+        title="Confirmar Eliminación"
+        message="¿Está seguro de eliminar esta diapositiva de portada? Esta acción no se puede deshacer."
+        variant="danger"
+        onConfirm={confirmDeleteHeroSlide}
+        onCancel={() => { setIsDeleteHeroSlideConfirmOpen(false); setPendingDeleteHeroSlideIndex(null); }}
+        confirmLabel="Eliminar"
+        cancelLabel="Cancelar"
+      />
+
       {/* Confirm Category Deletion Modal */}
       <ConfirmModal
         isOpen={isDeleteCatConfirmOpen}
@@ -1157,18 +1377,35 @@ export default function AdminGrillPage() {
 
               {/* Tabs */}
               <div className="flex border-b border-neutral-800 mb-6 gap-6 overflow-x-auto pb-1">
+                {/* 1. Portada (Slider) */}
                 <button
                   type="button"
-                  onClick={() => setContentTab("video")}
+                  onClick={() => setContentTab("hero")}
                   className={`pb-3 text-xs font-bold uppercase tracking-widest border-b-2 transition-all flex items-center gap-2 shrink-0 ${
-                    contentTab === "video"
+                    contentTab === "hero"
                       ? "border-gold-400 text-gold-400"
                       : "border-transparent text-neutral-400 hover:text-white"
                   }`}
                 >
-                  <Film className="w-4 h-4" />
-                  Experiencia Sensorial
+                  <ImageIcon className="w-4 h-4" />
+                  Portada (Slider)
                 </button>
+
+                {/* 2. Nuestro Menú */}
+                <button
+                  type="button"
+                  onClick={() => setContentTab("menu")}
+                  className={`pb-3 text-xs font-bold uppercase tracking-widest border-b-2 transition-all flex items-center gap-2 shrink-0 ${
+                    contentTab === "menu"
+                      ? "border-gold-400 text-gold-400"
+                      : "border-transparent text-neutral-400 hover:text-white"
+                  }`}
+                >
+                  <Flame className="w-4 h-4" />
+                  Nuestro Menú
+                </button>
+
+                {/* 3. Sobre Nosotros */}
                 <button
                   type="button"
                   onClick={() => setContentTab("about")}
@@ -1181,18 +1418,22 @@ export default function AdminGrillPage() {
                   <BookOpen className="w-4 h-4" />
                   Sobre Nosotros
                 </button>
+
+                {/* 4. Favoritos de la Casa */}
                 <button
                   type="button"
-                  onClick={() => setContentTab("carousel")}
+                  onClick={() => setContentTab("titles")}
                   className={`pb-3 text-xs font-bold uppercase tracking-widest border-b-2 transition-all flex items-center gap-2 shrink-0 ${
-                    contentTab === "carousel"
+                    contentTab === "titles"
                       ? "border-gold-400 text-gold-400"
                       : "border-transparent text-neutral-400 hover:text-white"
                   }`}
                 >
-                  <ImageIcon className="w-4 h-4" />
-                  Galería del Chef
+                  <BookOpen className="w-4 h-4" />
+                  Favoritos de la Casa
                 </button>
+
+                {/* 5. Testimonios */}
                 <button
                   type="button"
                   onClick={() => setContentTab("testimonials")}
@@ -1205,6 +1446,48 @@ export default function AdminGrillPage() {
                   <Star className="w-4 h-4" />
                   Testimonios
                 </button>
+
+                {/* 6. Experiencia Sensorial & Promociones */}
+                <button
+                  type="button"
+                  onClick={() => setContentTab("video")}
+                  className={`pb-3 text-xs font-bold uppercase tracking-widest border-b-2 transition-all flex items-center gap-2 shrink-0 ${
+                    contentTab === "video"
+                      ? "border-gold-400 text-gold-400"
+                      : "border-transparent text-neutral-400 hover:text-white"
+                  }`}
+                >
+                  <Film className="w-4 h-4" />
+                  Experiencia Sensorial
+                </button>
+
+                {/* 7. Galería del Chef */}
+                <button
+                  type="button"
+                  onClick={() => setContentTab("carousel")}
+                  className={`pb-3 text-xs font-bold uppercase tracking-widest border-b-2 transition-all flex items-center gap-2 shrink-0 ${
+                    contentTab === "carousel"
+                      ? "border-gold-400 text-gold-400"
+                      : "border-transparent text-neutral-400 hover:text-white"
+                  }`}
+                >
+                  <ImageIcon className="w-4 h-4" />
+                  Galería del Chef
+                </button>
+
+                {/* 8. Cómo Funciona */}
+                <button
+                  type="button"
+                  onClick={() => setContentTab("how")}
+                  className={`pb-3 text-xs font-bold uppercase tracking-widest border-b-2 transition-all flex items-center gap-2 shrink-0 ${
+                    contentTab === "how"
+                      ? "border-gold-400 text-gold-400"
+                      : "border-transparent text-neutral-400 hover:text-white"
+                  }`}
+                >
+                  <HelpCircle className="w-4 h-4" />
+                  Cómo Funciona
+                </button>
               </div>
 
               {loadingContent ? (
@@ -1214,6 +1497,110 @@ export default function AdminGrillPage() {
                 </div>
               ) : (
                 <div className="space-y-6">
+                  {contentFormError && (
+                    <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-sm mb-6 flex justify-between items-center animate-in fade-in duration-200">
+                      <span>{contentFormError}</span>
+                      <button type="button" onClick={() => setContentFormError("")} className="text-red-400 hover:text-white p-1">
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  )}
+                  {/* TAB: HERO SLIDER */}
+                  {contentTab === "hero" && (
+                    <div className="space-y-6">
+                      <div className="flex items-center justify-between border-b border-neutral-800 pb-4">
+                        <div>
+                          <h4 className="text-[10px] text-gold-400 uppercase tracking-widest font-black">Diapositivas de Portada</h4>
+                          <p className="text-[10px] text-neutral-500 uppercase mt-1">Crea slides de portada con textos personalizados e imágenes/videos de fondo</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={handleOpenAddHeroSlide}
+                          className="px-4 py-2 bg-gold-400 hover:bg-gold-500 text-obsidian text-[10px] font-bold tracking-widest uppercase rounded-sm flex items-center gap-1.5"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          Agregar Diapositiva
+                        </button>
+                      </div>
+
+                      {/* List heroSlides */}
+                      <div className="grid grid-cols-1 gap-4">
+                        {heroSlides.length === 0 ? (
+                          <p className="text-center text-xs text-neutral-500 py-8">No hay diapositivas de portada. Agrega una nueva.</p>
+                        ) : (
+                          heroSlides.map((slide, index) => (
+                            <div key={slide.id || index} className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-black/20 p-4 border border-neutral-850 rounded-sm gap-4 hover:border-neutral-800 transition-colors">
+                              <div className="flex items-center gap-4 min-w-0">
+                                <div className="w-24 h-16 shrink-0 bg-neutral-900 border border-neutral-800 rounded-sm overflow-hidden flex items-center justify-center relative">
+                                  {slide.mediaType === "VIDEO" ? (
+                                    <video src={slide.mediaUrl} className="w-full h-full object-cover" muted />
+                                  ) : (
+                                    <img src={slide.mediaUrl} alt={slide.title} className="w-full h-full object-cover" />
+                                  )}
+                                  <span className="absolute top-1 left-1 bg-black/70 px-1 py-0.5 rounded-[2px] text-[8px] font-black uppercase text-gold-400">
+                                    {slide.mediaType}
+                                  </span>
+                                </div>
+                                <div className="overflow-hidden">
+                                  <span className="text-[8px] bg-gold-400/10 border border-gold-400/20 text-gold-400 font-bold px-1.5 py-0.5 rounded-xs uppercase tracking-widest">{slide.tag || "PORTADA"}</span>
+                                  <h5 className="font-serif text-sm font-semibold text-neutral-200 mt-1">{slide.title || "Sin Título"}</h5>
+                                  <p className="text-[10px] text-neutral-500 line-clamp-1">{slide.description}</p>
+                                </div>
+                              </div>
+                              <div className="flex gap-2 self-end sm:self-center shrink-0">
+                                <button
+                                  type="button"
+                                  onClick={() => handleOpenEditHeroSlide(index)}
+                                  className="p-1.5 border border-neutral-800 hover:border-neutral-700 bg-neutral-900/60 text-neutral-400 hover:text-gold-400 rounded-xs transition-all"
+                                  title="Editar"
+                                >
+                                  <Edit2 className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeleteHeroSlide(index)}
+                                  className="p-1.5 border border-neutral-800 hover:border-neutral-700 bg-neutral-900/60 text-neutral-400 hover:text-red-400 rounded-xs transition-all"
+                                  title="Eliminar"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* TAB: NUESTRO MENÚ */}
+                  {contentTab === "menu" && (
+                    <div className="space-y-6 animate-in fade-in duration-200">
+                      <div className="border-b border-neutral-800 pb-4">
+                        <h4 className="text-[10px] text-gold-400 uppercase tracking-widest font-black">Nuestro Menú</h4>
+                        <p className="text-[10px] text-neutral-500 uppercase mt-1">Gestión de platillos y categorías de la carta.</p>
+                      </div>
+                      
+                      <div className="p-8 bg-[#0a0707] border border-amber-500/15 rounded-sm shadow-xl text-center space-y-4">
+                        <div className="w-16 h-16 rounded-full border border-amber-500/20 bg-black/40 flex items-center justify-center text-amber-500 mx-auto">
+                          <Flame className="w-8 h-8 animate-pulse text-amber-500" />
+                        </div>
+                        <h3 className="font-serif text-lg font-bold text-white">Los platillos de la carta se editan en la pantalla principal</h3>
+                        <p className="text-xs text-neutral-400 max-w-md mx-auto leading-relaxed font-normal">
+                          Para agregar, editar, eliminar o activar/desactivar platillos de la carta, utiliza la tabla y los botones que se encuentran en la pantalla principal de <strong>Administrar Zona Grill</strong> (al cerrar este panel).
+                        </p>
+                        <div className="pt-2">
+                          <button
+                            type="button"
+                            onClick={() => setIsContentModalOpen(false)}
+                            className="px-6 py-2.5 bg-amber-500 hover:bg-amber-600 text-black text-xs font-bold tracking-widest uppercase transition-all duration-300 rounded-sm cursor-pointer border-none"
+                          >
+                            Ir a Administrar Platillos
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   {/* TAB: VIDEO */}
                   {contentTab === "video" && (
                     <div className="space-y-6">
@@ -1276,11 +1663,12 @@ export default function AdminGrillPage() {
                                   const files = e.target.files;
                                   if (!files || files.length === 0) return;
                                   setUploadingVideo(true);
+                                  setContentFormError("");
                                   try {
                                     const url = await uploadImageFile(files[0]);
                                     setVideoUrl(url);
                                   } catch (err: any) {
-                                    alert(err.message || "Error al subir video");
+                                    setContentFormError(err.message || "Error al subir video");
                                   } finally {
                                     setUploadingVideo(false);
                                   }
@@ -1321,11 +1709,12 @@ export default function AdminGrillPage() {
                                   const files = e.target.files;
                                   if (!files || files.length === 0) return;
                                   setUploadingPoster(true);
+                                  setContentFormError("");
                                   try {
                                     const url = await uploadImageFile(files[0]);
                                     setVideoPosterUrl(url);
                                   } catch (err: any) {
-                                    alert(err.message || "Error al subir poster");
+                                    setContentFormError(err.message || "Error al subir poster");
                                   } finally {
                                     setUploadingPoster(false);
                                   }
@@ -1343,72 +1732,107 @@ export default function AdminGrillPage() {
                         </div>
                       </div>
 
-                      {/* Promociones del Fin de Semana */}
+                      {/* La Mística de las Brasas (Callout Lateral) */}
                       <div className="border-t border-neutral-800 pt-6 mt-6">
                         <h3 className="font-serif text-lg font-semibold text-gold-400 mb-4 flex items-center gap-2">
-                          <Gift className="w-5 h-5 text-gold-400" />
-                          Promociones del Fin de Semana
+                          <Flame className="w-5 h-5 text-gold-400" />
+                          La Mística de las Brasas (Callout Lateral)
                         </h3>
                         <p className="text-[10px] text-neutral-500 uppercase tracking-widest mb-6">
-                          Edita la información de las tres tarjetas de promociones que aparecen en la página de inicio.
+                          Edita el bloque de texto y métricas que acompaña al reproductor de video.
                         </p>
 
-                        <div className="space-y-6">
-                          {promotions.map((promo, idx) => (
-                            <div key={idx} className="p-4 bg-black/20 border border-neutral-850 rounded-sm space-y-4">
-                              <h4 className="text-[10px] text-gold-400 uppercase tracking-widest font-black">
-                                Promoción {idx + 1}
-                              </h4>
-                              
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
-                                  <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Etiqueta (Badge)</label>
-                                  <input
-                                    type="text"
-                                    value={promo.tag}
-                                    onChange={(e) => handlePromoChange(idx, "tag", e.target.value)}
-                                    placeholder="Ej. Sábados y Domingos"
-                                    className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-2.5 text-xs outline-none transition-colors rounded-xs text-white"
-                                  />
-                                </div>
-                                <div>
-                                  <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Valor (Descuento/Precio)</label>
-                                  <input
-                                    type="text"
-                                    value={promo.value}
-                                    onChange={(e) => handlePromoChange(idx, "value", e.target.value)}
-                                    placeholder="Ej. GRATIS o 10% OFF"
-                                    className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-2.5 text-xs outline-none transition-colors rounded-xs text-white"
-                                  />
-                                </div>
-                              </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                          <div>
+                            <label className="block text-[9px] uppercase tracking-widest text-neutral-500 mb-2 font-bold">Tag Superior</label>
+                            <input
+                              type="text"
+                              value={videoCalloutTag}
+                              onChange={(e) => setVideoCalloutTag(e.target.value)}
+                              placeholder="Ej. La Mística de las Brasas"
+                              className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[9px] uppercase tracking-widest text-neutral-500 mb-2 font-bold">Título de la Llamada</label>
+                            <input
+                              type="text"
+                              value={videoCalloutTitle}
+                              onChange={(e) => setVideoCalloutTitle(e.target.value)}
+                              placeholder="Ej. El Secreto de una Cocción al Mezquite Natural"
+                              className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white"
+                            />
+                          </div>
+                        </div>
 
-                              <div className="space-y-3">
-                                <div>
-                                  <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Título de la Promoción</label>
-                                  <input
-                                    type="text"
-                                    value={promo.title}
-                                    onChange={(e) => handlePromoChange(idx, "title", e.target.value)}
-                                    placeholder="Ej. Papas Rellenas Especiales"
-                                    className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-2.5 text-xs outline-none transition-colors rounded-xs text-white"
-                                  />
-                                </div>
-                                <div>
-                                  <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Descripción</label>
-                                  <textarea
-                                    rows={2}
-                                    value={promo.description}
-                                    onChange={(e) => handlePromoChange(idx, "description", e.target.value)}
-                                    placeholder="Detalles de la promoción..."
-                                    className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-2.5 text-xs outline-none transition-colors rounded-xs text-white resize-none"
-                                  />
-                                </div>
+                        <div className="mt-4">
+                          <label className="block text-[9px] uppercase tracking-widest text-neutral-500 mb-2 font-bold">Descripción Completa</label>
+                          <textarea
+                            rows={3}
+                            value={videoCalloutDesc}
+                            onChange={(e) => setVideoCalloutDesc(e.target.value)}
+                            placeholder="Descripción de la técnica de cocción..."
+                            className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white resize-none"
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-4">
+                          {/* Callout Stat 1 */}
+                          <div className="p-4 bg-black/20 border border-neutral-850 rounded-sm space-y-3">
+                            <h4 className="text-[10px] text-gold-400 uppercase tracking-widest font-black">Métrica 1</h4>
+                            <div className="grid grid-cols-2 gap-2">
+                              <div>
+                                <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Valor (Grande)</label>
+                                <input
+                                  type="text"
+                                  value={videoCalloutStat1Value}
+                                  onChange={(e) => setVideoCalloutStat1Value(e.target.value)}
+                                  placeholder="Ej. 100%"
+                                  className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-2 text-xs outline-none transition-colors rounded-xs text-white"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Etiqueta</label>
+                                <input
+                                  type="text"
+                                  value={videoCalloutStat1Label}
+                                  onChange={(e) => setVideoCalloutStat1Label(e.target.value)}
+                                  placeholder="Ej. Carbón de Mezquite"
+                                  className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-2 text-xs outline-none transition-colors rounded-xs text-white"
+                                />
                               </div>
                             </div>
-                          ))}
+                          </div>
+
+                          {/* Callout Stat 2 */}
+                          <div className="p-4 bg-black/20 border border-neutral-850 rounded-sm space-y-3">
+                            <h4 className="text-[10px] text-gold-400 uppercase tracking-widest font-black">Métrica 2</h4>
+                            <div className="grid grid-cols-2 gap-2">
+                              <div>
+                                <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Valor (Grande)</label>
+                                <input
+                                  type="text"
+                                  value={videoCalloutStat2Value}
+                                  onChange={(e) => setVideoCalloutStat2Value(e.target.value)}
+                                  placeholder="Ej. Gourmet"
+                                  className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-2 text-xs outline-none transition-colors rounded-xs text-white"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Etiqueta</label>
+                                <input
+                                  type="text"
+                                  value={videoCalloutStat2Label}
+                                  onChange={(e) => setVideoCalloutStat2Label(e.target.value)}
+                                  placeholder="Ej. Cortes Premium"
+                                  className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-2 text-xs outline-none transition-colors rounded-xs text-white"
+                                />
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
+
                     </div>
                   )}
 
@@ -1543,13 +1967,13 @@ export default function AdminGrillPage() {
                                 if (!files || files.length === 0) return;
                                 setUploadingAboutImage(true);
                                 try {
-                                  const url = await uploadImageFile(files[0]);
-                                  setAboutImageUrl(url);
-                                } catch (err: any) {
-                                  alert(err.message || "Error al subir imagen");
-                                } finally {
-                                  setUploadingAboutImage(false);
-                                }
+                                   const url = await uploadImageFile(files[0]);
+                                   setAboutImageUrl(url);
+                                 } catch (err: any) {
+                                   setContentFormError(err.message || "Error al subir imagen");
+                                 } finally {
+                                   setUploadingAboutImage(false);
+                                 }
                               }}
                               disabled={uploadingAboutImage}
                               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
@@ -1631,7 +2055,44 @@ export default function AdminGrillPage() {
                   {/* TAB: TESTIMONIALS */}
                   {contentTab === "testimonials" && (
                     <div className="space-y-6">
-                      <div className="flex items-center justify-between border-b border-neutral-800 pb-4">
+                      {/* Testimonios Settings Header */}
+                      <div className="p-4 bg-black/20 border border-neutral-850 rounded-sm space-y-4">
+                        <h3 className="font-serif text-sm font-semibold text-gold-400">Configuración General de Testimonios</h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Título de la Sección</label>
+                            <input
+                              type="text"
+                              value={testimonialsTitle}
+                              onChange={(e) => setTestimonialsTitle(e.target.value)}
+                              placeholder="Ej. LO QUE DICEN NUESTROS CLIENTES"
+                              className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-2.5 text-xs outline-none transition-colors rounded-xs text-white"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Texto del Botón</label>
+                            <input
+                              type="text"
+                              value={testimonialsButtonText}
+                              onChange={(e) => setTestimonialsButtonText(e.target.value)}
+                              placeholder="Ej. Ver más reseñas"
+                              className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-2.5 text-xs outline-none transition-colors rounded-xs text-white"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Enlace del Botón (WhatsApp o Link externo)</label>
+                          <input
+                            type="text"
+                            value={testimonialsButtonLink}
+                            onChange={(e) => setTestimonialsButtonLink(e.target.value)}
+                            placeholder="Ej. https://wa.me/..."
+                            className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-2.5 text-xs outline-none transition-colors rounded-xs text-white"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between border-b border-neutral-800 pb-4 pt-4">
                         <h4 className="text-[10px] text-gold-400 uppercase tracking-widest font-black">Testimonios de Clientes</h4>
                         <button
                           type="button"
@@ -1679,6 +2140,307 @@ export default function AdminGrillPage() {
                             </div>
                           ))
                         )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* TAB: HOW IT WORKS */}
+                  {contentTab === "how" && (
+                    <div className="space-y-6">
+                      <div className="border-b border-neutral-800 pb-4">
+                        <h4 className="text-[10px] text-gold-400 uppercase tracking-widest font-black">Configuración: ¿Cómo Funciona?</h4>
+                        <p className="text-[10px] text-neutral-500 uppercase mt-1">Personaliza el flujo paso a paso de los pedidos en Zona Grill.</p>
+                      </div>
+
+                      <div>
+                        <label className="block text-[9px] uppercase tracking-widest text-neutral-500 mb-2 font-bold">Título de la Sección</label>
+                        <input
+                          type="text"
+                          value={howItWorksTitle}
+                          onChange={(e) => setHowItWorksTitle(e.target.value)}
+                          placeholder="Ej. ¿CÓMO FUNCIONA?"
+                          className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white"
+                        />
+                      </div>
+
+                      <div className="space-y-6">
+                        {/* Step 1 */}
+                        <div className="p-4 bg-black/20 border border-neutral-850 rounded-sm space-y-4">
+                          <h4 className="text-[10px] text-gold-400 uppercase tracking-widest font-black">Paso 1</h4>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                              <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Título</label>
+                              <input
+                                type="text"
+                                value={step1Title}
+                                onChange={(e) => setStep1Title(e.target.value)}
+                                className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-2.5 text-xs outline-none transition-colors rounded-xs text-white"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Descripción Corta</label>
+                              <input
+                                type="text"
+                                value={step1Desc}
+                                onChange={(e) => setStep1Desc(e.target.value)}
+                                className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-2.5 text-xs outline-none transition-colors rounded-xs text-white"
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Step 2 */}
+                        <div className="p-4 bg-black/20 border border-neutral-850 rounded-sm space-y-4">
+                          <h4 className="text-[10px] text-gold-400 uppercase tracking-widest font-black">Paso 2</h4>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                              <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Título</label>
+                              <input
+                                type="text"
+                                value={step2Title}
+                                onChange={(e) => setStep2Title(e.target.value)}
+                                className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-2.5 text-xs outline-none transition-colors rounded-xs text-white"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Descripción Corta</label>
+                              <input
+                                type="text"
+                                value={step2Desc}
+                                onChange={(e) => setStep2Desc(e.target.value)}
+                                className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-2.5 text-xs outline-none transition-colors rounded-xs text-white"
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Step 3 */}
+                        <div className="p-4 bg-black/20 border border-neutral-850 rounded-sm space-y-4">
+                          <h4 className="text-[10px] text-gold-400 uppercase tracking-widest font-black">Paso 3</h4>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                              <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Título</label>
+                              <input
+                                type="text"
+                                value={step3Title}
+                                onChange={(e) => setStep3Title(e.target.value)}
+                                className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-2.5 text-xs outline-none transition-colors rounded-xs text-white"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Descripción Corta</label>
+                              <input
+                                type="text"
+                                value={step3Desc}
+                                onChange={(e) => setStep3Desc(e.target.value)}
+                                className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-2.5 text-xs outline-none transition-colors rounded-xs text-white"
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Step 4 */}
+                        <div className="p-4 bg-black/20 border border-neutral-850 rounded-sm space-y-4">
+                          <h4 className="text-[10px] text-gold-400 uppercase tracking-widest font-black">Paso 4</h4>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                              <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Título</label>
+                              <input
+                                type="text"
+                                value={step4Title}
+                                onChange={(e) => setStep4Title(e.target.value)}
+                                className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-2.5 text-xs outline-none transition-colors rounded-xs text-white"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Descripción Corta</label>
+                              <input
+                                type="text"
+                                value={step4Desc}
+                                onChange={(e) => setStep4Desc(e.target.value)}
+                                className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-2.5 text-xs outline-none transition-colors rounded-xs text-white"
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Step 5 */}
+                        <div className="p-4 bg-black/20 border border-neutral-850 rounded-sm space-y-4">
+                          <h4 className="text-[10px] text-gold-400 uppercase tracking-widest font-black">Paso 5</h4>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                              <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Título</label>
+                              <input
+                                type="text"
+                                value={step5Title}
+                                onChange={(e) => setStep5Title(e.target.value)}
+                                className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-2.5 text-xs outline-none transition-colors rounded-xs text-white"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Descripción Corta</label>
+                              <input
+                                type="text"
+                                value={step5Desc}
+                                onChange={(e) => setStep5Desc(e.target.value)}
+                                className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-2.5 text-xs outline-none transition-colors rounded-xs text-white"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* TAB: SECTIONS TITLES & BUTTONS */}
+                  {contentTab === "titles" && (
+                    <div className="space-y-6 animate-in fade-in duration-200">
+                      <div className="border-b border-neutral-800 pb-4">
+                        <h4 className="text-[10px] text-gold-400 uppercase tracking-widest font-black">Títulos y Botones de Secciones</h4>
+                        <p className="text-[10px] text-neutral-500 uppercase mt-1">Configura las cabeceras principales y los botones de acción para cada sección pública.</p>
+                      </div>
+
+                      {/* Los Favoritos de la Casa */}
+                      <div className="p-4 bg-black/20 border border-neutral-850 rounded-sm space-y-4">
+                        <h3 className="font-serif text-sm font-semibold text-gold-400">Sección: Los Favoritos de la Casa</h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Título Principal</label>
+                            <input
+                              type="text"
+                              value={favoritesTitle}
+                              onChange={(e) => setFavoritesTitle(e.target.value)}
+                              className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-2.5 text-xs outline-none transition-colors rounded-xs text-white"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Texto del Botón</label>
+                            <input
+                              type="text"
+                              value={favoritesButtonText}
+                              onChange={(e) => setFavoritesButtonText(e.target.value)}
+                              className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-2.5 text-xs outline-none transition-colors rounded-xs text-white"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Selector de Platillos Favoritos */}
+                        <div className="border-t border-neutral-850 pt-4 mt-4 space-y-3 text-left">
+                          <h4 className="text-[10px] text-gold-400 uppercase tracking-widest font-black">Platillos Destacados (Favoritos)</h4>
+                          <p className="text-[9px] text-neutral-500 uppercase">Selecciona los 4 productos de la carta que deseas mostrar en esta sección.</p>
+                          
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            {[
+                              { label: "Favorito 1", val: favoriteProduct1Id, setVal: setFavoriteProduct1Id },
+                              { label: "Favorito 2", val: favoriteProduct2Id, setVal: setFavoriteProduct2Id },
+                              { label: "Favorito 3", val: favoriteProduct3Id, setVal: setFavoriteProduct3Id },
+                              { label: "Favorito 4", val: favoriteProduct4Id, setVal: setFavoriteProduct4Id },
+                            ].map((slot, sIdx) => (
+                              <div key={sIdx}>
+                                <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">{slot.label}</label>
+                                <select
+                                  value={slot.val}
+                                  onChange={(e) => slot.setVal(e.target.value)}
+                                  className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-2 text-xs outline-none transition-colors rounded-xs text-white"
+                                >
+                                  <option value="">-- Seleccionar Platillo --</option>
+                                  {products.map((p) => (
+                                    <option key={p.id} value={p.id}>
+                                      [{p.category}] {p.name}
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Novedades y Ofertas */}
+                      <div className="p-4 bg-black/20 border border-neutral-850 rounded-sm space-y-4">
+                        <h3 className="font-serif text-sm font-semibold text-gold-400">Sección: Novedades y Ofertas</h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Título Principal</label>
+                            <input
+                              type="text"
+                              value={promotionsTitle}
+                              onChange={(e) => setPromotionsTitle(e.target.value)}
+                              className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-2.5 text-xs outline-none transition-colors rounded-xs text-white"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Texto del Botón</label>
+                            <input
+                              type="text"
+                              value={promotionsButtonText}
+                              onChange={(e) => setPromotionsButtonText(e.target.value)}
+                              className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-2.5 text-xs outline-none transition-colors rounded-xs text-white"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Promociones del Fin de Semana */}
+                        <div className="border-t border-neutral-850 pt-4 mt-4 space-y-3 text-left">
+                          <h4 className="text-[10px] text-gold-400 uppercase tracking-widest font-black flex items-center gap-1">
+                            <Gift className="w-3.5 h-3.5 text-gold-400" />
+                            Ofertas del Fin de Semana (Novedades)
+                          </h4>
+                          <p className="text-[9px] text-neutral-500 uppercase">Edita la información de las tres tarjetas de promociones públicas.</p>
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            {promotions.map((promo, idx) => (
+                              <div key={idx} className="p-3 bg-black/40 border border-neutral-850 rounded-sm space-y-3 text-left">
+                                <h5 className="text-[9px] text-gold-400 uppercase tracking-widest font-black">
+                                  Promoción {idx + 1}
+                                </h5>
+                                
+                                <div className="space-y-2.5">
+                                  <div>
+                                    <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-0.5 font-bold">Etiqueta (Badge)</label>
+                                    <input
+                                      type="text"
+                                      value={promo.tag}
+                                      onChange={(e) => handlePromoChange(idx, "tag", e.target.value)}
+                                      placeholder="Ej. Sábados y Domingos"
+                                      className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-1.5 px-2 text-xs outline-none transition-colors rounded-xs text-white"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-0.5 font-bold">Valor (Descuento/Precio)</label>
+                                    <input
+                                      type="text"
+                                      value={promo.value}
+                                      onChange={(e) => handlePromoChange(idx, "value", e.target.value)}
+                                      placeholder="Ej. 10% OFF o GRATIS"
+                                      className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-1.5 px-2 text-xs outline-none transition-colors rounded-xs text-white"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-0.5 font-bold">Título</label>
+                                    <input
+                                      type="text"
+                                      value={promo.title}
+                                      onChange={(e) => handlePromoChange(idx, "title", e.target.value)}
+                                      placeholder="Ej. Papas Rellenas"
+                                      className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-1.5 px-2 text-xs outline-none transition-colors rounded-xs text-white"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-0.5 font-bold">Descripción</label>
+                                    <textarea
+                                      rows={2}
+                                      value={promo.description}
+                                      onChange={(e) => handlePromoChange(idx, "description", e.target.value)}
+                                      placeholder="Detalles..."
+                                      className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-1.5 px-2 text-xs outline-none transition-colors rounded-xs text-white resize-none"
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
                       </div>
                     </div>
                   )}
@@ -1735,6 +2497,11 @@ export default function AdminGrillPage() {
 
             {/* Scrollable Content */}
             <div className="p-6 overflow-y-auto space-y-4 flex-1">
+              {slideFormError && (
+                <div className="p-3 bg-red-900/20 border border-red-900/50 text-red-400 text-xs rounded-sm mb-4 animate-in fade-in duration-200">
+                  {slideFormError}
+                </div>
+              )}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Tag Superior</label>
@@ -1812,7 +2579,7 @@ export default function AdminGrillPage() {
                           const url = await uploadImageFile(files[0]);
                           setSlideImage(url);
                         } catch (err: any) {
-                          alert(err.message || "Error al subir imagen");
+                          setSlideFormError(err.message || "Error al subir imagen");
                         } finally {
                           setUploadingSlideImage(false);
                         }
@@ -1918,6 +2685,176 @@ export default function AdminGrillPage() {
               <button
                 type="button"
                 onClick={() => setIsTestimonialFormOpen(false)}
+                className="px-4 py-2 bg-neutral-800 hover:bg-neutral-700 text-white text-xs font-bold uppercase rounded-sm"
+              >
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* Hero Slide Editor Sub-Modal */}
+      {isHeroSlideFormOpen && (
+        <div className="fixed inset-0 z-[60] bg-black/80 backdrop-blur-xs flex items-center justify-center p-4 font-sans text-white">
+          <form onSubmit={handleSaveHeroSlide} className="w-full max-w-lg bg-[#111111] border border-neutral-800 rounded-sm shadow-2xl relative animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
+            {/* Header */}
+            <div className="p-6 border-b border-neutral-800 flex items-center justify-between shrink-0">
+              <h3 className="font-serif text-xl font-semibold text-gold-400">
+                {editingHeroSlideIndex !== null ? "Editar Diapositiva de Portada" : "Nueva Diapositiva de Portada"}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setIsHeroSlideFormOpen(false)}
+                className="text-neutral-500 hover:text-white p-1"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Scrollable Content */}
+            <div className="p-6 overflow-y-auto space-y-4 flex-1">
+              {heroSlideFormError && <div className="p-3 bg-red-900/20 border border-red-900/50 text-red-400 text-xs rounded-sm">{heroSlideFormError}</div>}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Tag Superior</label>
+                  <input
+                    type="text"
+                    required
+                    value={heroSlideTag}
+                    onChange={(e) => setHeroSlideTag(e.target.value)}
+                    placeholder="Ej. SOLO SERVICIO A DOMICILIO"
+                    className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-3 text-xs outline-none transition-colors rounded-xs text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Título Principal</label>
+                  <input
+                    type="text"
+                    required
+                    value={heroSlideTitle}
+                    onChange={(e) => setHeroSlideTitle(e.target.value)}
+                    placeholder="Ej. DARK KITCHEN"
+                    className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-3 text-xs outline-none transition-colors rounded-xs text-white"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Descripción Corta</label>
+                <textarea
+                  rows={3}
+                  required
+                  value={heroSlideDescription}
+                  onChange={(e) => setHeroSlideDescription(e.target.value)}
+                  placeholder="Ej. Las mejores brasas merecen los mejores cortes."
+                  className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-3 text-xs outline-none transition-colors rounded-xs text-white resize-none"
+                />
+              </div>
+
+              {/* Media Type Selection */}
+              <div>
+                <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-2 font-bold">Tipo de Medio</label>
+                <div className="flex gap-4">
+                  <label className="flex items-center gap-2 text-xs text-neutral-300 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="heroMediaType"
+                      checked={heroSlideMediaType === "IMAGE"}
+                      onChange={() => {
+                        setHeroSlideMediaType("IMAGE");
+                        setHeroSlideMediaUrl("");
+                      }}
+                      className="accent-gold-400"
+                    />
+                    Imagen
+                  </label>
+                  <label className="flex items-center gap-2 text-xs text-neutral-300 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="heroMediaType"
+                      checked={heroSlideMediaType === "VIDEO"}
+                      onChange={() => {
+                        setHeroSlideMediaType("VIDEO");
+                        setHeroSlideMediaUrl("");
+                      }}
+                      className="accent-gold-400"
+                    />
+                    Video
+                  </label>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">
+                  {heroSlideMediaType === "IMAGE" ? "Archivo de Imagen" : "Archivo de Video"}
+                </label>
+                {heroSlideMediaUrl ? (
+                  <div className="relative aspect-video w-full border border-neutral-800 rounded-sm overflow-hidden group">
+                    {heroSlideMediaType === "IMAGE" ? (
+                      <img src={heroSlideMediaUrl} alt="Slide Preview" className="w-full h-full object-cover" />
+                    ) : (
+                      <video src={heroSlideMediaUrl} className="w-full h-full object-cover" muted playsInline controls />
+                    )}
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <button
+                        type="button"
+                        onClick={() => setHeroSlideMediaUrl("")}
+                        className="px-4 py-2 bg-red-650 hover:bg-red-700 text-white text-xs uppercase font-bold tracking-wider rounded-sm transition-all flex items-center gap-1.5"
+                      >
+                        <Trash2 className="w-4 h-4" /> Eliminar Medio
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="border-2 border-dashed border-neutral-800 hover:border-gold-400/25 p-6 text-center transition-colors rounded-sm relative w-full">
+                    <input
+                      type="file"
+                      accept={heroSlideMediaType === "IMAGE" ? "image/*" : "video/*"}
+                      onChange={async (e) => {
+                        const files = e.target.files;
+                        if (!files || files.length === 0) return;
+                        setUploadingHeroMedia(true);
+                        try {
+                          const url = await uploadImageFile(files[0]);
+                          setHeroSlideMediaUrl(url);
+                        } catch (err: any) {
+                          setHeroSlideFormError(err.message || "Error al subir medio");
+                        } finally {
+                          setUploadingHeroMedia(false);
+                        }
+                      }}
+                      disabled={uploadingHeroMedia}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                    />
+                    {heroSlideMediaType === "IMAGE" ? (
+                      <Upload className="w-8 h-8 text-neutral-600 mx-auto mb-2" />
+                    ) : (
+                      <Film className="w-8 h-8 text-neutral-600 mx-auto mb-2" />
+                    )}
+                    <span className="block text-xs text-neutral-400 font-semibold uppercase tracking-wider">
+                      {uploadingHeroMedia ? "Subiendo..." : heroSlideMediaType === "IMAGE" ? "Seleccionar Imagen" : "Seleccionar Video"}
+                    </span>
+                    <span className="text-[10px] text-neutral-600 block mt-1">
+                      {heroSlideMediaType === "IMAGE" ? "Formatos: JPG, PNG, WebP" : "Formatos: MP4, WebM"}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="p-6 border-t border-neutral-800 flex justify-end gap-3 shrink-0">
+              <button
+                type="submit"
+                disabled={uploadingHeroMedia}
+                className="px-4 py-2 bg-gold-400 hover:bg-gold-500 text-obsidian text-xs font-bold uppercase rounded-sm disabled:opacity-50"
+              >
+                Confirmar
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsHeroSlideFormOpen(false)}
                 className="px-4 py-2 bg-neutral-800 hover:bg-neutral-700 text-white text-xs font-bold uppercase rounded-sm"
               >
                 Cancelar

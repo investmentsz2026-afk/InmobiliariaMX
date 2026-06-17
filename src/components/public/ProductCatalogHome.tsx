@@ -27,8 +27,14 @@ interface Product {
   images: ImageProps[];
 }
 
+interface CategoryProps {
+  id: string;
+  name: string;
+}
+
 interface ProductCatalogHomeProps {
   products: Product[];
+  categories: CategoryProps[];
 }
 
 const getCategoryIcon = (catName: string) => {
@@ -40,24 +46,24 @@ const getCategoryIcon = (catName: string) => {
   return Sparkles;
 };
 
-export default function ProductCatalogHome({ products }: ProductCatalogHomeProps) {
+export default function ProductCatalogHome({ products, categories = [] }: ProductCatalogHomeProps) {
   const [activeTab, setActiveTab] = useState<string>("ALL");
 
-  // Get unique categories from products list
-  const uniqueTypes = Array.from(new Set(products.map((p) => p.type))).filter(Boolean);
+  // Only show products whose category matches one of the official managed categories
+  const activeProducts = products.filter(p => categories.some(c => c.name === p.type));
 
   const tabs = [
     { id: "ALL", label: "Todos", icon: Sparkles },
-    ...uniqueTypes.map((t) => ({
-      id: t,
-      label: t,
-      icon: getCategoryIcon(t),
+    ...categories.map((c) => ({
+      id: c.name,
+      label: c.name,
+      icon: getCategoryIcon(c.name),
     })),
   ];
 
   const filteredProducts = activeTab === "ALL" 
-    ? products 
-    : products.filter(p => p.type === activeTab);
+    ? activeProducts 
+    : activeProducts.filter(p => p.type === activeTab);
 
   return (
     <div className="space-y-12">

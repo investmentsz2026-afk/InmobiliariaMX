@@ -8,6 +8,13 @@ const DEFAULT_GRILL_CONTENT = {
     description: "Mira cómo se encienden nuestras brasas de mezquite natural y cómo preparamos cada corte premium al momento para asegurar la jugosidad y el término perfecto.",
     videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-barbecue-steaks-cooking-on-grill-42284-large.mp4",
     posterUrl: "https://images.unsplash.com/photo-1544025162-d76694265947?w=1200&auto=format&fit=crop&q=80",
+    calloutTag: "La Mística de las Brasas",
+    calloutTitle: "El Secreto de una Cocción al Mezquite Natural",
+    calloutDesc: "No asamos carne, creamos experiencias memorables. Controlamos la temperatura y el humo para lograr cortes jugosos, tiernos y con esa costra caramelizada inconfundible.",
+    calloutStat1Value: "100%",
+    calloutStat1Label: "Carbón de Mezquite",
+    calloutStat2Value: "Gourmet",
+    calloutStat2Label: "Cortes Premium Sonora",
   },
   aboutSection: {
     tag: "Nuestra Historia",
@@ -102,6 +109,58 @@ const DEFAULT_GRILL_CONTENT = {
       role: "Crítico Gastronómico",
     },
   ],
+  heroSlides: [
+    {
+      id: 1,
+      tag: "SOLO SERVICIO A DOMICILIO",
+      title: "LA CAVA\nDEL CORTE",
+      description: "Las mejores brasas merecen los mejores cortes.",
+      mediaType: "IMAGE",
+      mediaUrl: "https://images.unsplash.com/photo-1544025162-d76694265947?w=1000&auto=format&fit=crop&q=80",
+    },
+    {
+      id: 2,
+      tag: "SÁBADOS Y DOMINGOS",
+      title: "CORTES PREMIUM",
+      description: "Disfruta de la mejor carne asada con leña y carbón de mezquite 100% natural.",
+      mediaType: "IMAGE",
+      mediaUrl: "https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=1000&auto=format&fit=crop&q=80",
+    },
+    {
+      id: 3,
+      tag: "ESPECIALIDADES AL CARBÓN",
+      title: "PAPAS RELLENAS",
+      description: "Nuestras famosas papas con puré cremoso, queso fundido y abundante carne de tu elección.",
+      mediaType: "IMAGE",
+      mediaUrl: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=1000&auto=format&fit=crop&q=80",
+    },
+  ],
+  howItWorksSection: {
+    title: "¿CÓMO FUNCIONA?",
+    step1Title: "Elige tu menú",
+    step1Desc: "Descubre nuestras deliciosas opciones al carbón.",
+    step2Title: "Escribe por WhatsApp",
+    step2Desc: "Realiza tu pedido fácil y rápido con un par de clics.",
+    step3Title: "Calculamos envío",
+    step3Desc: "Te confirmamos el tiempo y el costo estimado de entrega.",
+    step4Title: "Cocina al momento",
+    step4Desc: "Todo preparado de forma artesanal al fuego natural.",
+    step5Title: "Recíbelo en casa",
+    step5Desc: "Y disfruta del aroma y sabor de la parrilla en tu mesa.",
+  },
+  favoritesSection: {
+    title: "LOS FAVORITOS DE LA CASA",
+    buttonText: "Ver todos los favoritos",
+  },
+  promotionsTitleSection: {
+    title: "NOVEDADES Y OFERTAS",
+    buttonText: "Ver todas las novedades",
+  },
+  testimonialsSection: {
+    title: "LO QUE DICEN NUESTROS CLIENTES",
+    buttonText: "Ver más reseñas",
+    buttonLink: "https://wa.me/523222018003?text=Hola,%20quisiera%20enviar%20una%20reseña%20sobre%20mi%20experiencia%20en%20la%20Zona%20Grill.",
+  },
 };
 
 export async function GET(req: NextRequest) {
@@ -122,6 +181,11 @@ export async function GET(req: NextRequest) {
       carouselSlides: data.carouselSlides || DEFAULT_GRILL_CONTENT.carouselSlides,
       promotions: data.promotions || DEFAULT_GRILL_CONTENT.promotions,
       testimonials: data.testimonials || DEFAULT_GRILL_CONTENT.testimonials,
+      heroSlides: data.heroSlides || DEFAULT_GRILL_CONTENT.heroSlides,
+      howItWorksSection: { ...DEFAULT_GRILL_CONTENT.howItWorksSection, ...data.howItWorksSection },
+      favoritesSection: { ...DEFAULT_GRILL_CONTENT.favoritesSection, ...data.favoritesSection },
+      promotionsTitleSection: { ...DEFAULT_GRILL_CONTENT.promotionsTitleSection, ...data.promotionsTitleSection },
+      testimonialsSection: { ...DEFAULT_GRILL_CONTENT.testimonialsSection, ...data.testimonialsSection },
     });
   } catch (error) {
     console.error("Error fetching grill content:", error);

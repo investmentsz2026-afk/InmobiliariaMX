@@ -1,8 +1,9 @@
 import { prisma } from "@/lib/prisma";
-import Hero from "@/components/public/Hero";
+import StoreHeroSlider from "@/components/public/StoreHeroSlider";
 import ProductCatalogHome from "@/components/public/ProductCatalogHome";
 import HomeContactForm from "@/components/public/HomeContactForm";
 import Testimonials from "@/components/public/Testimonials";
+import SensoryVideoPlayer from "@/components/public/SensoryVideoPlayer";
 import { ArrowRight, Weight, Flame, ShieldAlert, Award } from "lucide-react";
 import Link from "next/link";
 import { Metadata } from "next";
@@ -17,16 +18,50 @@ export const revalidate = 0;
 
 export default async function StorePage() {
   // Retrieve all cuts/products from the DB
-  const properties = await prisma.property.findMany({
-    include: { images: true },
-    orderBy: { createdAt: "desc" },
-  });
+  const [properties, storeCategories, setting] = await Promise.all([
+    prisma.property.findMany({
+      include: { images: true },
+      orderBy: { createdAt: "desc" },
+    }),
+    prisma.customCategory.findMany({
+      where: { target: "STORE" },
+      orderBy: { createdAt: "asc" },
+    }),
+    prisma.systemSetting.findUnique({
+      where: { key: "store_content" },
+    }),
+  ]);
 
-  const setting = await prisma.systemSetting.findUnique({
-    where: { key: "store_content" },
-  });
+  const categories = storeCategories.map((c) => ({ id: c.id, name: c.name }));
 
   const content = setting ? (setting.value as any) : null;
+
+  const heroSlides = content?.heroSlides || [
+    {
+      id: "1",
+      tag: "LA CAVA DEL CORTE | BOUTIQUE PREMIUM",
+      title: "Cortes Premium de Sonora\n& El Arte del Buen Comer",
+      description: "Seleccionamos minuciosamente los mejores cortes marmoleados, empacados al alto vacío y listos para tu asador. Disfruta también de nuestra Zona Grill cocinada al carbón de leña los fines de semana.",
+      mediaType: "IMAGE",
+      mediaUrl: "https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=1600&auto=format&fit=crop&q=80",
+    },
+    {
+      id: "2",
+      tag: "MADURACIÓN & SABOR",
+      title: "Calidad de Origen\nen tu Asador",
+      description: "Cortes empacados individualmente en origen al alto vacío para preservar la frescura, terneza y el sabor extraordinario del auténtico ganado sonorense.",
+      mediaType: "IMAGE",
+      mediaUrl: "https://images.unsplash.com/photo-1544025162-d76694265947?w=1600&auto=format&fit=crop&q=80",
+    },
+    {
+      id: "3",
+      tag: "EXPERIENCIA SENSORIAL",
+      title: "El Fuego Sagrado\nde la Parrilla",
+      description: "Parrilladas, costillares BBQ y platos listos para servir los fines de semana. Sabor ahumado a leña y carbón directo a tu mesa.",
+      mediaType: "VIDEO",
+      mediaUrl: "https://assets.mixkit.co/videos/preview/mixkit-barbecue-steaks-cooking-on-grill-42284-large.mp4",
+    }
+  ];
 
   const videoSection = content?.videoSection || {
     tag: "EXPERIENCIA SENSORIAL",
@@ -34,6 +69,12 @@ export default async function StorePage() {
     description: "Mira cómo seleccionamos cada pieza y encendemos las brasas de mezquite para ofrecerte la máxima jugosidad y el sabor auténtico de la parrilla.",
     videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-barbecue-steaks-cooking-on-grill-42284-large.mp4",
     posterUrl: "https://images.unsplash.com/photo-1544025162-d76694265947?w=1200&auto=format&fit=crop&q=80",
+  };
+
+  const catalogSection = content?.catalogSection || {
+    tag: "SELECCIÓN BOUTIQUE",
+    title: "Nuestro Menú & Productos",
+    description: "Cortes premium de Sonora empacados al vacío y especialidades preparadas al carbón. Pide directo por WhatsApp y coordina la entrega.",
   };
 
   const aboutSection = content?.aboutSection || {
@@ -48,12 +89,22 @@ export default async function StorePage() {
     imageUrl: "https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=800&auto=format&fit=crop&q=80",
   };
 
+  const gallerySection = content?.gallerySection || {
+    title: "GALERÍA VISUAL",
+    images: [
+      { id: "1", url: "https://images.unsplash.com/photo-1603048297172-c92544798d5a?w=600&auto=format&fit=crop&q=80", label: "Ribeye Sonorense" },
+      { id: "2", url: "https://images.unsplash.com/photo-1544025162-d76694265947?w=600&auto=format&fit=crop&q=80", label: "Costillar en Asador" },
+      { id: "3", url: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&auto=format&fit=crop&q=80", label: "Brasas de Mezquite" },
+      { id: "4", url: "https://images.unsplash.com/photo-1558030006-450675393462?w=600&auto=format&fit=crop&q=80", label: "T-Bone al Fuego" },
+    ]
+  };
+
   const testimonials = content?.testimonials || [];
 
   return (
     <div className="flex flex-col bg-[#edf2f6] text-neutral-900">
       {/* 1. HERO SECTION */}
-      <Hero />
+      <StoreHeroSlider slides={heroSlides} />
 
       {/* 1.5. VIDEO PROMOCIONAL */}
       <section className="py-20 bg-transparent">
@@ -72,21 +123,11 @@ export default async function StorePage() {
             {/* Overlay gradient */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent z-10 pointer-events-none" />
             
-            <video
-              autoPlay
-              loop
-              muted
-              playsInline
-              controls
-              poster={videoSection.posterUrl}
+            <SensoryVideoPlayer
+              videoUrl={videoSection.videoUrl}
+              posterUrl={videoSection.posterUrl}
               className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-500"
-            >
-              <source
-                src={videoSection.videoUrl}
-                type="video/mp4"
-              />
-              Tu navegador no soporta reproducción de video.
-            </video>
+            />
 
             {/* Decorative frame overlay */}
             <div className="absolute inset-0 border border-[#b01e28]/20 m-4 pointer-events-none rounded-xs z-20" />
@@ -98,16 +139,16 @@ export default async function StorePage() {
       <section id="catalogo" className="py-24 bg-transparent">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <span className="text-xs uppercase tracking-widest text-[#b01e28] font-bold">SELECCIÓN BOUTIQUE</span>
+            <span className="text-xs uppercase tracking-widest text-[#b01e28] font-bold">{catalogSection.tag}</span>
             <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight mt-2 text-neutral-900">
-              Nuestro Menú & Productos
+              {catalogSection.title}
             </h2>
             <p className="text-xs text-neutral-500 mt-3 max-w-md mx-auto font-light leading-relaxed">
-              Cortes premium de Sonora empacados al vacío y especialidades preparadas al carbón. Pide directo por WhatsApp y coordina la entrega.
+              {catalogSection.description}
             </p>
           </div>
 
-          <ProductCatalogHome products={properties as any} />
+          <ProductCatalogHome products={properties as any} categories={categories} />
         </div>
       </section>
 
@@ -151,31 +192,15 @@ export default async function StorePage() {
       {/* 5. GALERÍA VISUAL */}
       <section className="py-12 bg-transparent">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 min-h-[220px]">
-            <div className="relative overflow-hidden group rounded-sm aspect-[4/3] sm:aspect-auto">
-              <img src="https://images.unsplash.com/photo-1603048297172-c92544798d5a?w=600&auto=format&fit=crop&q=80" alt="Ribeye marmoleado de Sonora" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                <span className="text-xs text-white uppercase tracking-widest">Ribeye Sonorense</span>
+          <div className={`grid grid-cols-1 sm:grid-cols-2 ${gallerySection.images.length >= 4 ? 'lg:grid-cols-4' : gallerySection.images.length === 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-2'} gap-4 min-h-[220px]`}>
+            {gallerySection.images.map((img: any) => (
+              <div key={img.id} className="relative overflow-hidden group rounded-sm aspect-[4/3] sm:aspect-auto">
+                <img src={img.url} alt={img.label || "Galería"} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                  <span className="text-xs text-white uppercase tracking-widest">{img.label}</span>
+                </div>
               </div>
-            </div>
-            <div className="relative overflow-hidden group rounded-sm aspect-[4/3] sm:aspect-auto">
-              <img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=600&auto=format&fit=crop&q=80" alt="Costillas en asador al carbón" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                <span className="text-xs text-white uppercase tracking-widest">Costillar en Asador</span>
-              </div>
-            </div>
-            <div className="relative overflow-hidden group rounded-sm aspect-[4/3] sm:aspect-auto">
-              <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&auto=format&fit=crop&q=80" alt="Brasas de mezquite encendidas con carne" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                <span className="text-xs text-white uppercase tracking-widest">Brasas de Mezquite</span>
-              </div>
-            </div>
-            <div className="relative overflow-hidden group rounded-sm aspect-[4/3] sm:aspect-auto">
-              <img src="https://images.unsplash.com/photo-1558030006-450675393462?w=600&auto=format&fit=crop&q=80" alt="T-Bone grueso al fuego directo" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                <span className="text-xs text-white uppercase tracking-widest">T-Bone al Fuego</span>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>

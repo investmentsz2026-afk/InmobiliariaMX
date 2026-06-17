@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Edit2, Trash2, Loader2, Upload, X, Check, Star, Search, Film, BookOpen, MessageSquare } from "lucide-react";
+import { Plus, Edit2, Trash2, Loader2, Upload, X, Check, Star, Search, Film, BookOpen, MessageSquare, Image as ImageIcon, LayoutGrid, Tag } from "lucide-react";
 import ConfirmModal from "@/components/admin/ConfirmModal";
 import { parseDescription, serializeDescription } from "@/lib/utils";
 
@@ -83,9 +83,26 @@ export default function AdminPropertiesPage() {
 
   // Store Content Modal State
   const [isContentModalOpen, setIsContentModalOpen] = useState(false);
-  const [contentTab, setContentTab] = useState<"video" | "about" | "testimonials">("video");
+  const [contentTab, setContentTab] = useState<"hero" | "video" | "catalog" | "gallery" | "about" | "testimonials">("hero");
   const [loadingContent, setLoadingContent] = useState(false);
   const [savingContent, setSavingContent] = useState(false);
+
+  // Hero Slide Section Fields
+  const [heroSlides, setHeroSlides] = useState<any[]>([]);
+  const [isHeroSlideFormOpen, setIsHeroSlideFormOpen] = useState(false);
+  const [editingHeroSlideIndex, setEditingHeroSlideIndex] = useState<number | null>(null);
+
+  // Hero Slide Editor Fields
+  const [heroSlideTag, setHeroSlideTag] = useState("");
+  const [heroSlideTitle, setHeroSlideTitle] = useState("");
+  const [heroSlideDescription, setHeroSlideDescription] = useState("");
+  const [heroSlideMediaType, setHeroSlideMediaType] = useState<"IMAGE" | "VIDEO">("IMAGE");
+  const [heroSlideMediaUrl, setHeroSlideMediaUrl] = useState("");
+  const [uploadingHeroMedia, setUploadingHeroMedia] = useState(false);
+
+  // Delete Hero Slide Confirmation states
+  const [isDeleteHeroSlideConfirmOpen, setIsDeleteHeroSlideConfirmOpen] = useState(false);
+  const [pendingDeleteHeroSlideIndex, setPendingDeleteHeroSlideIndex] = useState<number | null>(null);
 
   // Video Section Fields
   const [videoTag, setVideoTag] = useState("");
@@ -118,6 +135,37 @@ export default function AdminPropertiesPage() {
   const [testimonialAuthor, setTestimonialAuthor] = useState("");
   const [testimonialRole, setTestimonialRole] = useState("");
 
+  // Delete Testimonial Confirmation states
+  const [isDeleteTestimonialConfirmOpen, setIsDeleteTestimonialConfirmOpen] = useState(false);
+  const [pendingDeleteTestimonialIndex, setPendingDeleteTestimonialIndex] = useState<number | null>(null);
+
+  // Delete Category Confirmation states
+  const [isDeleteCatConfirmOpen, setIsDeleteCatConfirmOpen] = useState(false);
+  const [pendingDeleteCatId, setPendingDeleteCatId] = useState<string | null>(null);
+
+  // Modal Sub-Form Error States
+  const [heroSlideFormError, setHeroSlideFormError] = useState("");
+  const [testimonialFormError, setTestimonialFormError] = useState("");
+  const [contentFormError, setContentFormError] = useState("");
+
+  // Catalog Section Fields
+  const [catalogTag, setCatalogTag] = useState("");
+  const [catalogTitle, setCatalogTitle] = useState("");
+  const [catalogDescription, setCatalogDescription] = useState("");
+
+  // Gallery Section Fields
+  const [galleryTitle, setGalleryTitle] = useState("");
+  const [galleryImages, setGalleryImages] = useState<any[]>([]);
+  const [uploadingGalleryImage, setUploadingGalleryImage] = useState<number | null>(null);
+  const [isGalleryImageFormOpen, setIsGalleryImageFormOpen] = useState(false);
+  const [editingGalleryImageIndex, setEditingGalleryImageIndex] = useState<number | null>(null);
+  const [galleryImageUrl, setGalleryImageUrl] = useState("");
+  const [galleryImageLabel, setGalleryImageLabel] = useState("");
+  const [galleryImageFormError, setGalleryImageFormError] = useState("");
+  const [uploadingGalleryMedia, setUploadingGalleryMedia] = useState(false);
+  const [isDeleteGalleryImageConfirmOpen, setIsDeleteGalleryImageConfirmOpen] = useState(false);
+  const [pendingDeleteGalleryImageIndex, setPendingDeleteGalleryImageIndex] = useState<number | null>(null);
+
   const fetchStoreContent = async () => {
     setLoadingContent(true);
     try {
@@ -125,6 +173,9 @@ export default function AdminPropertiesPage() {
       if (res.ok) {
         const data = await res.json();
         
+        // Load heroSlides
+        setHeroSlides(data.heroSlides || []);
+
         // Load video section
         setVideoTag(data.videoSection?.tag || "");
         setVideoTitle(data.videoSection?.title || "");
@@ -145,6 +196,15 @@ export default function AdminPropertiesPage() {
 
         // Load testimonials
         setStoreTestimonials(data.testimonials || []);
+
+        // Load catalog section
+        setCatalogTag(data.catalogSection?.tag || "");
+        setCatalogTitle(data.catalogSection?.title || "");
+        setCatalogDescription(data.catalogSection?.description || "");
+
+        // Load gallery section
+        setGalleryTitle(data.gallerySection?.title || "");
+        setGalleryImages(data.gallerySection?.images || []);
       }
     } catch (err) {
       console.error("Error loading store content:", err);
@@ -177,7 +237,9 @@ export default function AdminPropertiesPage() {
   const handleSaveStoreContent = async () => {
     setSavingContent(true);
     setError("");
+    setContentFormError("");
     const body = {
+      heroSlides,
       videoSection: {
         tag: videoTag,
         title: videoTitle,
@@ -197,6 +259,15 @@ export default function AdminPropertiesPage() {
         imageUrl: aboutImageUrl,
       },
       testimonials: storeTestimonials,
+      catalogSection: {
+        tag: catalogTag,
+        title: catalogTitle,
+        description: catalogDescription,
+      },
+      gallerySection: {
+        title: galleryTitle,
+        images: galleryImages,
+      },
     };
 
     try {
@@ -222,11 +293,74 @@ export default function AdminPropertiesPage() {
     }
   };
 
+  const handleOpenAddHeroSlide = () => {
+    setEditingHeroSlideIndex(null);
+    setHeroSlideTag("");
+    setHeroSlideTitle("");
+    setHeroSlideDescription("");
+    setHeroSlideMediaType("IMAGE");
+    setHeroSlideMediaUrl("");
+    setHeroSlideFormError("");
+    setIsHeroSlideFormOpen(true);
+  };
+
+  const handleOpenEditHeroSlide = (index: number) => {
+    const slide = heroSlides[index];
+    setEditingHeroSlideIndex(index);
+    setHeroSlideTag(slide.tag || "");
+    setHeroSlideTitle(slide.title || "");
+    setHeroSlideDescription(slide.description || "");
+    setHeroSlideMediaType(slide.mediaType || "IMAGE");
+    setHeroSlideMediaUrl(slide.mediaUrl || "");
+    setHeroSlideFormError("");
+    setIsHeroSlideFormOpen(true);
+  };
+
+  const handleSaveHeroSlide = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!heroSlideMediaUrl) {
+      setHeroSlideFormError(`Por favor, suba una ${heroSlideMediaType === "IMAGE" ? "imagen" : "un video"} para la diapositiva.`);
+      return;
+    }
+    const newSlide = {
+      id: editingHeroSlideIndex !== null ? heroSlides[editingHeroSlideIndex].id : Date.now(),
+      tag: heroSlideTag,
+      title: heroSlideTitle,
+      description: heroSlideDescription,
+      mediaType: heroSlideMediaType,
+      mediaUrl: heroSlideMediaUrl,
+    };
+
+    if (editingHeroSlideIndex !== null) {
+      const updated = [...heroSlides];
+      updated[editingHeroSlideIndex] = newSlide;
+      setHeroSlides(updated);
+    } else {
+      setHeroSlides([...heroSlides, newSlide]);
+    }
+    setIsHeroSlideFormOpen(false);
+  };
+
+  const handleDeleteHeroSlide = (index: number) => {
+    setPendingDeleteHeroSlideIndex(index);
+    setIsDeleteHeroSlideConfirmOpen(true);
+  };
+
+  const confirmDeleteHeroSlide = () => {
+    if (pendingDeleteHeroSlideIndex !== null) {
+      const updated = heroSlides.filter((_, idx) => idx !== pendingDeleteHeroSlideIndex);
+      setHeroSlides(updated);
+    }
+    setIsDeleteHeroSlideConfirmOpen(false);
+    setPendingDeleteHeroSlideIndex(null);
+  };
+
   const handleOpenAddTestimonial = () => {
     setEditingTestimonialIndex(null);
     setTestimonialText("");
     setTestimonialAuthor("");
     setTestimonialRole("");
+    setTestimonialFormError("");
     setIsTestimonialFormOpen(true);
   };
 
@@ -236,6 +370,7 @@ export default function AdminPropertiesPage() {
     setTestimonialText(item.text || "");
     setTestimonialAuthor(item.author || "");
     setTestimonialRole(item.role || "");
+    setTestimonialFormError("");
     setIsTestimonialFormOpen(true);
   };
 
@@ -259,10 +394,71 @@ export default function AdminPropertiesPage() {
   };
 
   const handleDeleteTestimonial = (index: number) => {
-    if (window.confirm("¿Está seguro de eliminar este testimonio?")) {
-      const updated = storeTestimonials.filter((_, idx) => idx !== index);
+    setPendingDeleteTestimonialIndex(index);
+    setIsDeleteTestimonialConfirmOpen(true);
+  };
+
+  const confirmDeleteTestimonial = () => {
+    if (pendingDeleteTestimonialIndex !== null) {
+      const updated = storeTestimonials.filter((_, idx) => idx !== pendingDeleteTestimonialIndex);
       setStoreTestimonials(updated);
     }
+    setIsDeleteTestimonialConfirmOpen(false);
+    setPendingDeleteTestimonialIndex(null);
+  };
+
+  // Gallery Image handlers
+  const handleOpenAddGalleryImage = () => {
+    setEditingGalleryImageIndex(null);
+    setGalleryImageUrl("");
+    setGalleryImageLabel("");
+    setGalleryImageFormError("");
+    setIsGalleryImageFormOpen(true);
+  };
+
+  const handleOpenEditGalleryImage = (index: number) => {
+    const img = galleryImages[index];
+    setEditingGalleryImageIndex(index);
+    setGalleryImageUrl(img.url || "");
+    setGalleryImageLabel(img.label || "");
+    setGalleryImageFormError("");
+    setIsGalleryImageFormOpen(true);
+  };
+
+  const handleSaveGalleryImage = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!galleryImageUrl) {
+      setGalleryImageFormError("Por favor, suba una imagen para la galería.");
+      return;
+    }
+    const newImg = {
+      id: editingGalleryImageIndex !== null ? galleryImages[editingGalleryImageIndex].id : String(Date.now()),
+      url: galleryImageUrl,
+      label: galleryImageLabel,
+    };
+
+    if (editingGalleryImageIndex !== null) {
+      const updated = [...galleryImages];
+      updated[editingGalleryImageIndex] = newImg;
+      setGalleryImages(updated);
+    } else {
+      setGalleryImages([...galleryImages, newImg]);
+    }
+    setIsGalleryImageFormOpen(false);
+  };
+
+  const handleDeleteGalleryImage = (index: number) => {
+    setPendingDeleteGalleryImageIndex(index);
+    setIsDeleteGalleryImageConfirmOpen(true);
+  };
+
+  const confirmDeleteGalleryImage = () => {
+    if (pendingDeleteGalleryImageIndex !== null) {
+      const updated = galleryImages.filter((_, idx) => idx !== pendingDeleteGalleryImageIndex);
+      setGalleryImages(updated);
+    }
+    setIsDeleteGalleryImageConfirmOpen(false);
+    setPendingDeleteGalleryImageIndex(null);
   };
 
   const fetchCategories = async () => {
@@ -324,13 +520,16 @@ export default function AdminPropertiesPage() {
     }
   };
 
-  const handleDeleteCategory = async (id: string) => {
-    if (!window.confirm("¿Está seguro de eliminar esta categoría? Esto no afectará a los productos existentes.")) {
-      return;
-    }
+  const handleDeleteCategory = (id: string) => {
+    setPendingDeleteCatId(id);
+    setIsDeleteCatConfirmOpen(true);
+  };
+
+  const confirmDeleteCategory = async () => {
+    if (!pendingDeleteCatId) return;
     setCatError("");
     try {
-      const res = await fetch(`/api/categories?id=${id}`, {
+      const res = await fetch(`/api/categories?id=${pendingDeleteCatId}`, {
         method: "DELETE",
       });
       if (res.ok) {
@@ -342,6 +541,9 @@ export default function AdminPropertiesPage() {
     } catch (err) {
       console.error(err);
       setCatError("Error de red al eliminar categoría");
+    } finally {
+      setIsDeleteCatConfirmOpen(false);
+      setPendingDeleteCatId(null);
     }
   };
 
@@ -1206,7 +1408,7 @@ export default function AdminPropertiesPage() {
                     Administrar Contenido de Store
                   </h2>
                   <p className="text-[10px] text-neutral-500 uppercase tracking-widest mt-1">
-                    Edita el Video, la sección Sobre Nosotros y los Testimonios de la Tienda
+                    Edita la portada, video, catálogo, galería, sobre nosotros y testimonios
                   </p>
                 </div>
                 <button
@@ -1219,6 +1421,18 @@ export default function AdminPropertiesPage() {
 
               {/* Tabs */}
               <div className="flex border-b border-neutral-800 mb-6 gap-6 overflow-x-auto pb-1">
+                <button
+                  type="button"
+                  onClick={() => setContentTab("hero")}
+                  className={`pb-3 text-xs font-bold uppercase tracking-widest border-b-2 transition-all flex items-center gap-2 shrink-0 ${
+                    contentTab === "hero"
+                      ? "border-gold-400 text-gold-400"
+                      : "border-transparent text-neutral-400 hover:text-white"
+                  }`}
+                >
+                  <ImageIcon className="w-4 h-4" />
+                  Portada (Slider)
+                </button>
                 <button
                   type="button"
                   onClick={() => setContentTab("video")}
@@ -1245,6 +1459,30 @@ export default function AdminPropertiesPage() {
                 </button>
                 <button
                   type="button"
+                  onClick={() => setContentTab("catalog")}
+                  className={`pb-3 text-xs font-bold uppercase tracking-widest border-b-2 transition-all flex items-center gap-2 shrink-0 ${
+                    contentTab === "catalog"
+                      ? "border-gold-400 text-gold-400"
+                      : "border-transparent text-neutral-400 hover:text-white"
+                  }`}
+                >
+                  <Tag className="w-4 h-4" />
+                  Sección Catálogo
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setContentTab("gallery")}
+                  className={`pb-3 text-xs font-bold uppercase tracking-widest border-b-2 transition-all flex items-center gap-2 shrink-0 ${
+                    contentTab === "gallery"
+                      ? "border-gold-400 text-gold-400"
+                      : "border-transparent text-neutral-400 hover:text-white"
+                  }`}
+                >
+                  <LayoutGrid className="w-4 h-4" />
+                  Galería Visual
+                </button>
+                <button
+                  type="button"
                   onClick={() => setContentTab("testimonials")}
                   className={`pb-3 text-xs font-bold uppercase tracking-widest border-b-2 transition-all flex items-center gap-2 shrink-0 ${
                     contentTab === "testimonials"
@@ -1264,6 +1502,82 @@ export default function AdminPropertiesPage() {
                 </div>
               ) : (
                 <div className="space-y-6">
+                  {contentFormError && (
+                    <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-sm mb-6 flex justify-between items-center animate-in fade-in duration-200">
+                      <span>{contentFormError}</span>
+                      <button type="button" onClick={() => setContentFormError("")} className="text-red-400 hover:text-white p-1">
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  )}
+
+                  {/* TAB: HERO SLIDER */}
+                  {contentTab === "hero" && (
+                    <div className="space-y-6">
+                      <div className="flex items-center justify-between border-b border-neutral-800 pb-4">
+                        <div>
+                          <h4 className="text-[10px] text-gold-400 uppercase tracking-widest font-black">Diapositivas de Portada</h4>
+                          <p className="text-[10px] text-neutral-500 uppercase mt-1">Crea slides de portada con textos personalizados e imágenes/videos de fondo</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={handleOpenAddHeroSlide}
+                          className="px-4 py-2 bg-gold-400 hover:bg-gold-500 text-obsidian text-[10px] font-bold tracking-widest uppercase rounded-sm flex items-center gap-1.5 animate-all duration-300"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          Agregar Diapositiva
+                        </button>
+                      </div>
+
+                      {/* List heroSlides */}
+                      <div className="grid grid-cols-1 gap-4">
+                        {heroSlides.length === 0 ? (
+                          <p className="text-center text-xs text-neutral-500 py-8">No hay diapositivas de portada. Agrega una nueva.</p>
+                        ) : (
+                          heroSlides.map((slide, index) => (
+                            <div key={slide.id || index} className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-black/20 p-4 border border-neutral-850 rounded-sm gap-4 hover:border-neutral-800 transition-colors">
+                              <div className="flex items-center gap-4 min-w-0">
+                                <div className="w-24 h-16 shrink-0 bg-neutral-900 border border-neutral-800 rounded-sm overflow-hidden flex items-center justify-center relative">
+                                  {slide.mediaType === "VIDEO" ? (
+                                    <video src={slide.mediaUrl} className="w-full h-full object-cover" muted />
+                                  ) : (
+                                    <img src={slide.mediaUrl} alt={slide.title} className="w-full h-full object-cover" />
+                                  )}
+                                  <span className="absolute top-1 left-1 bg-black/70 px-1 py-0.5 rounded-[2px] text-[8px] font-black uppercase text-gold-400">
+                                    {slide.mediaType}
+                                  </span>
+                                </div>
+                                <div className="overflow-hidden">
+                                  <span className="text-[8px] bg-gold-400/10 border border-gold-400/20 text-gold-400 font-bold px-1.5 py-0.5 rounded-xs uppercase tracking-widest">{slide.tag || "PORTADA"}</span>
+                                  <h5 className="font-serif text-sm font-semibold text-neutral-200 mt-1">{slide.title || "Sin Título"}</h5>
+                                  <p className="text-[10px] text-neutral-500 line-clamp-1">{slide.description}</p>
+                                </div>
+                              </div>
+                              <div className="flex gap-2 self-end sm:self-center shrink-0">
+                                <button
+                                  type="button"
+                                  onClick={() => handleOpenEditHeroSlide(index)}
+                                  className="p-1.5 border border-neutral-800 hover:border-neutral-700 bg-neutral-900/60 text-neutral-400 hover:text-gold-400 rounded-xs transition-all"
+                                  title="Editar"
+                                >
+                                  <Edit2 className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeleteHeroSlide(index)}
+                                  className="p-1.5 border border-neutral-800 hover:border-neutral-700 bg-neutral-900/60 text-neutral-400 hover:text-red-400 rounded-xs transition-all"
+                                  title="Eliminar"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                  )}
+
                   {/* TAB: VIDEO */}
                   {contentTab === "video" && (
                     <div className="space-y-6">
@@ -1330,7 +1644,7 @@ export default function AdminPropertiesPage() {
                                     const url = await uploadImageFile(files[0]);
                                     setVideoUrl(url);
                                   } catch (err: any) {
-                                    alert(err.message || "Error al subir video");
+                                    setContentFormError(err.message || "Error al subir video");
                                   } finally {
                                     setUploadingVideo(false);
                                   }
@@ -1375,7 +1689,7 @@ export default function AdminPropertiesPage() {
                                     const url = await uploadImageFile(files[0]);
                                     setVideoPosterUrl(url);
                                   } catch (err: any) {
-                                    alert(err.message || "Error al subir poster");
+                                    setContentFormError(err.message || "Error al subir poster");
                                   } finally {
                                     setUploadingPoster(false);
                                   }
@@ -1602,6 +1916,102 @@ export default function AdminPropertiesPage() {
                       </div>
                     </div>
                   )}
+
+                  {/* TAB: CATALOG SECTION */}
+                  {contentTab === "catalog" && (
+                    <div className="space-y-6">
+                      <div className="border-b border-neutral-800 pb-4">
+                        <h4 className="text-[10px] text-gold-400 uppercase tracking-widest font-black">Encabezados del Catálogo</h4>
+                        <p className="text-[10px] text-neutral-500 uppercase mt-1">Edita el tag, título y descripción que aparecen sobre el listado de productos</p>
+                      </div>
+                      <div>
+                        <label className="block text-[9px] uppercase tracking-widest text-neutral-500 mb-2 font-bold">Tag Superior</label>
+                        <input
+                          type="text"
+                          value={catalogTag}
+                          onChange={(e) => setCatalogTag(e.target.value)}
+                          placeholder="Ej. SELECCIÓN BOUTIQUE"
+                          className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[9px] uppercase tracking-widest text-neutral-500 mb-2 font-bold">Título del Catálogo</label>
+                        <input
+                          type="text"
+                          value={catalogTitle}
+                          onChange={(e) => setCatalogTitle(e.target.value)}
+                          placeholder="Ej. Nuestro Menú & Productos"
+                          className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[9px] uppercase tracking-widest text-neutral-500 mb-2 font-bold">Descripción</label>
+                        <textarea
+                          rows={3}
+                          value={catalogDescription}
+                          onChange={(e) => setCatalogDescription(e.target.value)}
+                          placeholder="Descripción breve del catálogo..."
+                          className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white resize-none"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* TAB: GALLERY */}
+                  {contentTab === "gallery" && (
+                    <div className="space-y-6">
+                      <div className="flex items-center justify-between border-b border-neutral-800 pb-4">
+                        <div>
+                          <h4 className="text-[10px] text-gold-400 uppercase tracking-widest font-black">Galería Visual</h4>
+                          <p className="text-[10px] text-neutral-500 uppercase mt-1">Administra las imágenes de la galería de la tienda</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={handleOpenAddGalleryImage}
+                          className="px-4 py-2 bg-gold-400 hover:bg-gold-500 text-obsidian text-[10px] font-bold tracking-widest uppercase rounded-sm flex items-center gap-1.5 animate-all duration-300"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          Agregar Imagen
+                        </button>
+                      </div>
+
+                      {/* Gallery Images List */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {galleryImages.length === 0 ? (
+                          <p className="text-center text-xs text-neutral-500 py-8 col-span-2">No hay imágenes en la galería. Agrega una nueva.</p>
+                        ) : (
+                          galleryImages.map((img, index) => (
+                            <div key={img.id || index} className="relative group border border-neutral-850 rounded-sm overflow-hidden bg-black/20 hover:border-neutral-800 transition-colors">
+                              <div className="aspect-[4/3] relative">
+                                <img src={img.url} alt={img.label || "Galería"} className="w-full h-full object-cover" />
+                                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                                  <button
+                                    type="button"
+                                    onClick={() => handleOpenEditGalleryImage(index)}
+                                    className="p-2 bg-neutral-900/80 hover:bg-neutral-800 text-gold-400 rounded-sm transition-all"
+                                    title="Editar"
+                                  >
+                                    <Edit2 className="w-4 h-4" />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleDeleteGalleryImage(index)}
+                                    className="p-2 bg-neutral-900/80 hover:bg-neutral-800 text-red-400 rounded-sm transition-all"
+                                    title="Eliminar"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                                </div>
+                              </div>
+                              <div className="p-3">
+                                <span className="text-xs text-neutral-300 uppercase tracking-wider font-semibold">{img.label || "Sin etiqueta"}</span>
+                              </div>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -1638,20 +2048,28 @@ export default function AdminPropertiesPage() {
       {/* Testimonial Editor Sub-Modal */}
       {isTestimonialFormOpen && (
         <div className="fixed inset-0 z-[60] bg-black/80 backdrop-blur-xs flex items-center justify-center p-4 font-sans text-white">
-          <form onSubmit={handleSaveTestimonial} className="w-full max-w-lg bg-[#111111] border border-neutral-800 p-6 rounded-sm shadow-2xl relative animate-in zoom-in-95 duration-200">
-            <button
-              type="button"
-              onClick={() => setIsTestimonialFormOpen(false)}
-              className="absolute right-4 top-4 text-neutral-500 hover:text-white"
-            >
-              <X className="w-5 h-5" />
-            </button>
-            
-            <h3 className="font-serif text-xl font-semibold text-gold-400 mb-6 border-b border-neutral-800 pb-3">
-              {editingTestimonialIndex !== null ? "Editar Testimonio" : "Nuevo Testimonio"}
-            </h3>
+          <form onSubmit={handleSaveTestimonial} className="w-full max-w-lg bg-[#111111] border border-neutral-800 rounded-sm shadow-2xl relative animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
+            {/* Header */}
+            <div className="p-6 border-b border-neutral-800 flex items-center justify-between shrink-0">
+              <h3 className="font-serif text-xl font-semibold text-gold-400">
+                {editingTestimonialIndex !== null ? "Editar Testimonio" : "Nuevo Testimonio"}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setIsTestimonialFormOpen(false)}
+                className="text-neutral-500 hover:text-white p-1"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
 
-            <div className="space-y-4">
+            {/* Scrollable Content */}
+            <div className="p-6 overflow-y-auto space-y-4 flex-1">
+              {testimonialFormError && (
+                <div className="p-3 bg-red-900/20 border border-red-900/50 text-red-400 text-xs rounded-sm mb-4 animate-in fade-in duration-200">
+                  {testimonialFormError}
+                </div>
+              )}
               <div>
                 <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Contenido del Testimonio</label>
                 <textarea
@@ -1690,7 +2108,8 @@ export default function AdminPropertiesPage() {
               </div>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-neutral-800 flex justify-end gap-3">
+            {/* Footer */}
+            <div className="p-6 border-t border-neutral-800 flex justify-end gap-3 shrink-0">
               <button
                 type="submit"
                 className="px-4 py-2 bg-gold-400 hover:bg-gold-500 text-obsidian text-xs font-bold uppercase rounded-sm"
@@ -1708,6 +2127,334 @@ export default function AdminPropertiesPage() {
           </form>
         </div>
       )}
+
+      {/* Hero Slide Editor Sub-Modal */}
+      {isHeroSlideFormOpen && (
+        <div className="fixed inset-0 z-[60] bg-black/80 backdrop-blur-xs flex items-center justify-center p-4 font-sans text-white">
+          <form onSubmit={handleSaveHeroSlide} className="w-full max-w-lg bg-[#111111] border border-neutral-800 rounded-sm shadow-2xl relative animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
+            {/* Header */}
+            <div className="p-6 border-b border-neutral-800 flex items-center justify-between shrink-0">
+              <h3 className="font-serif text-xl font-semibold text-gold-400">
+                {editingHeroSlideIndex !== null ? "Editar Diapositiva de Portada" : "Nueva Diapositiva de Portada"}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setIsHeroSlideFormOpen(false)}
+                className="text-neutral-500 hover:text-white p-1"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Scrollable Content */}
+            <div className="p-6 overflow-y-auto space-y-4 flex-1">
+              {heroSlideFormError && (
+                <div className="p-3 bg-red-900/20 border border-red-900/50 text-red-400 text-xs rounded-sm mb-4 animate-in fade-in duration-200">
+                  {heroSlideFormError}
+                </div>
+              )}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Tag Superior</label>
+                  <input
+                    type="text"
+                    required
+                    value={heroSlideTag}
+                    onChange={(e) => setHeroSlideTag(e.target.value)}
+                    placeholder="Ej. SOLO SERVICIO A DOMICILIO"
+                    className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-3 text-xs outline-none transition-colors rounded-xs text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Título Principal</label>
+                  <input
+                    type="text"
+                    required
+                    value={heroSlideTitle}
+                    onChange={(e) => setHeroSlideTitle(e.target.value)}
+                    placeholder="Ej. DARK KITCHEN"
+                    className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-3 text-xs outline-none transition-colors rounded-xs text-white"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Descripción Corta</label>
+                <textarea
+                  rows={3}
+                  required
+                  value={heroSlideDescription}
+                  onChange={(e) => setHeroSlideDescription(e.target.value)}
+                  placeholder="Ej. Las mejores brasas merecen los mejores cortes."
+                  className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-3 text-xs outline-none transition-colors rounded-xs text-white resize-none"
+                />
+              </div>
+
+              {/* Media Type Selection */}
+              <div>
+                <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-2 font-bold">Tipo de Medio</label>
+                <div className="flex gap-4">
+                  <label className="flex items-center gap-2 text-xs text-neutral-300 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="heroMediaType"
+                      checked={heroSlideMediaType === "IMAGE"}
+                      onChange={() => {
+                        setHeroSlideMediaType("IMAGE");
+                        setHeroSlideMediaUrl("");
+                      }}
+                      className="accent-gold-400"
+                    />
+                    Imagen
+                  </label>
+                  <label className="flex items-center gap-2 text-xs text-neutral-300 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="heroMediaType"
+                      checked={heroSlideMediaType === "VIDEO"}
+                      onChange={() => {
+                        setHeroSlideMediaType("VIDEO");
+                        setHeroSlideMediaUrl("");
+                      }}
+                      className="accent-gold-400"
+                    />
+                    Video
+                  </label>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">
+                  {heroSlideMediaType === "IMAGE" ? "Archivo de Imagen" : "Archivo de Video"}
+                </label>
+                {heroSlideMediaUrl ? (
+                  <div className="relative aspect-video w-full border border-neutral-800 rounded-sm overflow-hidden group">
+                    {heroSlideMediaType === "IMAGE" ? (
+                      <img src={heroSlideMediaUrl} alt="Slide Preview" className="w-full h-full object-cover" />
+                    ) : (
+                      <video src={heroSlideMediaUrl} className="w-full h-full object-cover" muted playsInline controls />
+                    )}
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <button
+                        type="button"
+                        onClick={() => setHeroSlideMediaUrl("")}
+                        className="px-4 py-2 bg-red-650 hover:bg-red-700 text-white text-xs uppercase font-bold tracking-wider rounded-sm transition-all flex items-center gap-1.5"
+                      >
+                        <Trash2 className="w-4 h-4" /> Eliminar Medio
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="border-2 border-dashed border-neutral-800 hover:border-gold-400/25 p-6 text-center transition-colors rounded-sm relative w-full">
+                    <input
+                      type="file"
+                      accept={heroSlideMediaType === "IMAGE" ? "image/*" : "video/*"}
+                      onChange={async (e) => {
+                        const files = e.target.files;
+                        if (!files || files.length === 0) return;
+                        setUploadingHeroMedia(true);
+                        setHeroSlideFormError("");
+                        try {
+                          const url = await uploadImageFile(files[0]);
+                          setHeroSlideMediaUrl(url);
+                        } catch (err: any) {
+                          setHeroSlideFormError(err.message || "Error al subir medio");
+                        } finally {
+                          setUploadingHeroMedia(false);
+                        }
+                      }}
+                      disabled={uploadingHeroMedia}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                    />
+                    {heroSlideMediaType === "IMAGE" ? (
+                      <Upload className="w-8 h-8 text-neutral-600 mx-auto mb-2" />
+                    ) : (
+                      <Film className="w-8 h-8 text-neutral-600 mx-auto mb-2" />
+                    )}
+                    <span className="block text-xs text-neutral-400 font-semibold uppercase tracking-wider">
+                      {uploadingHeroMedia ? "Subiendo..." : heroSlideMediaType === "IMAGE" ? "Seleccionar Imagen" : "Seleccionar Video"}
+                    </span>
+                    <span className="text-[10px] text-neutral-600 block mt-1">
+                      {heroSlideMediaType === "IMAGE" ? "Formatos: JPG, PNG, WebP" : "Formatos: MP4, WebM"}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="p-6 border-t border-neutral-800 flex justify-end gap-3 shrink-0">
+              <button
+                type="submit"
+                disabled={uploadingHeroMedia}
+                className="px-4 py-2 bg-gold-400 hover:bg-gold-500 text-obsidian text-xs font-bold uppercase rounded-sm disabled:opacity-50"
+              >
+                Confirmar
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsHeroSlideFormOpen(false)}
+                className="px-4 py-2 bg-neutral-800 hover:bg-neutral-700 text-white text-xs font-bold uppercase rounded-sm"
+              >
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* Category deletion ConfirmModal */}
+      <ConfirmModal
+        isOpen={isDeleteCatConfirmOpen}
+        title="Eliminar Categoría"
+        message="¿Está seguro de eliminar esta categoría? Esto no afectará a los productos existentes."
+        variant="danger"
+        onConfirm={confirmDeleteCategory}
+        onCancel={() => { setIsDeleteCatConfirmOpen(false); setPendingDeleteCatId(null); }}
+        confirmLabel="Eliminar"
+        cancelLabel="Cancelar"
+      />
+
+      {/* Hero Slide deletion ConfirmModal */}
+      <ConfirmModal
+        isOpen={isDeleteHeroSlideConfirmOpen}
+        title="Eliminar Diapositiva"
+        message="¿Está seguro de eliminar esta diapositiva de portada? Esta acción no se puede deshacer."
+        variant="danger"
+        onConfirm={confirmDeleteHeroSlide}
+        onCancel={() => { setIsDeleteHeroSlideConfirmOpen(false); setPendingDeleteHeroSlideIndex(null); }}
+        confirmLabel="Eliminar"
+        cancelLabel="Cancelar"
+      />
+
+      {/* Testimonial deletion ConfirmModal */}
+      <ConfirmModal
+        isOpen={isDeleteTestimonialConfirmOpen}
+        title="Eliminar Testimonio"
+        message="¿Está seguro de eliminar este testimonio? Esta acción no se puede deshacer."
+        variant="danger"
+        onConfirm={confirmDeleteTestimonial}
+        onCancel={() => { setIsDeleteTestimonialConfirmOpen(false); setPendingDeleteTestimonialIndex(null); }}
+        confirmLabel="Eliminar"
+        cancelLabel="Cancelar"
+      />
+
+      {/* Gallery Image Editor Sub-Modal */}
+      {isGalleryImageFormOpen && (
+        <div className="fixed inset-0 z-[60] bg-black/80 backdrop-blur-xs flex items-center justify-center p-4 font-sans text-white">
+          <form onSubmit={handleSaveGalleryImage} className="w-full max-w-lg bg-[#111111] border border-neutral-800 rounded-sm shadow-2xl relative animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
+            {/* Header */}
+            <div className="p-6 border-b border-neutral-800 flex items-center justify-between shrink-0">
+              <h3 className="font-serif text-xl font-semibold text-gold-400">
+                {editingGalleryImageIndex !== null ? "Editar Imagen de Galería" : "Nueva Imagen de Galería"}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setIsGalleryImageFormOpen(false)}
+                className="text-neutral-500 hover:text-white p-1"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Scrollable Content */}
+            <div className="p-6 overflow-y-auto space-y-4 flex-1">
+              {galleryImageFormError && (
+                <div className="p-3 bg-red-900/20 border border-red-900/50 text-red-400 text-xs rounded-sm mb-4 animate-in fade-in duration-200">
+                  {galleryImageFormError}
+                </div>
+              )}
+
+              <div>
+                <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Etiqueta de la Imagen</label>
+                <input
+                  type="text"
+                  value={galleryImageLabel}
+                  onChange={(e) => setGalleryImageLabel(e.target.value)}
+                  placeholder="Ej. Ribeye Sonorense"
+                  className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-3 text-xs outline-none transition-colors rounded-xs text-white"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Imagen</label>
+                {galleryImageUrl ? (
+                  <div className="relative aspect-[4/3] w-full border border-neutral-800 rounded-sm overflow-hidden group">
+                    <img src={galleryImageUrl} alt="Preview" className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <button
+                        type="button"
+                        onClick={() => setGalleryImageUrl("")}
+                        className="px-4 py-2 bg-red-650 hover:bg-red-700 text-white text-xs uppercase font-bold tracking-wider rounded-sm transition-all flex items-center gap-1.5"
+                      >
+                        <Trash2 className="w-4 h-4" /> Eliminar Imagen
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="border-2 border-dashed border-neutral-800 hover:border-gold-400/25 p-6 text-center transition-colors rounded-sm relative w-full">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={async (e) => {
+                        const files = e.target.files;
+                        if (!files || files.length === 0) return;
+                        setUploadingGalleryMedia(true);
+                        setGalleryImageFormError("");
+                        try {
+                          const url = await uploadImageFile(files[0]);
+                          setGalleryImageUrl(url);
+                        } catch (err: any) {
+                          setGalleryImageFormError(err.message || "Error al subir imagen");
+                        } finally {
+                          setUploadingGalleryMedia(false);
+                        }
+                      }}
+                      disabled={uploadingGalleryMedia}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                    />
+                    <Upload className="w-8 h-8 text-neutral-600 mx-auto mb-2" />
+                    <span className="block text-xs text-neutral-400 font-semibold uppercase tracking-wider">
+                      {uploadingGalleryMedia ? "Subiendo..." : "Seleccionar Imagen"}
+                    </span>
+                    <span className="text-[10px] text-neutral-600 block mt-1">Formatos: JPG, PNG, WebP</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="p-6 border-t border-neutral-800 flex justify-end gap-3 shrink-0">
+              <button
+                type="submit"
+                disabled={uploadingGalleryMedia}
+                className="px-4 py-2 bg-gold-400 hover:bg-gold-500 text-obsidian text-xs font-bold uppercase rounded-sm disabled:opacity-50"
+              >
+                Confirmar
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsGalleryImageFormOpen(false)}
+                className="px-4 py-2 bg-neutral-800 hover:bg-neutral-700 text-white text-xs font-bold uppercase rounded-sm"
+              >
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* Gallery Image deletion ConfirmModal */}
+      <ConfirmModal
+        isOpen={isDeleteGalleryImageConfirmOpen}
+        title="Eliminar Imagen de Galería"
+        message="¿Está seguro de eliminar esta imagen de la galería? Esta acción no se puede deshacer."
+        variant="danger"
+        onConfirm={confirmDeleteGalleryImage}
+        onCancel={() => { setIsDeleteGalleryImageConfirmOpen(false); setPendingDeleteGalleryImageIndex(null); }}
+        confirmLabel="Eliminar"
+        cancelLabel="Cancelar"
+      />
     </div>
   );
 }

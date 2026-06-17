@@ -2,6 +2,32 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 const DEFAULT_STORE_CONTENT = {
+  heroSlides: [
+    {
+      id: "1",
+      tag: "LA CAVA DEL CORTE | BOUTIQUE PREMIUM",
+      title: "Cortes Premium de Sonora\n& El Arte del Buen Comer",
+      description: "Seleccionamos minuciosamente los mejores cortes marmoleados, empacados al alto vacío y listos para tu asador. Disfruta también de nuestra Zona Grill cocinada al carbón de leña los fines de semana.",
+      mediaType: "IMAGE",
+      mediaUrl: "https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=1600&auto=format&fit=crop&q=80",
+    },
+    {
+      id: "2",
+      tag: "MADURACIÓN & SABOR",
+      title: "Calidad de Origen\nen tu Asador",
+      description: "Cortes empacados individualmente en origen al alto vacío para preservar la frescura, terneza y el sabor extraordinario del auténtico ganado sonorense.",
+      mediaType: "IMAGE",
+      mediaUrl: "https://images.unsplash.com/photo-1544025162-d76694265947?w=1600&auto=format&fit=crop&q=80",
+    },
+    {
+      id: "3",
+      tag: "EXPERIENCIA SENSORIAL",
+      title: "El Fuego Sagrado\nde la Parrilla",
+      description: "Parrilladas, costillares BBQ y platos listos para servir los fines de semana. Sabor ahumado a leña y carbón directo a tu mesa.",
+      mediaType: "VIDEO",
+      mediaUrl: "https://assets.mixkit.co/videos/preview/mixkit-barbecue-steaks-cooking-on-grill-42284-large.mp4",
+    }
+  ],
   videoSection: {
     tag: "EXPERIENCIA SENSORIAL",
     title: "El Arte del Fuego & La Brasa",
@@ -40,6 +66,20 @@ const DEFAULT_STORE_CONTENT = {
       role: "Cliente Corporativo",
     },
   ],
+  catalogSection: {
+    tag: "SELECCIÓN BOUTIQUE",
+    title: "Nuestro Menú & Productos",
+    description: "Cortes premium de Sonora empacados al vacío y especialidades preparadas al carbón. Pide directo por WhatsApp y coordina la entrega.",
+  },
+  gallerySection: {
+    title: "GALERÍA VISUAL",
+    images: [
+      { id: "1", url: "https://images.unsplash.com/photo-1603048297172-c92544798d5a?w=600&auto=format&fit=crop&q=80", label: "Ribeye Sonorense" },
+      { id: "2", url: "https://images.unsplash.com/photo-1544025162-d76694265947?w=600&auto=format&fit=crop&q=80", label: "Costillar en Asador" },
+      { id: "3", url: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&auto=format&fit=crop&q=80", label: "Brasas de Mezquite" },
+      { id: "4", url: "https://images.unsplash.com/photo-1558030006-450675393462?w=600&auto=format&fit=crop&q=80", label: "T-Bone al Fuego" },
+    ]
+  }
 };
 
 export async function GET(req: NextRequest) {
@@ -54,9 +94,12 @@ export async function GET(req: NextRequest) {
 
     const data = setting.value as any;
     return NextResponse.json({
+      heroSlides: data.heroSlides || DEFAULT_STORE_CONTENT.heroSlides,
       videoSection: { ...DEFAULT_STORE_CONTENT.videoSection, ...data.videoSection },
       aboutSection: { ...DEFAULT_STORE_CONTENT.aboutSection, ...data.aboutSection },
       testimonials: data.testimonials || DEFAULT_STORE_CONTENT.testimonials,
+      catalogSection: { ...DEFAULT_STORE_CONTENT.catalogSection, ...data.catalogSection },
+      gallerySection: { ...DEFAULT_STORE_CONTENT.gallerySection, ...data.gallerySection },
     });
   } catch (error) {
     console.error("Error fetching store content:", error);
