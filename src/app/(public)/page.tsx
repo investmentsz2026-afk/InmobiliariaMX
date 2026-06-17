@@ -16,6 +16,8 @@ export const metadata: Metadata = {
   description: "Disfruta de nuestros cortes preparados al carbón los fines de semana. Parrilladas, papas rellenas con extra carne, BBQ y complementos.",
 };
 
+export const revalidate = 0;
+
 export default async function ZonaGrillPage() {
   const setting = await prisma.systemSetting.findUnique({
     where: { key: "grill_content" },
