@@ -55,7 +55,7 @@ export default function HomeContactForm() {
 
   const containerClass = isStorePage
     ? "bg-white border border-[#b01e28]/25 p-10 text-center flex flex-col items-center justify-center min-h-[400px] rounded-sm"
-    : "bg-[#0c0c0c]/90 border border-amber-500/25 p-10 text-center flex flex-col items-center justify-center min-h-[400px] rounded-sm";
+    : "bg-black border border-gold-400/25 p-10 text-center flex flex-col items-center justify-center min-h-[400px] rounded-sm";
 
   const successTitleClass = isStorePage
     ? "font-serif text-2xl text-neutral-900 mb-3"
@@ -67,15 +67,15 @@ export default function HomeContactForm() {
 
   const successBtnClass = isStorePage
     ? "px-6 py-2.5 bg-[#b01e28] hover:bg-[#91181f] text-white text-xs font-semibold tracking-widest uppercase transition-all duration-300 rounded-sm cursor-pointer"
-    : "px-6 py-2.5 bg-amber-500 hover:bg-amber-600 text-black text-xs font-semibold tracking-widest uppercase transition-all duration-300 rounded-sm cursor-pointer";
+    : "px-6 py-2.5 bg-gold-400 hover:bg-gold-500 text-black text-xs font-semibold tracking-widest uppercase transition-all duration-300 rounded-sm cursor-pointer";
 
   const inputClass = isStorePage
     ? "w-full bg-white text-neutral-900 border-b border-neutral-200 focus:border-[#b01e28] py-3 px-1 text-sm outline-none transition-colors duration-300 placeholder-neutral-400"
-    : "w-full bg-transparent text-white border-b border-neutral-800 focus:border-amber-500 py-3 px-1 text-sm outline-none transition-colors duration-300 placeholder-neutral-500";
+    : "w-full bg-transparent text-white border-b border-neutral-800 focus:border-gold-400 py-3 px-1 text-sm outline-none transition-colors duration-300 placeholder-neutral-500";
 
   const btnClass = isStorePage
     ? "w-full py-4 bg-[#b01e28] hover:bg-[#91181f] disabled:bg-neutral-200 disabled:text-neutral-400 text-white text-xs font-semibold tracking-widest uppercase transition-all duration-300 rounded-sm flex items-center justify-center shadow-lg hover:shadow-red-900/20 cursor-pointer border-none"
-    : "w-full py-4 bg-amber-500 hover:bg-amber-600 disabled:bg-[#1a1616] disabled:text-neutral-600 text-black text-xs font-semibold tracking-widest uppercase transition-all duration-300 rounded-sm flex items-center justify-center shadow-lg hover:shadow-amber-500/20 cursor-pointer border-none";
+    : "w-full py-4 bg-gold-400 hover:bg-gold-500 disabled:bg-black/50 disabled:text-neutral-600 text-black text-xs font-semibold tracking-widest uppercase transition-all duration-300 rounded-sm flex items-center justify-center shadow-lg hover:shadow-gold-400/20 cursor-pointer border-none";
 
   const errorClass = isStorePage
     ? "p-4 bg-red-50 border border-red-200 text-red-650 text-xs rounded-sm"
@@ -84,7 +84,7 @@ export default function HomeContactForm() {
   if (submitSuccess) {
     return (
       <div className={containerClass}>
-        <CheckCircle2 className={`w-16 h-16 mb-6 animate-bounce ${isStorePage ? "text-[#b01e28]" : "text-amber-500"}`} />
+        <CheckCircle2 className={`w-16 h-16 mb-6 animate-bounce ${isStorePage ? "text-[#b01e28]" : "text-gold-400"}`} />
         <h3 className={successTitleClass}>¡Mensaje Enviado con Éxito!</h3>
         <p className={successDescClass}>
           Hemos recibido tu solicitud. Uno de nuestros maestros parrilleros o asesores de ventas se contactará contigo en las próximas horas para atender tu solicitud de manera personalizada.

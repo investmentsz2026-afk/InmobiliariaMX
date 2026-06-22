@@ -4,18 +4,18 @@
   --font-serif: var(--font-playfair), Georgia, serif;
   --font-sans: var(--font-poppins), system-ui, sans-serif;
   
-  /* Luxury Gold Color Palette */
-  --color-gold-50: #faf8f5;
-  --color-gold-100: #f3edd8;
-  --color-gold-200: #e6dbb3;
-  --color-gold-300: #d3c28c;
-  --color-gold-400: #c5a880; /* Core Luxury Accent */
-  --color-gold-500: #b8915b;
-  --color-gold-600: #9e7647;
-  --color-gold-700: #7f5b35;
-  --color-gold-800: #624328;
-  --color-gold-900: #4a321e;
-  --color-gold-950: #291a0f;
+  /* Luxury Gold Color Palette - Real 24k Metallic Gold (Intense, Deeper & Devoid of Neon Yellow) */
+  --color-gold-50: #ffffff;
+  --color-gold-100: #fff6e6;
+  --color-gold-200: #f7cf79; /* Warm gold highlight */
+  --color-gold-300: #e5aa27; /* Rich bright gold */
+  --color-gold-400: #d49a17; /* Denser, deeper 24k metallic gold */
+  --color-gold-500: #a67710; /* Dark golden bronze */
+  --color-gold-600: #9c6b00;
+  --color-gold-700: #704d00;
+  --color-gold-800: #4c3400;
+  --color-gold-900: #281b00;
+  --color-gold-950: #140e00;
   
   /* Deep Forest Green Palette */
   --color-forest-900: #182c25;

@@ -78,7 +78,7 @@ export default function GrillFavorites({ favorites, title, buttonText }: GrillFa
         {favorites.map((fav, idx) => (
           <div
             key={fav.id || idx}
-            className="bg-[#0c0c0c] border border-amber-500/10 hover:border-amber-500/35 p-4 rounded-sm shadow-xl transition-all duration-300 text-center flex flex-col justify-between group hover:-translate-y-1"
+            className="bg-black border border-gold-400/10 hover:border-gold-400/35 p-4 rounded-sm shadow-xl transition-all duration-300 text-center flex flex-col justify-between group hover:-translate-y-1"
           >
             <div>
               {/* Crop-designed image */}
@@ -91,7 +91,7 @@ export default function GrillFavorites({ favorites, title, buttonText }: GrillFa
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
                 
                 {/* Category label badge */}
-                <span className="absolute top-2 left-2 px-2 py-0.5 bg-black/70 border border-amber-500/20 text-gold-400 text-[8px] font-bold uppercase tracking-widest rounded-xs">
+                <span className="absolute top-2 left-2 px-2 py-0.5 bg-black/70 border border-gold-400/20 text-gold-400 text-[8px] font-bold uppercase tracking-widest rounded-xs">
                   {fav.category}
                 </span>
               </div>
@@ -114,7 +114,7 @@ export default function GrillFavorites({ favorites, title, buttonText }: GrillFa
               {/* 5 gold stars */}
               <div className="flex items-center justify-center gap-1 mt-3 select-none">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
+                  <Star key={i} className="w-3.5 h-3.5 fill-gold-400 text-gold-400" />
                 ))}
               </div>
             </div>
@@ -123,7 +123,7 @@ export default function GrillFavorites({ favorites, title, buttonText }: GrillFa
               <button
                 type="button"
                 onClick={() => handleOpenCustomizer(fav)}
-                className="w-full py-2 bg-amber-500 border border-amber-500 text-black hover:bg-amber-600 hover:border-amber-600 text-[10px] font-bold uppercase tracking-widest transition-all duration-300 rounded-xs flex items-center justify-center gap-1.5 cursor-pointer shadow-md"
+                className="w-full py-2 bg-gold-400 border border-gold-400 text-black hover:bg-gold-500 hover:border-gold-500 text-[10px] font-bold uppercase tracking-widest transition-all duration-300 rounded-xs flex items-center justify-center gap-1.5 cursor-pointer shadow-md"
               >
                 <ShoppingCart className="w-3.5 h-3.5" />
                 Ordenar Platillo
@@ -144,7 +144,7 @@ export default function GrillFavorites({ favorites, title, buttonText }: GrillFa
       <div className="text-center mt-10">
         <a
           href="#menu-section"
-          className="inline-flex items-center gap-2 px-6 py-3 bg-transparent border border-amber-500/60 hover:border-amber-500 text-gold-400 hover:text-black hover:bg-amber-500 text-xs font-bold tracking-widest uppercase transition-all duration-300 rounded-sm cursor-pointer"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-transparent border border-gold-400/60 hover:border-gold-400 text-gold-400 hover:text-black hover:bg-gold-400 text-xs font-bold tracking-widest uppercase transition-all duration-300 rounded-sm cursor-pointer"
         >
           {buttonText}
         </a>
@@ -170,22 +170,22 @@ export default function GrillFavorites({ favorites, title, buttonText }: GrillFa
                 animate={{ scale: 1, opacity: 1, y: 0 }}
                 exit={{ scale: 0.95, opacity: 0, y: 30 }}
                 transition={{ type: "spring", damping: 30, stiffness: 300 }}
-                className="relative w-full max-w-4xl bg-[#0b0101] border border-red-500/20 rounded-sm overflow-hidden shadow-2xl z-10 flex flex-col md:flex-row h-[88vh] md:h-[600px]"
+                className="relative w-full max-w-4xl bg-black border border-gold-400/20 rounded-sm overflow-hidden shadow-2xl z-10 flex flex-col md:flex-row h-[88vh] md:h-[600px]"
               >
                 {/* Premium Top Line Accent for whole container */}
-                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-red-650 to-transparent z-30 md:hidden" />
+                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-gold-400 to-transparent z-30 md:hidden" />
 
                 {/* Close Button */}
                 <button
                   onClick={() => setSelectedItem(null)}
-                  className="absolute top-4 right-4 z-40 p-2 text-neutral-200 hover:text-red-500 bg-black/60 backdrop-blur-md border border-red-950/40 hover:border-gold-500/30 rounded-full transition-all hover:scale-105 cursor-pointer animate-fade-in"
+                  className="absolute top-4 right-4 z-40 p-2 text-neutral-200 hover:text-gold-400 bg-black/60 backdrop-blur-md border border-neutral-850 hover:border-gold-400/30 rounded-full transition-all hover:scale-105 cursor-pointer animate-fade-in"
                   aria-label="Cerrar modal"
                 >
                   <X className="w-5 h-5" />
                 </button>
 
                 {/* LEFT COLUMN: Large cinematic image */}
-                <div className="w-full md:w-1/2 h-[220px] md:h-full relative overflow-hidden flex-shrink-0 bg-neutral-900">
+                <div className="w-full md:w-1/2 h-[220px] md:h-full relative overflow-hidden flex-shrink-0 bg-neutral-950">
                   <img
                     src={selectedItem.image}
                     alt={selectedItem.name}
@@ -211,23 +211,23 @@ export default function GrillFavorites({ favorites, title, buttonText }: GrillFa
                 </div>
 
                 {/* RIGHT COLUMN: Options and Customizer */}
-                <div className="w-full md:w-1/2 h-full flex flex-col justify-between bg-[#0d0101] min-h-0 text-left">
+                <div className="w-full md:w-1/2 h-full flex flex-col justify-between bg-black min-h-0 text-left">
                   {/* Options Header */}
-                  <div className="hidden md:flex justify-between items-center p-6 border-b border-red-950/50 bg-[#0f0202]/70">
+                  <div className="hidden md:flex justify-between items-center p-6 border-b border-neutral-850 bg-black">
                     <div>
-                      <span className="text-[9px] uppercase tracking-[0.2em] text-red-500 font-bold">
+                      <span className="text-[10px] uppercase tracking-[0.2em] text-gold-400 font-bold">
                         Personalizar Pedido
                       </span>
-                      <h4 className="font-serif text-lg font-semibold text-white mt-0.5">Opciones de Preparación</h4>
+                      <h4 className="font-serif text-xl font-semibold text-white mt-0.5">Opciones de Preparación</h4>
                     </div>
                   </div>
 
                   {/* Scrollable details and selectors */}
                   <div className="p-5 md:p-6 overflow-y-auto space-y-5 flex-grow min-h-0 custom-scrollbar">
                     {/* Product Description */}
-                    <div className="space-y-1 bg-[#150303]/60 border border-red-950/40 rounded-xs p-3.5">
-                      <h5 className="text-[9px] uppercase tracking-widest text-gold-400/70 font-bold">Descripción del Platillo</h5>
-                      <p className="text-xs sm:text-sm text-neutral-250 font-normal leading-relaxed">
+                    <div className="space-y-1 bg-black border border-neutral-850 rounded-xs p-3.5">
+                      <h5 className="text-[10px] sm:text-xs uppercase tracking-widest text-gold-400 font-bold">Descripción del Platillo</h5>
+                      <p className="text-sm sm:text-base text-neutral-100 font-normal leading-relaxed">
                         {selectedItem.description}
                       </p>
                     </div>
@@ -237,7 +237,7 @@ export default function GrillFavorites({ favorites, title, buttonText }: GrillFa
                       selectedItem.category.toLowerCase().includes("parrillada") ||
                       selectedItem.category.toLowerCase().includes("bbq")) && (
                       <div className="space-y-2">
-                        <label className="block text-[9px] uppercase tracking-widest text-gold-400 font-bold">
+                        <label className="block text-[10px] sm:text-xs uppercase tracking-widest text-gold-400 font-bold">
                           Término de la Carne
                         </label>
                         <div className="grid grid-cols-2 gap-2 text-xs">
@@ -246,14 +246,14 @@ export default function GrillFavorites({ favorites, title, buttonText }: GrillFa
                               key={opt}
                               type="button"
                               onClick={() => setDoneness(opt)}
-                              className={`py-2 px-3 text-left border rounded-xs transition-all duration-200 flex items-center justify-between cursor-pointer ${
+                              className={`py-3 px-4 text-left border rounded-xs transition-all duration-200 flex items-center justify-between cursor-pointer text-xs sm:text-sm ${
                                 doneness === opt
-                                  ? "border-red-500 bg-red-950/40 text-white font-medium shadow-[0_0_10px_rgba(220,38,38,0.08)]"
-                                  : "border-red-950/30 bg-[#120202]/30 text-neutral-400 hover:border-red-500/25 hover:text-white"
+                                  ? "border-gold-400 bg-gold-950/20 text-white font-semibold shadow-[0_0_10px_rgba(255,188,0,0.08)]"
+                                  : "border-neutral-850 bg-black text-neutral-300 hover:border-gold-400/30 hover:text-white"
                               }`}
                             >
                               <span>{opt}</span>
-                              {doneness === opt && <Check className="w-3.5 h-3.5 text-red-500" />}
+                              {doneness === opt && <Check className="w-3.5 h-3.5 text-gold-400" />}
                             </button>
                           ))}
                         </div>
@@ -268,7 +268,7 @@ export default function GrillFavorites({ favorites, title, buttonText }: GrillFa
                       <>
                         {/* Side 1 */}
                         <div className="space-y-2">
-                          <label className="block text-[9px] uppercase tracking-widest text-gold-400 font-bold">
+                          <label className="block text-[10px] sm:text-xs uppercase tracking-widest text-gold-400 font-bold">
                             Primer Acompañamiento
                           </label>
                           <div className="grid grid-cols-2 gap-2">
@@ -282,14 +282,14 @@ export default function GrillFavorites({ favorites, title, buttonText }: GrillFa
                                 key={opt}
                                 type="button"
                                 onClick={() => setSide1(opt)}
-                                className={`py-2 px-3 text-left border rounded-xs transition-all duration-200 flex flex-col justify-between h-[68px] cursor-pointer ${
+                                className={`py-3 px-4 text-left border rounded-xs transition-all duration-200 flex flex-col justify-between h-[76px] cursor-pointer text-xs sm:text-sm ${
                                   side1 === opt
-                                    ? "border-red-500 bg-red-950/40 text-white shadow-[0_0_10px_rgba(220,38,38,0.08)]"
-                                    : "border-red-950/30 bg-[#120202]/30 text-neutral-400 hover:border-red-500/25 hover:text-white"
+                                    ? "border-gold-400 bg-gold-950/20 text-white shadow-[0_0_10px_rgba(255,188,0,0.08)]"
+                                    : "border-neutral-850 bg-black/30 text-neutral-300 hover:border-gold-400/30 hover:text-white"
                                 }`}
                               >
-                                <span className="text-[10px] font-medium leading-snug">{opt}</span>
-                                {side1 === opt && <Check className="w-3.5 h-3.5 text-red-500 self-end mt-1" />}
+                                <span className="text-xs sm:text-sm font-semibold leading-snug">{opt}</span>
+                                {side1 === opt && <Check className="w-3.5 h-3.5 text-gold-400 self-end mt-1" />}
                               </button>
                             ))}
                           </div>
@@ -297,7 +297,7 @@ export default function GrillFavorites({ favorites, title, buttonText }: GrillFa
 
                         {/* Side 2 */}
                         <div className="space-y-2">
-                          <label className="block text-[9px] uppercase tracking-widest text-gold-400 font-bold">
+                          <label className="block text-[10px] sm:text-xs uppercase tracking-widest text-gold-400 font-bold">
                             Segundo Acompañamiento
                           </label>
                           <div className="grid grid-cols-2 gap-2">
@@ -311,14 +311,14 @@ export default function GrillFavorites({ favorites, title, buttonText }: GrillFa
                                 key={opt}
                                 type="button"
                                 onClick={() => setSide2(opt)}
-                                className={`py-2 px-3 text-left border rounded-xs transition-all duration-200 flex flex-col justify-between h-[68px] cursor-pointer ${
+                                className={`py-3 px-4 text-left border rounded-xs transition-all duration-200 flex flex-col justify-between h-[76px] cursor-pointer text-xs sm:text-sm ${
                                   side2 === opt
-                                    ? "border-red-500 bg-red-950/40 text-white shadow-[0_0_10px_rgba(220,38,38,0.08)]"
-                                    : "border-red-950/30 bg-[#120202]/30 text-neutral-400 hover:border-red-500/25 hover:text-white"
+                                    ? "border-gold-400 bg-gold-950/20 text-white shadow-[0_0_10px_rgba(255,188,0,0.08)]"
+                                    : "border-neutral-850 bg-black/30 text-neutral-300 hover:border-gold-400/30 hover:text-white"
                                 }`}
                               >
-                                <span className="text-[10px] font-medium leading-snug">{opt}</span>
-                                {side2 === opt && <Check className="w-3.5 h-3.5 text-red-500 self-end mt-1" />}
+                                <span className="text-xs sm:text-sm font-semibold leading-snug">{opt}</span>
+                                {side2 === opt && <Check className="w-3.5 h-3.5 text-gold-400 self-end mt-1" />}
                               </button>
                             ))}
                           </div>
@@ -328,7 +328,7 @@ export default function GrillFavorites({ favorites, title, buttonText }: GrillFa
                   </div>
 
                   {/* Action Button */}
-                  <div className="p-5 md:p-6 bg-[#0f0202]/80 border-t border-red-950/50 flex-shrink-0">
+                  <div className="p-5 md:p-6 bg-black border-t border-neutral-850 flex-shrink-0">
                     <button
                       onClick={handleAddToCart}
                       className="w-full py-3.5 bg-gold-400 hover:bg-gold-500 text-black text-xs font-bold tracking-widest uppercase transition-all duration-300 rounded-sm flex items-center justify-center gap-2 shadow-lg hover:shadow-gold-400/20 cursor-pointer border-none hover:scale-[1.01]"

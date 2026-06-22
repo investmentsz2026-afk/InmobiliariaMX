@@ -74,10 +74,10 @@ export default function Header() {
   return (
     <>
       <header className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 py-2 md:py-2.5 px-4 md:px-8 text-white">
-        <div className="max-w-7xl mx-auto px-4 md:px-6 py-1.5 md:py-2 flex items-center justify-between rounded-full border transition-all duration-300 border-gold-400/40 bg-[#0c0c0c]/85 backdrop-blur-lg shadow-[0_10px_30px_rgba(0,0,0,0.8),_0_0_20px_rgba(184,144,71,0.15)]">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-1.5 md:py-2 flex items-center justify-between rounded-full border transition-all duration-300 border-gold-400/40 bg-black/90 backdrop-blur-lg shadow-[0_10px_30px_rgba(0,0,0,0.8),_0_0_20px_rgba(255,188,0,0.15)]">
           {/* Logo Showcase - 3D Plaque Container */}
           <Link href="/" className="flex items-center group" onClick={handleLinkClick}>
-            <div className="relative p-1 rounded-md transition-all duration-300 transform group-hover:scale-105 group-hover:-translate-y-0.5 flex items-center justify-center select-none overflow-hidden bg-gradient-to-b from-[#14120f] to-[#0a0907] border-b-2 border-r-2 border-t border-l border-amber-600/35 border-r-amber-950/60 border-b-amber-950/80 shadow-[0_3px_8px_rgba(0,0,0,0.7),_inset_0_1px_1px_rgba(255,255,255,0.1)] group-hover:shadow-[0_5px_12px_rgba(184,144,71,0.35),_inset_0_1px_1px_rgba(255,255,255,0.15)] group-hover:border-amber-500/45">
+            <div className="relative p-1 rounded-md transition-all duration-300 transform group-hover:scale-105 group-hover:-translate-y-0.5 flex items-center justify-center select-none overflow-hidden bg-gradient-to-b from-[#14120f] to-[#0a0907] border-b-2 border-r-2 border-t border-l border-gold-600/35 border-r-gold-950/60 border-b-gold-950/80 shadow-[0_3px_8px_rgba(0,0,0,0.7),_inset_0_1px_1px_rgba(255,255,255,0.1)] group-hover:shadow-[0_5px_12px_rgba(255,188,0,0.35),_inset_0_1px_1px_rgba(255,255,255,0.15)] group-hover:border-gold-500/45">
               {/* Glossy shine */}
               <div className="absolute inset-0 pointer-events-none rounded-md bg-gradient-to-tr from-transparent via-white/[0.04] to-transparent" />
               <img
@@ -187,12 +187,12 @@ export default function Header() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 220 }}
-              className="fixed top-0 right-0 bottom-0 w-80 max-w-[85vw] border-l z-55 p-6 flex flex-col md:hidden transition-colors duration-300 bg-[#0c0c0c] border-white/5 text-white"
+              className="fixed top-0 right-0 bottom-0 w-80 max-w-[85vw] border-l z-55 p-6 flex flex-col md:hidden transition-colors duration-300 bg-black border-white/5 text-white"
             >
               {/* Drawer Header */}
               <div className="flex items-center justify-between pb-6 border-b mb-6 border-white/5">
                 <Link href="/" className="flex items-center group" onClick={handleLinkClick}>
-                  <div className="relative p-1 rounded-md transition-all duration-300 transform group-hover:scale-105 active:scale-95 flex items-center justify-center select-none overflow-hidden bg-gradient-to-b from-[#14120f] to-[#0a0907] border-b-2 border-r-2 border-t border-l border-amber-600/35 border-r-amber-950/60 border-b-amber-950/80 shadow-[0_3px_8px_rgba(0,0,0,0.7)]">
+                  <div className="relative p-1 rounded-md transition-all duration-300 transform group-hover:scale-105 active:scale-95 flex items-center justify-center select-none overflow-hidden bg-gradient-to-b from-[#14120f] to-[#0a0907] border-b-2 border-r-2 border-t border-l border-gold-600/35 border-r-gold-950/60 border-b-gold-950/80 shadow-[0_3px_8px_rgba(0,0,0,0.7)]">
                     <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.04] to-transparent pointer-events-none rounded-md" />
                     <img
                       src="/uploads/logo.png"

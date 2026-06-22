@@ -157,7 +157,7 @@ export default function GrillHeroSlider({ slides }: GrillHeroSliderProps) {
 
   return (
     <div 
-      className="relative w-full min-h-[58vh] md:min-h-[68vh] flex items-center overflow-hidden border-b border-amber-500/10 bg-black"
+      className="relative w-full min-h-[58vh] md:min-h-[68vh] flex items-center overflow-hidden border-b border-gold-400/10 bg-black"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -267,7 +267,7 @@ export default function GrillHeroSlider({ slides }: GrillHeroSliderProps) {
                 </a>
                 <a
                   href="#menu-section"
-                  className="px-6 py-4 bg-transparent border border-amber-500/60 hover:border-amber-500 text-gold-400 hover:text-black hover:bg-amber-500 text-xs font-bold tracking-widest uppercase transition-all duration-300 rounded-sm flex items-center justify-center cursor-pointer z-20"
+                  className="px-6 py-4 bg-transparent border border-gold-400/60 hover:border-gold-400 text-gold-400 hover:text-black hover:bg-gold-400 text-xs font-bold tracking-widest uppercase transition-all duration-300 rounded-sm flex items-center justify-center cursor-pointer z-20"
                 >
                   Ver Menú
                 </a>
@@ -275,7 +275,7 @@ export default function GrillHeroSlider({ slides }: GrillHeroSliderProps) {
 
               {/* Quick Details List */}
               {!isVideo && (
-                <div className="pt-6 border-t border-amber-500/10 grid grid-cols-2 gap-6 text-xs select-none max-w-sm">
+                <div className="pt-6 border-t border-gold-400/10 grid grid-cols-2 gap-6 text-xs select-none max-w-sm">
                   <div>
                     <span className="block text-[9px] uppercase tracking-widest text-gold-400 font-bold mb-0.5">Horarios</span>
                     <span className="text-neutral-300 font-medium">Sábados y Domingos: 14:00 - 19:00</span>
@@ -320,7 +320,7 @@ export default function GrillHeroSlider({ slides }: GrillHeroSliderProps) {
               onClick={() => handleSelect(idx)}
               className={`h-2 transition-all duration-350 cursor-pointer rounded-full ${
                 currentIndex === idx 
-                  ? "bg-amber-500 w-6" 
+                  ? "bg-gold-400 w-6" 
                   : "bg-white/20 hover:bg-white/40 w-2"
               }`}
               aria-label={`Ir a diapositiva ${idx + 1}`}

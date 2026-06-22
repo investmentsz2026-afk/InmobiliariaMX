@@ -44,7 +44,7 @@ export default function GrillTestimonials({
   const activeReviews = reviews && reviews.length > 0 ? reviews : defaultReviews;
 
   return (
-    <section className="max-w-7xl mx-auto px-6 py-16 text-center relative z-10 border-t border-amber-500/10">
+    <section className="max-w-7xl mx-auto px-6 py-16 text-center relative z-10 border-t border-gold-400/10">
       {/* Golden Section Divider */}
       <SectionDivider title={title} />
 
@@ -57,7 +57,7 @@ export default function GrillTestimonials({
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: idx * 0.1 }}
-            className="bg-[#0c0c0c] border border-amber-500/10 hover:border-amber-500/30 p-6 sm:p-8 rounded-sm shadow-xl flex flex-col justify-between text-left relative overflow-hidden transition-all duration-300 group"
+            className="bg-black border border-gold-400/10 hover:border-gold-400/30 p-6 sm:p-8 rounded-sm shadow-xl flex flex-col justify-between text-left relative overflow-hidden transition-all duration-300 group"
           >
             {/* Ambient fire glow inside card */}
             <div className="absolute top-0 right-0 w-24 h-24 bg-red-650/[0.02] rounded-full blur-2xl pointer-events-none" />
@@ -66,7 +66,7 @@ export default function GrillTestimonials({
               {/* 5 Golden Stars */}
               <div className="flex items-center gap-1 select-none">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
+                  <Star key={i} className="w-3.5 h-3.5 fill-gold-400 text-gold-400" />
                 ))}
               </div>
 
@@ -95,7 +95,7 @@ export default function GrillTestimonials({
           href={buttonLink}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 px-6 py-3 bg-transparent border border-amber-500/60 hover:border-amber-500 text-gold-400 hover:text-black hover:bg-amber-500 text-xs font-bold tracking-widest uppercase transition-all duration-300 rounded-sm cursor-pointer"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-transparent border border-gold-400/60 hover:border-gold-400 text-gold-400 hover:text-black hover:bg-gold-400 text-xs font-bold tracking-widest uppercase transition-all duration-300 rounded-sm cursor-pointer"
         >
           <MessageSquare className="w-4 h-4" />
           {buttonText}

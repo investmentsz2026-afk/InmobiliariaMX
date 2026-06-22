@@ -45,7 +45,7 @@ export default function Hero() {
             repeat: Infinity,
             ease: "easeInOut",
           }}
-          className="absolute w-[600px] h-[600px] rounded-full border-[5px] border-amber-500 shadow-[0_0_35px_rgba(245,158,11,0.95),_inset_0_0_20px_rgba(245,158,11,0.7)]"
+          className="absolute w-[600px] h-[600px] rounded-full border-[5px] border-gold-400 shadow-[0_0_35px_rgba(255,188,0,0.95),_inset_0_0_20px_rgba(255,188,0,0.7)]"
         />
         {/* Ring 3 (Dashed Red) */}
         <motion.div
@@ -93,7 +93,7 @@ export default function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.8 }}
-          className="text-base sm:text-lg text-amber-950 max-w-2xl font-normal tracking-wide leading-relaxed mb-10 px-6 sm:px-8 py-4 bg-amber-50/80 backdrop-blur-md border border-amber-500/30 rounded-sm shadow-[0_4px_20px_rgba(245,158,11,0.08)]"
+          className="text-base sm:text-lg text-gold-950 max-w-2xl font-normal tracking-wide leading-relaxed mb-10 px-6 sm:px-8 py-4 bg-gold-50/80 backdrop-blur-md border border-gold-400/30 rounded-sm shadow-[0_4px_20px_rgba(255,188,0,0.08)]"
         >
           Seleccionamos minuciosamente los mejores cortes marmoleados, empacados al alto vacío y listos para tu asador. Disfruta también de nuestra Zona Grill cocinada al carbón de leña los fines de semana.
         </motion.p>

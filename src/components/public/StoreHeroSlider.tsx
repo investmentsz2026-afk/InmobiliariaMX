@@ -222,7 +222,7 @@ export default function StoreHeroSlider({ slides }: StoreHeroSliderProps) {
             repeat: Infinity,
             ease: "easeInOut",
           }}
-          className="absolute w-[600px] h-[600px] rounded-full border-[3px] border-amber-500 shadow-[0_0_20px_rgba(245,158,11,0.1)]"
+          className="absolute w-[600px] h-[600px] rounded-full border-[3px] border-gold-400 shadow-[0_0_20px_rgba(255,188,0,0.1)]"
         />
       </div>
 

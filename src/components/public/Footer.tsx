@@ -16,7 +16,7 @@ export default function Footer() {
     ? "#contacto" 
     : (pathname === "/store" ? "#contacto" : "/store#contacto");
 
-  const footerBgClass = isStorePage ? "bg-neutral-50 text-neutral-600 border-t border-neutral-200 font-sans" : "bg-[#111111] text-gray-400 pt-20 pb-10 border-t border-white/5 font-sans";
+  const footerBgClass = isStorePage ? "bg-neutral-50 text-neutral-600 border-t border-neutral-200 font-sans" : "bg-black text-gray-400 pt-20 pb-10 border-t border-white/5 font-sans";
   const footerTitleClass = isStorePage ? "font-serif text-neutral-900 tracking-widest text-sm uppercase mb-6 font-bold" : "font-serif text-white tracking-widest text-sm uppercase mb-6 font-semibold";
   const footerTextClass = isStorePage ? "text-sm text-neutral-500 leading-relaxed" : "text-sm text-gray-500 leading-relaxed";
   const footerLinkClass = (isActive = false) => {
@@ -41,7 +41,7 @@ export default function Footer() {
   const footerBottomTextClass = isStorePage ? "text-neutral-450" : "text-gray-600";
 
   return (
-    <footer className={isStorePage ? "bg-neutral-50 text-neutral-600 pt-20 pb-10 border-t border-neutral-200 font-sans" : "bg-[#111111] text-gray-400 pt-20 pb-10 border-t border-white/5 font-sans"}>
+    <footer className={isStorePage ? "bg-neutral-50 text-neutral-600 pt-20 pb-10 border-t border-neutral-200 font-sans" : "bg-black text-gray-400 pt-20 pb-10 border-t border-white/5 font-sans"}>
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
         
         {/* Brand info */}

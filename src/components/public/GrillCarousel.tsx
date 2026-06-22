@@ -184,7 +184,7 @@ export default function GrillCarousel({ slides }: GrillCarouselProps) {
       {/* Header Info */}
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4 border-l-2 border-red-600 pl-4">
         <div>
-          <span className="flex items-center gap-1.5 text-xs text-amber-500 font-bold tracking-widest uppercase">
+          <span className="flex items-center gap-1.5 text-xs text-gold-400 font-bold tracking-widest uppercase">
             <Flame className="w-4.5 h-4.5 text-red-500 animate-pulse" />
             Galería del Chef
           </span>
@@ -199,7 +199,7 @@ export default function GrillCarousel({ slides }: GrillCarouselProps) {
 
       {/* Main Container - Split Layout */}
       <div
-        className="relative w-full bg-[#0a0606]/85 backdrop-blur-md rounded-xl p-6 sm:p-8 border border-amber-500/10 shadow-2xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center"
+        className="relative w-full bg-black rounded-xl p-6 sm:p-8 border border-gold-400/10 shadow-2xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
@@ -223,7 +223,7 @@ export default function GrillCarousel({ slides }: GrillCarouselProps) {
                   <h3 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight leading-tight">
                     {activeSlides[currentIndex].title}
                   </h3>
-                  <h4 className="text-xs sm:text-sm text-amber-400 font-semibold uppercase tracking-wider">
+                  <h4 className="text-xs sm:text-sm text-gold-400 font-semibold uppercase tracking-wider">
                     {activeSlides[currentIndex].subtitle}
                   </h4>
                   <p className="text-neutral-300 text-xs font-light leading-relaxed">
@@ -239,7 +239,7 @@ export default function GrillCarousel({ slides }: GrillCarouselProps) {
             {/* Active slide progress bar */}
             <div className="relative w-full h-1 bg-white/10 rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-red-600 via-amber-500 to-red-600 transition-all duration-100 ease-linear"
+                className="h-full bg-gradient-to-r from-red-600 via-gold-400 to-red-600 transition-all duration-100 ease-linear"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -253,7 +253,7 @@ export default function GrillCarousel({ slides }: GrillCarouselProps) {
                     onClick={() => handleSelect(idx)}
                     className={`transition-all duration-300 h-1.5 rounded-full cursor-pointer ${
                       idx === currentIndex
-                        ? "w-6 bg-amber-500"
+                        ? "w-6 bg-gold-400"
                         : "w-1.5 bg-neutral-700 hover:bg-neutral-500"
                     }`}
                     aria-label={`Ir al slide ${idx + 1}`}
@@ -287,7 +287,7 @@ export default function GrillCarousel({ slides }: GrillCarouselProps) {
           {activeSlides[currentIndex] && (
             <div
               onClick={() => openLightbox(currentIndex)}
-              className="relative w-full aspect-[4/3] rounded-lg overflow-hidden border border-amber-500/15 shadow-xl group/img cursor-zoom-in bg-neutral-950"
+              className="relative w-full aspect-[4/3] rounded-lg overflow-hidden border border-gold-400/15 shadow-xl group/img cursor-zoom-in bg-neutral-950"
               title="Haz clic para ver en pantalla completa"
             >
               <AnimatePresence initial={false} custom={direction}>
@@ -306,8 +306,8 @@ export default function GrillCarousel({ slides }: GrillCarouselProps) {
 
               {/* Hover Image Overlay with Zoom/Eye indicator */}
               <div className="absolute inset-0 bg-black/10 group-hover/img:bg-black/40 transition-colors duration-300 flex items-center justify-center z-10">
-                <div className="w-12 h-12 rounded-full bg-red-750/90 text-white flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-all duration-350 scale-75 group-hover/img:scale-100 border border-amber-500/20 shadow-lg shadow-black/50">
-                  <Maximize2 className="w-5 h-5 text-amber-400" />
+                <div className="w-12 h-12 rounded-full bg-red-750/90 text-white flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-all duration-350 scale-75 group-hover/img:scale-100 border border-gold-400/20 shadow-lg shadow-black/50">
+                  <Maximize2 className="w-5 h-5 text-gold-400" />
                 </div>
               </div>
 
@@ -397,14 +397,14 @@ export default function GrillCarousel({ slides }: GrillCarouselProps) {
 
               {/* Bottom Info Bar */}
               <div
-                className="w-full max-w-2xl mx-auto bg-neutral-950/85 border border-neutral-850 rounded-xl p-4 md:p-5 text-center space-y-1.5 backdrop-blur-md z-10"
+                className="w-full max-w-2xl mx-auto bg-black border border-neutral-850 rounded-xl p-4 md:p-5 text-center space-y-1.5 z-10"
                 onClick={(e) => e.stopPropagation()}
               >
-                <span className="text-[9px] tracking-wider text-amber-500 font-bold uppercase block">
+                <span className="text-[9px] tracking-wider text-gold-400 font-bold uppercase block">
                   Imagen {lightboxIndex + 1} de {activeSlides.length}
                 </span>
                 <h3 className="font-serif text-base md:text-lg font-bold text-white tracking-tight leading-none">
-                  {activeSlides[lightboxIndex].title} — <span className="text-amber-400 font-sans text-xs md:text-sm font-medium">{activeSlides[lightboxIndex].subtitle}</span>
+                  {activeSlides[lightboxIndex].title} — <span className="text-gold-400 font-sans text-xs md:text-sm font-medium">{activeSlides[lightboxIndex].subtitle}</span>
                 </h3>
                 <p className="text-neutral-400 text-[10px] md:text-xs font-light max-w-lg mx-auto leading-relaxed mt-1">
                   {activeSlides[lightboxIndex].description}

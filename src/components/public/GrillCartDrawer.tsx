@@ -134,10 +134,10 @@ export default function GrillCartDrawer() {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="w-screen max-w-md bg-[#0c0101] border-l border-red-500/10 text-white flex flex-col shadow-2xl h-full"
+            className="w-screen max-w-md bg-black border-l border-red-500/10 text-white flex flex-col shadow-2xl h-full"
           >
             {/* Drawer Header */}
-            <div className="p-6 border-b border-red-950/40 flex items-center justify-between bg-black/40">
+            <div className="p-6 border-b border-red-950/40 flex items-center justify-between bg-black">
               <div className="flex items-center gap-2.5">
                 <Flame className="w-5 h-5 text-gold-400 animate-pulse" />
                 <h2 className="font-serif text-lg font-semibold tracking-wide">
@@ -185,7 +185,7 @@ export default function GrillCartDrawer() {
                         value={custName}
                         onChange={(e) => setCustName(e.target.value)}
                         placeholder="Ej. Pedro Picapiedra"
-                        className="w-full bg-black/40 border border-white/10 focus:border-red-500 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white"
+                        className="w-full bg-black border border-white/10 focus:border-red-500 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white"
                       />
                     </div>
 
@@ -199,7 +199,7 @@ export default function GrillCartDrawer() {
                           value={custPhone}
                           onChange={(e) => setCustPhone(e.target.value)}
                           placeholder="Ej. 3222018003"
-                          className="w-full bg-black/40 border border-white/10 focus:border-red-500 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white"
+                          className="w-full bg-black border border-white/10 focus:border-red-500 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white"
                         />
                       </div>
                       <div>
@@ -210,7 +210,7 @@ export default function GrillCartDrawer() {
                           value={custEmail}
                           onChange={(e) => setCustEmail(e.target.value)}
                           placeholder="correo@ejemplo.com"
-                          className="w-full bg-black/40 border border-white/10 focus:border-red-500 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white"
+                          className="w-full bg-black border border-white/10 focus:border-red-500 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white"
                         />
                       </div>
                     </div>
@@ -225,7 +225,7 @@ export default function GrillCartDrawer() {
                           disabled={isSending}
                           value={custDate}
                           onChange={(e) => setCustDate(e.target.value)}
-                          className="w-full bg-black/40 border border-white/10 focus:border-red-500 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white"
+                          className="w-full bg-black border border-white/10 focus:border-red-500 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white"
                         />
                       </div>
                       <div>
@@ -235,7 +235,7 @@ export default function GrillCartDrawer() {
                           disabled={isSending}
                           value={custTime}
                           onChange={(e) => setCustTime(e.target.value)}
-                          className="w-full bg-black/40 border border-white/10 focus:border-red-500 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white"
+                          className="w-full bg-black border border-white/10 focus:border-red-500 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white"
                         >
                           <option value="">Seleccionar</option>
                           <option value="12:00 PM">12:00 PM</option>
@@ -283,7 +283,7 @@ export default function GrillCartDrawer() {
                 items.map((item) => (
                   <div
                     key={item.id}
-                    className="flex gap-4 p-3.5 bg-neutral-950 border border-red-950/40 rounded-sm hover:border-gold-500/20 transition-all duration-300 group text-left"
+                    className="flex gap-4 p-3.5 bg-black border border-red-950/40 rounded-sm hover:border-gold-500/20 transition-all duration-300 group text-left"
                   >
                     {/* Item Image */}
                     <div className="w-20 h-20 bg-neutral-900 rounded-sm overflow-hidden flex-shrink-0 relative border border-red-950/30">
@@ -318,7 +318,7 @@ export default function GrillCartDrawer() {
 
                       {/* Quantity Selector & Trash */}
                       <div className="flex items-center justify-between mt-2">
-                        <div className="flex items-center border border-red-950/50 bg-black/40 rounded-xs">
+                        <div className="flex items-center border border-red-950/50 bg-black rounded-xs">
                           <button
                             onClick={() => updateQuantity(item.id, item.quantity - 1)}
                             className="p-1 hover:text-gold-400 text-neutral-400 transition-colors cursor-pointer"
@@ -357,7 +357,7 @@ export default function GrillCartDrawer() {
 
             {/* Drawer Footer */}
             {items.length > 0 && (
-              <div className="p-6 border-t border-red-950/40 bg-black/40 space-y-4">
+              <div className="p-6 border-t border-red-950/40 bg-black space-y-4">
                 {showCheckout ? (
                   <div className="space-y-3">
                     <div className="flex items-center justify-between text-neutral-400 text-xs uppercase tracking-wider">

@@ -225,7 +225,7 @@ export default function GrillMenuInteractive() {
   return (
     <div className="space-y-12">
       {/* Marquee Running Text Ribbon */}
-      <div className="w-full overflow-hidden bg-red-950/45 border-y border-gold-400/20 py-3.5 relative flex items-center mb-6 shadow-sm">
+      <div className="w-full overflow-hidden bg-black border-y border-gold-400/20 py-3.5 relative flex items-center mb-6 shadow-sm">
         <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-[#050000] to-transparent z-10 pointer-events-none" />
         <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-[#050000] to-transparent z-10 pointer-events-none" />
         <div className="animate-marquee whitespace-nowrap flex items-center text-[10px] sm:text-xs tracking-[0.2em] font-bold uppercase text-gold-400">
@@ -269,7 +269,7 @@ export default function GrillMenuInteractive() {
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="relative bg-gradient-to-r from-red-950/50 via-gold-500/5 to-red-950/50 border border-gold-400/20 rounded-md p-4 text-center max-w-2xl mx-auto mb-8 shadow-xs"
+        className="relative bg-black border border-gold-400/20 rounded-md p-4 text-center max-w-2xl mx-auto mb-8 shadow-xs"
       >
         <p className="text-xs text-gold-300 font-medium flex items-center justify-center gap-2">
           <motion.div
@@ -299,7 +299,7 @@ export default function GrillMenuInteractive() {
                   const el = document.getElementById(`cat-section-${idx}`);
                   if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
                 }}
-                className="relative aspect-[4/5] rounded-sm overflow-hidden border border-amber-500/10 hover:border-amber-500/35 shadow-xl cursor-pointer transition-all duration-300 group flex flex-col justify-end p-4 text-center bg-[#050505] hover:-translate-y-1"
+                className="relative aspect-[4/5] rounded-sm overflow-hidden border border-gold-400/10 hover:border-gold-400/35 shadow-xl cursor-pointer transition-all duration-300 group flex flex-col justify-end p-4 text-center bg-black hover:-translate-y-1"
               >
                 {/* Background image */}
                 <img
@@ -312,7 +312,7 @@ export default function GrillMenuInteractive() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent pointer-events-none" />
 
                 {/* Golden Badge Circle for Category Icon */}
-                <div className="absolute top-[22%] left-1/2 -translate-x-1/2 w-12 h-12 rounded-full border border-amber-500/20 bg-black/80 flex items-center justify-center text-amber-500 transition-all duration-300 group-hover:border-amber-500 group-hover:scale-110 shadow-lg shadow-black/80 z-20">
+                <div className="absolute top-[22%] left-1/2 -translate-x-1/2 w-12 h-12 rounded-full border border-gold-400/20 bg-black/80 flex items-center justify-center text-gold-400 transition-all duration-300 group-hover:border-gold-400 group-hover:scale-110 shadow-lg shadow-black/80 z-20">
                   <Icon className="w-5 h-5" />
                 </div>
 
@@ -321,7 +321,7 @@ export default function GrillMenuInteractive() {
                   <h3 className="font-serif text-sm sm:text-base font-bold tracking-wider text-white uppercase truncate">
                     {cat.name}
                   </h3>
-                  <span className="inline-block px-3 py-1 border border-amber-500/50 group-hover:border-amber-500 text-gold-400 group-hover:text-black group-hover:bg-amber-500 text-[8px] font-bold uppercase tracking-widest transition-all duration-300 rounded-xs">
+                  <span className="inline-block px-3 py-1 border border-gold-400/50 group-hover:border-gold-400 text-gold-400 group-hover:text-black group-hover:bg-gold-400 text-[8px] font-bold uppercase tracking-widest transition-all duration-300 rounded-xs">
                     Ver Menú
                   </span>
                 </div>
@@ -336,7 +336,7 @@ export default function GrillMenuInteractive() {
           {[1, 2, 3].map((colIdx) => (
             <div
               key={colIdx}
-              className="space-y-8 bg-[#0c0202]/60 border border-red-950/40 p-8 rounded-sm relative overflow-hidden shadow-sm"
+              className="space-y-8 bg-black border border-red-950/40 p-8 rounded-sm relative overflow-hidden shadow-sm"
             >
               <div className="border-b border-red-950/40 pb-4 space-y-2">
                 <div className="h-3 w-20 bg-neutral-800 rounded-xs animate-pulse" />
@@ -375,7 +375,7 @@ export default function GrillMenuInteractive() {
                 className="space-y-6 text-left pt-6 scroll-mt-24"
               >
                 {/* Header de la Sección */}
-                <div className="relative border-b border-amber-500/20 pb-4">
+                <div className="relative border-b border-gold-400/20 pb-4">
                   <span className="text-[10px] uppercase text-red-500 tracking-[0.25em] font-bold block">
                     {section.subtitle}
                   </span>
@@ -385,7 +385,7 @@ export default function GrillMenuInteractive() {
                   <p className="text-sm text-neutral-200 max-w-2xl font-light mt-1">
                     {section.description}
                   </p>
-                  <div className="absolute bottom-0 left-0 w-24 h-[2px] bg-amber-500/60" />
+                  <div className="absolute bottom-0 left-0 w-24 h-[2px] bg-gold-400/60" />
                 </div>
 
                 {/* Grilla de Platillos */}
@@ -395,10 +395,10 @@ export default function GrillMenuInteractive() {
                       key={itemIdx}
                       variants={itemVariants}
                       onClick={() => handleOpenCustomizer(item)}
-                      className="flex items-center gap-4 group/item cursor-pointer p-4 bg-[#0a0a0a] hover:bg-[#121212] border border-amber-500/10 hover:border-amber-500/35 rounded-sm transition-all duration-300 shadow-xl"
+                      className="flex items-center gap-4 group/item cursor-pointer p-4 bg-black hover:bg-black border border-gold-400/10 hover:border-gold-400/35 rounded-sm transition-all duration-300 shadow-xl"
                     >
                       {/* Thumbnail Image */}
-                      <div className="w-20 h-20 rounded-sm overflow-hidden border border-amber-500/10 bg-neutral-900/60 flex-shrink-0 relative group-hover/item:border-amber-500/40 transition-colors duration-300">
+                      <div className="w-20 h-20 rounded-sm overflow-hidden border border-gold-400/10 bg-neutral-900/60 flex-shrink-0 relative group-hover/item:border-gold-400/40 transition-colors duration-300">
                         {item.imageUrl ? (
                           <img
                             src={item.imageUrl}
@@ -428,7 +428,7 @@ export default function GrillMenuInteractive() {
                         </p>
                         <div className="mt-1.5 flex items-center gap-1.5">
                           <span className="text-[8px] bg-red-500/15 text-red-400 border border-red-500/10 px-1.5 py-0.5 rounded-xs uppercase tracking-widest font-semibold flex items-center gap-1">
-                            <Sparkles className="w-2.5 h-2.5 text-amber-500 animate-pulse" /> Ver detalles y ordenar
+                            <Sparkles className="w-2.5 h-2.5 text-gold-400 animate-pulse" /> Ver detalles y ordenar
                           </span>
                         </div>
                       </div>
@@ -446,9 +446,9 @@ export default function GrillMenuInteractive() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4, duration: 0.6 }}
-        className="mt-16 bg-gradient-to-br from-[#0c0c0c]/90 to-[#050505]/95 border border-amber-500/10 rounded-md p-8 max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left relative overflow-hidden shadow-2xl"
+        className="mt-16 bg-black border border-gold-400/10 rounded-md p-8 max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left relative overflow-hidden shadow-2xl"
       >
-        <div className="absolute inset-0 bg-amber-550/[0.01] pointer-events-none" />
+        <div className="absolute inset-0 bg-gold-500/[0.01] pointer-events-none" />
         <div className="absolute -left-16 -top-16 w-32 h-32 bg-red-650/5 rounded-full blur-3xl" />
         
         <div className="space-y-3 relative z-10">
@@ -465,7 +465,7 @@ export default function GrillMenuInteractive() {
           href="https://wa.me/523222018003?text=Hola,%20quisiera%20hacer%20un%20pedido%20del%20menú%20de%20la%20Zona%20Grill."
           target="_blank"
           rel="noopener noreferrer"
-          className="relative z-10 shrink-0 px-6 py-4 bg-gradient-to-r from-red-750 to-red-650 hover:from-red-650 hover:to-red-600 text-white text-xs font-bold tracking-widest uppercase transition-all duration-300 rounded-sm flex items-center gap-2 shadow-lg shadow-red-900/30 hover:scale-105 cursor-pointer border border-amber-500/20"
+          className="relative z-10 shrink-0 px-6 py-4 bg-gradient-to-r from-red-750 to-red-650 hover:from-red-650 hover:to-red-600 text-white text-xs font-bold tracking-widest uppercase transition-all duration-300 rounded-sm flex items-center gap-2 shadow-lg shadow-red-900/30 hover:scale-105 cursor-pointer border border-gold-400/20"
         >
           <MessageSquare className="w-4 h-4 text-white" />
           Ordenar por WhatsApp
@@ -492,22 +492,22 @@ export default function GrillMenuInteractive() {
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 30 }}
               transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="relative w-full max-w-4xl bg-[#0b0101] border border-red-500/20 rounded-sm overflow-hidden shadow-2xl z-10 flex flex-col md:flex-row h-[88vh] md:h-[600px]"
+              className="relative w-full max-w-4xl bg-black border border-gold-400/20 rounded-sm overflow-hidden shadow-2xl z-10 flex flex-col md:flex-row h-[88vh] md:h-[600px]"
             >
               {/* Premium Top Line Accent for whole container */}
-              <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-red-650 to-transparent z-30 md:hidden" />
+              <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-gold-400 to-transparent z-30 md:hidden" />
 
               {/* Close Button */}
               <button
                 onClick={() => setSelectedItem(null)}
-                className="absolute top-4 right-4 z-40 p-2 text-neutral-200 hover:text-red-500 bg-black/60 backdrop-blur-md border border-red-950/40 hover:border-gold-500/30 rounded-full transition-all hover:scale-105 cursor-pointer"
+                className="absolute top-4 right-4 z-40 p-2 text-neutral-200 hover:text-gold-400 bg-black/60 backdrop-blur-md border border-neutral-850 hover:border-gold-400/30 rounded-full transition-all hover:scale-105 cursor-pointer"
                 aria-label="Cerrar modal"
               >
                 <X className="w-5 h-5" />
               </button>
 
               {/* LEFT COLUMN: Large cinematic image */}
-              <div className="w-full md:w-1/2 h-[220px] md:h-full relative overflow-hidden flex-shrink-0 bg-neutral-900">
+              <div className="w-full md:w-1/2 h-[220px] md:h-full relative overflow-hidden flex-shrink-0 bg-neutral-950">
                 {selectedItem.imageUrl ? (
                   <img
                     src={selectedItem.imageUrl}
@@ -515,11 +515,11 @@ export default function GrillMenuInteractive() {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-b from-[#1a0505] to-[#050000] p-8 text-center relative">
-                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(220,38,38,0.05)_0%,transparent_70%)]" />
-                    <Flame className="w-16 h-16 text-red-500/25 mb-3 animate-pulse" />
+                  <div className="w-full h-full flex flex-col items-center justify-center bg-black p-8 text-center relative">
+                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,188,0,0.03)_0%,transparent_70%)]" />
+                    <Flame className="w-16 h-16 text-gold-400/25 mb-3 animate-pulse" />
                     <span className="font-serif text-lg text-gold-400 uppercase tracking-widest font-semibold">La Cava del Corte</span>
-                    <span className="text-[10px] text-red-400/80 uppercase tracking-widest mt-1">Zona Grill</span>
+                    <span className="text-[10px] text-gold-400/80 uppercase tracking-widest mt-1">Zona Grill</span>
                   </div>
                 )}
                 
@@ -542,23 +542,23 @@ export default function GrillMenuInteractive() {
               </div>
 
               {/* RIGHT COLUMN: Options and Customizer */}
-              <div className="w-full md:w-1/2 h-full flex flex-col justify-between bg-[#0d0101] min-h-0 text-left">
+              <div className="w-full md:w-1/2 h-full flex flex-col justify-between bg-black min-h-0 text-left">
                 {/* Options Header */}
-                <div className="hidden md:flex justify-between items-center p-6 border-b border-red-950/50 bg-[#0f0202]/70">
+                <div className="hidden md:flex justify-between items-center p-6 border-b border-neutral-850 bg-black">
                   <div>
-                    <span className="text-[9px] uppercase tracking-[0.2em] text-red-500 font-bold">
+                    <span className="text-[10px] uppercase tracking-[0.2em] text-gold-400 font-bold">
                       Personalizar Pedido
                     </span>
-                    <h4 className="font-serif text-lg font-semibold text-white mt-0.5">Opciones de Preparación</h4>
+                    <h4 className="font-serif text-xl font-semibold text-white mt-0.5">Opciones de Preparación</h4>
                   </div>
                 </div>
 
                 {/* Scrollable details and selectors */}
                 <div className="p-5 md:p-6 overflow-y-auto space-y-5 flex-grow min-h-0 custom-scrollbar">
                   {/* Product Description */}
-                  <div className="space-y-1 bg-[#150303]/60 border border-red-950/40 rounded-xs p-3.5">
-                    <h5 className="text-[9px] uppercase tracking-widest text-gold-400/70 font-bold">Descripción del Platillo</h5>
-                    <p className="text-xs sm:text-sm text-neutral-250 font-normal leading-relaxed">
+                  <div className="space-y-1 bg-black border border-neutral-850 rounded-xs p-3.5">
+                    <h5 className="text-[10px] sm:text-xs uppercase tracking-widest text-gold-400 font-bold">Descripción del Platillo</h5>
+                    <p className="text-sm sm:text-base text-neutral-100 font-normal leading-relaxed">
                       {selectedItem.description}
                     </p>
                   </div>
@@ -568,7 +568,7 @@ export default function GrillMenuInteractive() {
                     selectedItem.category.toLowerCase().includes("parrillada") ||
                     selectedItem.category.toLowerCase().includes("bbq")) && (
                     <div className="space-y-2">
-                      <label className="block text-[9px] uppercase tracking-widest text-gold-400 font-bold">
+                      <label className="block text-[10px] sm:text-xs uppercase tracking-widest text-gold-400 font-bold">
                         Término de la Carne
                       </label>
                       <div className="grid grid-cols-2 gap-2 text-xs">
@@ -577,20 +577,21 @@ export default function GrillMenuInteractive() {
                             key={opt}
                             type="button"
                             onClick={() => setDoneness(opt)}
-                            className={`py-2 px-3 text-left border rounded-xs transition-all duration-200 flex items-center justify-between cursor-pointer ${
+                            className={`py-3 px-4 text-left border rounded-xs transition-all duration-200 flex items-center justify-between cursor-pointer text-xs sm:text-sm ${
                               doneness === opt
-                                ? "border-red-500 bg-red-950/40 text-white font-medium shadow-[0_0_10px_rgba(220,38,38,0.08)]"
-                                : "border-red-950/30 bg-[#120202]/30 text-neutral-400 hover:border-red-500/25 hover:text-white"
+                                ? "border-gold-400 bg-gold-950/20 text-white font-semibold shadow-[0_0_10px_rgba(255,188,0,0.08)]"
+                                : "border-neutral-850 bg-black text-neutral-300 hover:border-gold-400/30 hover:text-white"
                             }`}
                           >
                             <span>{opt}</span>
-                            {doneness === opt && <Check className="w-3.5 h-3.5 text-red-500" />}
+                            {doneness === opt && <Check className="w-3.5 h-3.5 text-gold-400" />}
                           </button>
                         ))}
                       </div>
                     </div>
                   )}
 
+                  {/* Sides Options (Hidden for simple items) */}
                   {!(selectedItem.category.toLowerCase().includes("complemento") ||
                     selectedItem.category.toLowerCase().includes("embutido") ||
                     selectedItem.category.toLowerCase().includes("pizza") ||
@@ -598,7 +599,7 @@ export default function GrillMenuInteractive() {
                     <>
                       {/* Side 1 */}
                       <div className="space-y-2">
-                        <label className="block text-[9px] uppercase tracking-widest text-gold-400 font-bold">
+                        <label className="block text-[10px] sm:text-xs uppercase tracking-widest text-gold-400 font-bold">
                           Primer Acompañamiento
                         </label>
                         <div className="grid grid-cols-2 gap-2">
@@ -612,14 +613,14 @@ export default function GrillMenuInteractive() {
                               key={opt}
                               type="button"
                               onClick={() => setSide1(opt)}
-                              className={`py-2 px-3 text-left border rounded-xs transition-all duration-200 flex flex-col justify-between h-[68px] cursor-pointer ${
+                              className={`py-3 px-4 text-left border rounded-xs transition-all duration-200 flex flex-col justify-between h-[76px] cursor-pointer text-xs sm:text-sm ${
                                 side1 === opt
-                                  ? "border-red-500 bg-red-950/40 text-white shadow-[0_0_10px_rgba(220,38,38,0.08)]"
-                                  : "border-red-950/30 bg-[#120202]/30 text-neutral-400 hover:border-red-500/25 hover:text-white"
+                                  ? "border-gold-400 bg-gold-950/20 text-white shadow-[0_0_10px_rgba(255,188,0,0.08)]"
+                                  : "border-neutral-850 bg-black/30 text-neutral-300 hover:border-gold-400/30 hover:text-white"
                               }`}
                             >
-                              <span className="text-[10px] font-medium leading-snug">{opt}</span>
-                              {side1 === opt && <Check className="w-3.5 h-3.5 text-red-500 self-end mt-1" />}
+                              <span className="text-xs sm:text-sm font-semibold leading-snug">{opt}</span>
+                              {side1 === opt && <Check className="w-3.5 h-3.5 text-gold-400 self-end mt-1" />}
                             </button>
                           ))}
                         </div>
@@ -627,7 +628,7 @@ export default function GrillMenuInteractive() {
 
                       {/* Side 2 */}
                       <div className="space-y-2">
-                        <label className="block text-[9px] uppercase tracking-widest text-gold-400 font-bold">
+                        <label className="block text-[10px] sm:text-xs uppercase tracking-widest text-gold-400 font-bold">
                           Segundo Acompañamiento
                         </label>
                         <div className="grid grid-cols-2 gap-2">
@@ -641,14 +642,14 @@ export default function GrillMenuInteractive() {
                               key={opt}
                               type="button"
                               onClick={() => setSide2(opt)}
-                              className={`py-2 px-3 text-left border rounded-xs transition-all duration-200 flex flex-col justify-between h-[68px] cursor-pointer ${
+                              className={`py-3 px-4 text-left border rounded-xs transition-all duration-200 flex flex-col justify-between h-[76px] cursor-pointer text-xs sm:text-sm ${
                                 side2 === opt
-                                  ? "border-red-500 bg-red-950/40 text-white shadow-[0_0_10px_rgba(220,38,38,0.08)]"
-                                  : "border-red-950/30 bg-[#120202]/30 text-neutral-400 hover:border-red-500/25 hover:text-white"
+                                  ? "border-gold-400 bg-gold-950/20 text-white shadow-[0_0_10px_rgba(255,188,0,0.08)]"
+                                  : "border-neutral-850 bg-black/30 text-neutral-300 hover:border-gold-400/30 hover:text-white"
                               }`}
                             >
-                              <span className="text-[10px] font-medium leading-snug">{opt}</span>
-                              {side2 === opt && <Check className="w-3.5 h-3.5 text-red-500 self-end mt-1" />}
+                              <span className="text-xs sm:text-sm font-semibold leading-snug">{opt}</span>
+                              {side2 === opt && <Check className="w-3.5 h-3.5 text-gold-400 self-end mt-1" />}
                             </button>
                           ))}
                         </div>
@@ -658,7 +659,7 @@ export default function GrillMenuInteractive() {
                 </div>
 
                 {/* Action Button */}
-                <div className="p-5 md:p-6 bg-[#0f0202]/80 border-t border-red-950/50 flex-shrink-0">
+                <div className="p-5 md:p-6 bg-black border-t border-neutral-850 flex-shrink-0">
                   <button
                     onClick={handleAddToCart}
                     className="w-full py-3.5 bg-gold-400 hover:bg-gold-500 text-obsidian text-xs font-bold tracking-widest uppercase transition-all duration-300 rounded-sm flex items-center justify-center gap-2 shadow-lg hover:shadow-gold-400/20 cursor-pointer border-none hover:scale-[1.01]"

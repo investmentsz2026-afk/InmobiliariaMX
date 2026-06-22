@@ -199,12 +199,12 @@ export default async function ZonaGrillPage() {
   ];
 
   return (
-    <div className="relative text-white min-h-screen -mt-24 pt-28 sm:pt-24 pb-20 font-sans selection:bg-red-650 selection:text-white overflow-hidden bg-[#050505]">
+    <div className="relative text-white min-h-screen -mt-24 pt-28 sm:pt-24 pb-20 font-sans selection:bg-red-650 selection:text-white overflow-hidden bg-black">
       {/* Animated Background */}
       <GrillBackground />
 
       {/* Decorative Top Accent */}
-      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-amber-500 to-transparent z-50" />
+      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-gold-400 to-transparent z-50" />
 
       {/* 1. Portada (Slider) */}
       <GrillHeroSlider slides={heroSlides} />
@@ -215,7 +215,7 @@ export default async function ZonaGrillPage() {
       </div>
 
       {/* 3. Nuestra Historia (Sobre Nosotros) */}
-      <section id="nosotros" className="max-w-7xl mx-auto px-6 relative z-10 py-24 border-t border-amber-500/10 bg-[#0c0c0c]/80 mt-16 rounded-sm shadow-2xl border border-amber-500/5">
+      <section id="nosotros" className="max-w-7xl mx-auto px-6 relative z-10 py-24 border-t border-gold-400/10 bg-black mt-16 rounded-sm shadow-2xl border border-gold-400/5">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
           <div className="space-y-6 text-left">
             <span className="inline-flex items-center gap-2 px-3 py-1 bg-red-650/15 border border-red-500/20 text-red-400 text-[10px] tracking-widest uppercase font-bold rounded-full">
@@ -232,25 +232,25 @@ export default async function ZonaGrillPage() {
             </p>
             <div className="pt-6 grid grid-cols-2 gap-6 border-t border-neutral-900">
               <div>
-                <span className="font-serif text-3xl font-extrabold text-amber-500">{aboutSection.stat1Value}</span>
+                <span className="font-serif text-3xl font-extrabold text-gold-400">{aboutSection.stat1Value}</span>
                 <p className="text-[10px] uppercase text-neutral-400 tracking-widest mt-1">{aboutSection.stat1Label}</p>
               </div>
               <div>
-                <span className="font-serif text-3xl font-extrabold text-amber-500">{aboutSection.stat2Value}</span>
+                <span className="font-serif text-3xl font-extrabold text-gold-400">{aboutSection.stat2Value}</span>
                 <p className="text-[10px] uppercase text-neutral-400 tracking-widest mt-1">{aboutSection.stat2Label}</p>
               </div>
             </div>
           </div>
           
-          <div className="relative aspect-[4/3] rounded-sm overflow-hidden border border-amber-500/20 shadow-2xl group">
+          <div className="relative aspect-[4/3] rounded-sm overflow-hidden border border-gold-400/20 shadow-2xl group">
             <img
               src={aboutSection.imageUrl}
               alt="Cortes de carne en la parrilla caliente"
               className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
-            <div className="absolute bottom-4 left-4 border-l-2 border-amber-500 pl-3 text-left">
-              <span className="block text-[8px] uppercase tracking-widest text-amber-500 font-bold">Maestros del Asador</span>
+            <div className="absolute bottom-4 left-4 border-l-2 border-gold-400 pl-3 text-left">
+              <span className="block text-[8px] uppercase tracking-widest text-gold-400 font-bold">Maestros del Asador</span>
               <span className="text-white text-xs font-semibold">El Secreto de la Cocción Perfecta</span>
             </div>
           </div>
@@ -280,7 +280,7 @@ export default async function ZonaGrillPage() {
           {promotions.slice(0, 3).map((promo: any, idx: number) => (
             <div
               key={idx}
-              className="bg-[#0c0c0c] border border-amber-500/10 hover:border-amber-500/35 p-6 rounded-sm shadow-xl flex items-center justify-between gap-4 relative overflow-hidden transition-all duration-300 group hover:-translate-y-1"
+              className="bg-black border border-gold-400/10 hover:border-gold-400/35 p-6 rounded-sm shadow-xl flex items-center justify-between gap-4 relative overflow-hidden transition-all duration-300 group hover:-translate-y-1"
             >
               {/* Internal glow */}
               <div className="absolute top-0 right-0 w-20 h-20 bg-red-650/[0.01] rounded-full blur-2xl pointer-events-none" />
@@ -308,7 +308,7 @@ export default async function ZonaGrillPage() {
               </div>
 
               {/* Right Side Circular Image */}
-              <div className="flex-shrink-0 w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border border-amber-500/20 group-hover:border-amber-500/45 transition-colors duration-300 relative shadow-lg">
+              <div className="flex-shrink-0 w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border border-gold-400/20 group-hover:border-gold-400/45 transition-colors duration-300 relative shadow-lg">
                 <img
                   src={promoImages[idx] || promoImages[0]}
                   alt={promo.title}
@@ -325,7 +325,7 @@ export default async function ZonaGrillPage() {
             href="https://wa.me/523222018003?text=Hola,%20quisiera%20saber%20más%20sobre%20las%20novedades%20y%20ofertas%20de%20la%20Zona%20Grill."
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-transparent border border-amber-500/60 hover:border-amber-500 text-gold-400 hover:text-black hover:bg-amber-500 text-xs font-bold tracking-widest uppercase transition-all duration-300 rounded-sm cursor-pointer"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-transparent border border-gold-400/60 hover:border-gold-400 text-gold-400 hover:text-black hover:bg-gold-400 text-xs font-bold tracking-widest uppercase transition-all duration-300 rounded-sm cursor-pointer"
           >
             {promotionsTitleSection.buttonText}
           </a>
@@ -333,13 +333,13 @@ export default async function ZonaGrillPage() {
       </section>
 
       {/* 7. Experiencia Sensorial */}
-      <section className="max-w-7xl mx-auto px-6 py-16 relative z-10 border-t border-amber-500/10">
+      <section className="max-w-7xl mx-auto px-6 py-16 relative z-10 border-t border-gold-400/10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           {/* Left: Interactive Video Player */}
           <div className="lg:col-span-7 space-y-4">
             <div className="text-left mb-6">
-              <span className="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[10px] tracking-widest uppercase font-bold rounded-full">
-                <Flame className="w-3.5 h-3.5 animate-pulse text-amber-500" />
+              <span className="inline-flex items-center gap-2 px-3 py-1 bg-gold-400/10 border border-gold-400/20 text-gold-400 text-[10px] tracking-widest uppercase font-bold rounded-full">
+                <Flame className="w-3.5 h-3.5 animate-pulse text-gold-400" />
                 {videoSection.tag}
               </span>
               <h2 className="font-serif text-3xl sm:text-4xl font-extrabold tracking-tight text-white mt-2 leading-tight">
@@ -349,8 +349,8 @@ export default async function ZonaGrillPage() {
                 {videoSection.description}
               </p>
             </div>
-
-            <div className="relative aspect-video w-full rounded-sm overflow-hidden border border-amber-500/25 shadow-[0_10px_40px_rgba(217,119,6,0.15)] bg-black group">
+ 
+            <div className="relative aspect-video w-full rounded-sm overflow-hidden border border-gold-400/25 shadow-[0_10px_40px_rgba(212,175,55,0.15)] bg-black group">
               {/* Overlay gradient */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10 pointer-events-none" />
               
@@ -360,18 +360,18 @@ export default async function ZonaGrillPage() {
                 className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-500"
               />
 
-              {/* Decorative amber frame */}
-              <div className="absolute inset-0 border border-amber-500/20 m-4 pointer-events-none rounded-xs z-20" />
+              {/* Decorative gold frame */}
+              <div className="absolute inset-0 border border-gold-400/20 m-4 pointer-events-none rounded-xs z-20" />
             </div>
           </div>
 
           {/* Right side metric showcase / History callout */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="border border-amber-500/15 bg-[#0a0707] p-8 rounded-sm shadow-xl relative overflow-hidden text-left">
+            <div className="border border-gold-400/15 bg-black p-8 rounded-sm shadow-xl relative overflow-hidden text-left">
               {/* Glow accent */}
               <div className="absolute top-0 right-0 w-24 h-24 bg-red-650/5 rounded-full blur-2xl pointer-events-none" />
               
-              <span className="text-[10px] tracking-wider text-amber-500 font-bold uppercase block mb-3">{videoSection.calloutTag || "La Mística de las Brasas"}</span>
+              <span className="text-[10px] tracking-wider text-gold-400 font-bold uppercase block mb-3">{videoSection.calloutTag || "La Mística de las Brasas"}</span>
               <h3 className="font-serif text-xl sm:text-2xl font-bold text-white leading-tight mb-4">
                 {videoSection.calloutTitle || "El Secreto de una Cocción al Mezquite Natural"}
               </h3>
@@ -381,11 +381,11 @@ export default async function ZonaGrillPage() {
 
               <div className="grid grid-cols-2 gap-4 border-t border-neutral-900 pt-6">
                 <div>
-                  <span className="font-serif text-3xl font-extrabold text-amber-500">{videoSection.calloutStat1Value || "100%"}</span>
+                  <span className="font-serif text-3xl font-extrabold text-gold-400">{videoSection.calloutStat1Value || "100%"}</span>
                   <p className="text-[9px] uppercase text-neutral-400 tracking-widest mt-1">{videoSection.calloutStat1Label || "Carbón de Mezquite"}</p>
                 </div>
                 <div>
-                  <span className="font-serif text-3xl font-extrabold text-amber-500">{videoSection.calloutStat2Value || "Gourmet"}</span>
+                  <span className="font-serif text-3xl font-extrabold text-gold-400">{videoSection.calloutStat2Value || "Gourmet"}</span>
                   <p className="text-[9px] uppercase text-neutral-400 tracking-widest mt-1">{videoSection.calloutStat2Label || "Cortes Premium Sonora"}</p>
                 </div>
               </div>
@@ -403,13 +403,13 @@ export default async function ZonaGrillPage() {
 
         <div className="relative flex flex-col md:flex-row items-stretch justify-between gap-8 md:gap-4 max-w-5xl mx-auto py-8 px-4 mt-6">
           {/* Dashed line background on desktop */}
-          <div className="absolute top-[45px] left-8 right-8 h-[1px] border-t border-dashed border-amber-500/20 -translate-y-1/2 hidden md:block z-0" />
+          <div className="absolute top-[45px] left-8 right-8 h-[1px] border-t border-dashed border-gold-400/20 -translate-y-1/2 hidden md:block z-0" />
 
           {/* Step 1 */}
-          <div className="flex-1 flex flex-col items-center text-center group z-10 relative bg-[#050505] px-2">
-            <div className="relative w-16 h-16 rounded-full border border-amber-500/20 bg-[#0c0c0c] flex items-center justify-center text-amber-500 group-hover:border-amber-500/75 transition-all duration-300 shadow-xl shadow-black">
+          <div className="flex-1 flex flex-col items-center text-center group z-10 relative bg-black px-2">
+            <div className="relative w-16 h-16 rounded-full border border-gold-400/20 bg-black flex items-center justify-center text-gold-400 group-hover:border-gold-400/75 transition-all duration-300 shadow-xl shadow-black">
               <Utensils className="w-6 h-6" />
-              <span className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-amber-500 text-black text-[10px] font-bold flex items-center justify-center border border-black select-none">
+              <span className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-gold-400 text-black text-[10px] font-bold flex items-center justify-center border border-black select-none">
                 1
               </span>
             </div>
@@ -420,10 +420,10 @@ export default async function ZonaGrillPage() {
           </div>
 
           {/* Step 2 */}
-          <div className="flex-1 flex flex-col items-center text-center group z-10 relative bg-[#050505] px-2">
-            <div className="relative w-16 h-16 rounded-full border border-amber-500/20 bg-[#0c0c0c] flex items-center justify-center text-amber-500 group-hover:border-amber-500/75 transition-all duration-300 shadow-xl shadow-black">
+          <div className="flex-1 flex flex-col items-center text-center group z-10 relative bg-black px-2">
+            <div className="relative w-16 h-16 rounded-full border border-gold-400/20 bg-black flex items-center justify-center text-gold-400 group-hover:border-gold-400/75 transition-all duration-300 shadow-xl shadow-black">
               <MessageSquare className="w-6 h-6 animate-pulse" />
-              <span className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-amber-500 text-black text-[10px] font-bold flex items-center justify-center border border-black select-none">
+              <span className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-gold-400 text-black text-[10px] font-bold flex items-center justify-center border border-black select-none">
                 2
               </span>
             </div>
@@ -434,10 +434,10 @@ export default async function ZonaGrillPage() {
           </div>
 
           {/* Step 3 */}
-          <div className="flex-1 flex flex-col items-center text-center group z-10 relative bg-[#050505] px-2">
-            <div className="relative w-16 h-16 rounded-full border border-amber-500/20 bg-[#0c0c0c] flex items-center justify-center text-amber-500 group-hover:border-amber-500/75 transition-all duration-300 shadow-xl shadow-black">
+          <div className="flex-1 flex flex-col items-center text-center group z-10 relative bg-black px-2">
+            <div className="relative w-16 h-16 rounded-full border border-gold-400/20 bg-black flex items-center justify-center text-gold-400 group-hover:border-gold-400/75 transition-all duration-300 shadow-xl shadow-black">
               <Calculator className="w-6 h-6" />
-              <span className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-amber-500 text-black text-[10px] font-bold flex items-center justify-center border border-black select-none">
+              <span className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-gold-400 text-black text-[10px] font-bold flex items-center justify-center border border-black select-none">
                 3
               </span>
             </div>
@@ -448,10 +448,10 @@ export default async function ZonaGrillPage() {
           </div>
 
           {/* Step 4 */}
-          <div className="flex-1 flex flex-col items-center text-center group z-10 relative bg-[#050505] px-2">
-            <div className="relative w-16 h-16 rounded-full border border-amber-500/20 bg-[#0c0c0c] flex items-center justify-center text-amber-500 group-hover:border-amber-500/75 transition-all duration-300 shadow-xl shadow-black">
+          <div className="flex-1 flex flex-col items-center text-center group z-10 relative bg-black px-2">
+            <div className="relative w-16 h-16 rounded-full border border-gold-400/20 bg-black flex items-center justify-center text-gold-400 group-hover:border-gold-400/75 transition-all duration-300 shadow-xl shadow-black">
               <Flame className="w-6 h-6" />
-              <span className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-amber-500 text-black text-[10px] font-bold flex items-center justify-center border border-black select-none">
+              <span className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-gold-400 text-black text-[10px] font-bold flex items-center justify-center border border-black select-none">
                 4
               </span>
             </div>
@@ -462,10 +462,10 @@ export default async function ZonaGrillPage() {
           </div>
 
           {/* Step 5 */}
-          <div className="flex-1 flex flex-col items-center text-center group z-10 relative bg-[#050505] px-2">
-            <div className="relative w-16 h-16 rounded-full border border-amber-500/20 bg-[#0c0c0c] flex items-center justify-center text-amber-500 group-hover:border-amber-500/75 transition-all duration-300 shadow-xl shadow-black">
+          <div className="flex-1 flex flex-col items-center text-center group z-10 relative bg-black px-2">
+            <div className="relative w-16 h-16 rounded-full border border-gold-400/20 bg-black flex items-center justify-center text-gold-400 group-hover:border-gold-400/75 transition-all duration-300 shadow-xl shadow-black">
               <ShoppingBag className="w-6 h-6" />
-              <span className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-amber-500 text-black text-[10px] font-bold flex items-center justify-center border border-black select-none">
+              <span className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-gold-400 text-black text-[10px] font-bold flex items-center justify-center border border-black select-none">
                 5
               </span>
             </div>
@@ -478,7 +478,7 @@ export default async function ZonaGrillPage() {
       </section>
 
       {/* 10. Contacto (Static at bottom) */}
-      <section id="contacto" className="max-w-7xl mx-auto px-6 relative z-10 py-24 border-t border-amber-500/10">
+      <section id="contacto" className="max-w-7xl mx-auto px-6 relative z-10 py-24 border-t border-gold-400/10">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-start">
           <div className="space-y-6 text-left">
             <span className="inline-flex items-center gap-2 px-3 py-1 bg-red-650/15 border border-red-500/20 text-red-400 text-[10px] tracking-widest uppercase font-bold rounded-full">
@@ -486,7 +486,7 @@ export default async function ZonaGrillPage() {
             </span>
             <h2 className="font-serif text-3xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight">
               ¿Listo para encender <br />
-              <span className="text-amber-500">las brasas?</span>
+              <span className="text-gold-400">las brasas?</span>
             </h2>
             <p className="text-sm text-neutral-250 leading-relaxed font-normal">
               Escríbenos para programar tu pedido, reservar paquetes de asado familiar o cotizar servicios de parrilladas completas a domicilio para tus eventos corporativos y reuniones privadas.
@@ -494,7 +494,7 @@ export default async function ZonaGrillPage() {
             
             <div className="pt-8 space-y-6">
               <div className="flex items-center space-x-4">
-                <div className="p-3 bg-red-650/15 border border-red-500/20 rounded-full text-amber-500 shadow-md">
+                <div className="p-3 bg-red-650/15 border border-red-500/20 rounded-full text-gold-400 shadow-md">
                   <Flame className="w-5 h-5" />
                 </div>
                 <div>
@@ -503,7 +503,7 @@ export default async function ZonaGrillPage() {
                 </div>
               </div>
               <div className="flex items-center space-x-4">
-                <div className="p-3 bg-red-650/15 border border-red-500/20 rounded-full text-amber-500 shadow-md">
+                <div className="p-3 bg-red-650/15 border border-red-500/20 rounded-full text-gold-400 shadow-md">
                   <Clock className="w-5 h-5" />
                 </div>
                 <div>
@@ -512,7 +512,7 @@ export default async function ZonaGrillPage() {
                 </div>
               </div>
               <div className="flex items-center space-x-4">
-                <div className="p-3 bg-red-650/15 border border-red-500/20 rounded-full text-amber-500 shadow-md">
+                <div className="p-3 bg-red-650/15 border border-red-500/20 rounded-full text-gold-400 shadow-md">
                   <MapPin className="w-5 h-5" />
                 </div>
                 <div>
@@ -523,9 +523,9 @@ export default async function ZonaGrillPage() {
             </div>
           </div>
           
-          <div className="bg-[#0c0c0c]/80 border border-amber-500/20 p-8 rounded-sm shadow-2xl relative">
+          <div className="bg-black border border-gold-400/20 p-8 rounded-sm shadow-2xl relative">
             {/* Ambient fire glow */}
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-red-600/10 to-amber-500/10 rounded-sm blur-md opacity-75 pointer-events-none" />
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-red-600/10 to-gold-400/10 rounded-sm blur-md opacity-75 pointer-events-none" />
             <div className="relative z-10">
               <HomeContactForm />
             </div>
