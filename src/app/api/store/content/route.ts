@@ -79,6 +79,63 @@ const DEFAULT_STORE_CONTENT = {
       { id: "3", url: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&auto=format&fit=crop&q=80", label: "Brasas de Mezquite" },
       { id: "4", url: "https://images.unsplash.com/photo-1558030006-450675393462?w=600&auto=format&fit=crop&q=80", label: "T-Bone al Fuego" },
     ]
+  },
+  promoBanner: {
+    visible: true,
+    tag: "¡Gran Apertura MEAT STORE!",
+    description: "Obtén 10% de descuento en tu primer pedido de cortes premium.",
+    code: "MEATSTORE10",
+    buttonText: "Aplicar en WhatsApp",
+    whatsappUrl: "https://wa.me/523222018003?text=Hola!%20Quiero%20ordenar%20con%20el%20código%20de%20descuento%20MEATSTORE10",
+  },
+  favoritesSection: {
+    tag: "RECOMENDACIONES DE LA CASA",
+    title: "Favoritos de Nuestros Clientes",
+    description: "Selecciones diseñadas a la medida para cada tipo de ocasión, nivel de experiencia y antojo.",
+    cards: [
+      {
+        id: "1",
+        badge: "🥇 Para 2 personas",
+        title: "Cena Íntima Premium",
+        tag: "Reserva Doble",
+        description: "Dos jugosos medallones de Ribeye de 400g cada uno. Perfectos para una velada especial o cena en pareja."
+      },
+      {
+        id: "2",
+        badge: "🥇 Para reunión de amigos",
+        title: "Parrillada Familiar",
+        tag: "Paquete Todo Incluido",
+        description: "El combo ideal con Sirloin, chorizo artesanal, papas rellenas y tortillas de harina sonorenses. Rinde para 6 personas."
+      },
+      {
+        id: "3",
+        badge: "🥇 Para principiantes",
+        title: "Iniciación al Asado",
+        tag: "Fácil Preparación",
+        description: "Delgados filetes de Sirloin y arrachera fina de cocción rápida. Ideal si estás iniciando en el arte de la parrilla."
+      },
+      {
+        id: "4",
+        badge: "🥇 Para parrilleros expertos",
+        title: "El Desafío del Fuego",
+        tag: "Cortes Gruesos",
+        description: "Imponentes cortes de 2 o 3 pulgadas como el Tomahawk o Prime Rib. Requiere control de temperaturas y cocción indirecta."
+      }
+    ]
+  },
+  monsterProduct: {
+    visible: true,
+    tag: "🔥 EL MONSTRUO DEL ASADOR",
+    title: "Tomahawk Gigante",
+    titleBold: "(1.8 kg)",
+    description: "Nuestra pieza insignia definitiva: un colosal Tomahawk cortado grueso de 3 pulgadas con su característico hueso largo expuesto. Posee una infiltración de grasa excepcional y un marmoleado de campeonato que le otorga una jugosidad insuperable. Empacado individualmente al alto vacío en origen y congelado de inmediato. Es el reto definitivo para parrilleros expertos.",
+    price: 1450,
+    weight: "1.8 kg",
+    thickness: "3.0\"",
+    suggestion: "6 Personas",
+    buttonText: "Ver Detalle del Monstruo",
+    buttonLink: "/propiedades/el-monstruo-del-asador-tomahawk-gigante-1-8kg",
+    imageUrl: "https://images.unsplash.com/photo-1628268909376-e8c44bb3153f?w=1000&auto=format&fit=crop&q=80",
   }
 };
 
@@ -100,6 +157,9 @@ export async function GET(req: NextRequest) {
       testimonials: data.testimonials || DEFAULT_STORE_CONTENT.testimonials,
       catalogSection: { ...DEFAULT_STORE_CONTENT.catalogSection, ...data.catalogSection },
       gallerySection: { ...DEFAULT_STORE_CONTENT.gallerySection, ...data.gallerySection },
+      promoBanner: { ...DEFAULT_STORE_CONTENT.promoBanner, ...data.promoBanner },
+      favoritesSection: { ...DEFAULT_STORE_CONTENT.favoritesSection, ...data.favoritesSection },
+      monsterProduct: { ...DEFAULT_STORE_CONTENT.monsterProduct, ...data.monsterProduct },
     });
   } catch (error) {
     console.error("Error fetching store content:", error);

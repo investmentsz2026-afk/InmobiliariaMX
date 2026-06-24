@@ -304,7 +304,7 @@ export default function StoreHeroSlider({ slides }: StoreHeroSliderProps) {
               isVideo ? "justify-start self-start md:ml-4" : "justify-center"
             }`}>
               <Link
-                href="/store#catalogo"
+                href="/meat-store#catalogo"
                 className="px-8 py-4 bg-[#b01e28] hover:bg-[#91181f] text-white text-xs font-semibold tracking-widest uppercase transition-all duration-300 rounded-sm shadow-md hover:scale-102 hover:shadow-red-900/20 flex items-center justify-center gap-1.5"
               >
                 <span>Cortes para Llevar</span>

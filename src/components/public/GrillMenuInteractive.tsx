@@ -271,7 +271,7 @@ export default function GrillMenuInteractive() {
         transition={{ duration: 0.5 }}
         className="relative bg-black border border-gold-400/20 rounded-md p-4 text-center max-w-2xl mx-auto mb-8 shadow-xs"
       >
-        <p className="text-xs text-gold-300 font-medium flex items-center justify-center gap-2">
+        <div className="text-xs text-gold-300 font-medium flex items-center justify-center gap-2">
           <motion.div
             animate={{ scale: [1, 1.15, 1] }}
             transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
@@ -279,7 +279,7 @@ export default function GrillMenuInteractive() {
             <Sparkles className="w-4 h-4 text-red-500 flex-shrink-0" />
           </motion.div>
           <span>Haz clic en cualquier platillo para personalizar tus complementos y ordenar por WhatsApp.</span>
-        </p>
+        </div>
       </motion.div>
 
       {/* Golden Section Divider */}

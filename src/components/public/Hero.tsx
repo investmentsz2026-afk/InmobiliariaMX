@@ -106,7 +106,7 @@ export default function Hero() {
           className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto"
         >
           <Link
-            href="/store#catalogo"
+            href="/meat-store#catalogo"
             className="px-8 py-4 bg-[#b01e28] hover:bg-[#91181f] text-white text-xs font-semibold tracking-widest uppercase transition-all duration-300 rounded-sm shadow-md hover:scale-102 hover:shadow-red-900/20"
           >
             Cortes para Llevar

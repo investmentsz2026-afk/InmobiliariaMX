@@ -9,6 +9,7 @@ import SectionDivider from "@/components/public/SectionDivider";
 import GrillHeroSlider from "@/components/public/GrillHeroSlider";
 import GrillFavorites from "@/components/public/GrillFavorites";
 import SensoryVideoPlayer from "@/components/public/SensoryVideoPlayer";
+import GrillIntroVideoPopup from "@/components/public/GrillIntroVideoPopup";
 import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
@@ -80,6 +81,15 @@ export default async function ZonaGrillPage() {
     buttonLink: "https://wa.me/523222018003?text=Hola,%20quisiera%20enviar%20una%20reseña%20sobre%20mi%20experiencia%20en%20la%20Zona%20Grill.",
   };
 
+  const popupVideo = content?.popupVideo || {
+    enabled: true,
+    title: "Descubre Cómo Funcionamos",
+    videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-barbecue-steaks-cooking-on-grill-42284-large.mp4",
+    posterUrl: "https://images.unsplash.com/photo-1544025162-d76694265947?w=1200&auto=format&fit=crop&q=80",
+    footerText: "¿Listo para saborear la experiencia?",
+    buttonText: "Entendido, Ver Menú",
+  };
+
   const heroSlides = content?.heroSlides || [
     {
       id: 1,
@@ -122,13 +132,27 @@ export default async function ZonaGrillPage() {
   };
 
   const favoritesSection = content?.favoritesSection || {
-    title: "LOS FAVORITOS DE LA CASA",
+    title: "LAS FAVORITAS DE NUESTROS CLIENTES",
     buttonText: "Ver todos los favoritos",
   };
 
   const promotionsTitleSection = content?.promotionsTitleSection || {
     title: "NOVEDADES Y OFERTAS",
     buttonText: "Ver todas las novedades",
+  };
+
+  const introSection = content?.introSection || {
+    tag: "LA EXPERIENCIA DEFINITIVA AL CARBÓN",
+    title: "Cortes Premium preparados al momento y llevados hasta tu casa.",
+    description: "Nuestra pasión es el fuego y la excelencia. Cada fin de semana encendemos las brasas con leña de mezquite 100% natural para asar pacientemente las mejores piezas seleccionadas de Sonora. Empacamos con tecnología térmica para que experimentes el aroma ahumado, la jugosidad y el término perfecto directo en tu mesa.",
+    urgency1Title: "Solo Servicio a Domicilio",
+    urgency1Desc: "La Cava del Corte en tu hogar. Sin demoras, directo de nuestra parrilla a tu mesa.",
+    urgency2Title: "Entrega en la Bahía",
+    urgency2Desc: "Envíos a Bahía de Banderas y Puerto Vallarta con empaques térmicos especializados.",
+    urgency3Title: "Cortes Seleccionados",
+    urgency3Desc: "Parrilladas, papas rellenas gigantes y especialidades con carne premium de Sonora.",
+    urgency4Title: "Preparados al Momento",
+    urgency4Desc: "Asados al carbón de mezquite únicamente al recibir tu orden para garantizar la jugosidad.",
   };
 
   // Map 4 favorites dishes from db, or fallback to beautiful presets
@@ -208,6 +232,96 @@ export default async function ZonaGrillPage() {
 
       {/* 1. Portada (Slider) */}
       <GrillHeroSlider slides={heroSlides} />
+
+      {/* 1.5. STORYTELLING & BENEFICIOS DE URGENCIA */}
+      <section className="relative z-10 max-w-7xl mx-auto px-6 pt-12 pb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+          
+          {/* Tarjeta de Storytelling (La Historia en Primeros Segundos) */}
+          <div className="lg:col-span-7 bg-[#050505]/95 border border-gold-400/20 p-8 sm:p-10 rounded-sm relative overflow-hidden flex flex-col justify-center shadow-2xl">
+            {/* Soft gold backdrop glow */}
+            <div className="absolute -top-24 -left-24 w-48 h-48 bg-gold-400/[0.04] rounded-full blur-3xl pointer-events-none" />
+            
+            <div className="relative z-10 text-left space-y-4">
+              <span className="block text-[9px] uppercase tracking-widest text-gold-400 font-bold">
+                {introSection.tag}
+              </span>
+              <h2 className="font-serif text-2xl sm:text-3xl font-extrabold text-white leading-tight">
+                {introSection.title}
+              </h2>
+              <div className="w-12 h-[1px] bg-gold-400/50" />
+              <p className="text-neutral-300 text-xs sm:text-sm font-light leading-relaxed">
+                {introSection.description}
+              </p>
+            </div>
+          </div>
+
+          {/* Cuadrícula de Urgencia & Posicionamiento (4 Bloques) */}
+          <div className="lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            
+            {/* Bloque 1 */}
+            <div className="bg-[#050505]/95 border border-gold-400/10 hover:border-gold-400/25 p-5 rounded-sm flex flex-col justify-between text-left transition-all duration-300 group hover:-translate-y-0.5">
+              <div className="space-y-2">
+                <div className="w-8 h-8 rounded-full bg-gold-400/10 flex items-center justify-center text-gold-400 group-hover:scale-105 transition-transform duration-300">
+                  <Flame className="w-4 h-4 text-gold-400" />
+                </div>
+                <h4 className="font-serif text-xs font-bold text-white uppercase tracking-wider">
+                  {introSection.urgency1Title}
+                </h4>
+                <p className="text-[10px] text-neutral-400 leading-normal font-light">
+                  {introSection.urgency1Desc}
+                </p>
+              </div>
+            </div>
+
+            {/* Bloque 2 */}
+            <div className="bg-[#050505]/95 border border-gold-400/10 hover:border-gold-400/25 p-5 rounded-sm flex flex-col justify-between text-left transition-all duration-300 group hover:-translate-y-0.5">
+              <div className="space-y-2">
+                <div className="w-8 h-8 rounded-full bg-gold-400/10 flex items-center justify-center text-gold-400 group-hover:scale-105 transition-transform duration-300">
+                  <span className="text-sm">🚚</span>
+                </div>
+                <h4 className="font-serif text-xs font-bold text-white uppercase tracking-wider">
+                  {introSection.urgency2Title}
+                </h4>
+                <p className="text-[10px] text-neutral-400 leading-normal font-light">
+                  {introSection.urgency2Desc}
+                </p>
+              </div>
+            </div>
+
+            {/* Bloque 3 */}
+            <div className="bg-[#050505]/95 border border-gold-400/10 hover:border-gold-400/25 p-5 rounded-sm flex flex-col justify-between text-left transition-all duration-300 group hover:-translate-y-0.5">
+              <div className="space-y-2">
+                <div className="w-8 h-8 rounded-full bg-gold-400/10 flex items-center justify-center text-gold-400 group-hover:scale-105 transition-transform duration-300">
+                  <span className="text-sm">🥩</span>
+                </div>
+                <h4 className="font-serif text-xs font-bold text-white uppercase tracking-wider">
+                  {introSection.urgency3Title}
+                </h4>
+                <p className="text-[10px] text-neutral-400 leading-normal font-light">
+                  {introSection.urgency3Desc}
+                </p>
+              </div>
+            </div>
+
+            {/* Bloque 4 */}
+            <div className="bg-[#050505]/95 border border-gold-400/10 hover:border-gold-400/25 p-5 rounded-sm flex flex-col justify-between text-left transition-all duration-300 group hover:-translate-y-0.5">
+              <div className="space-y-2">
+                <div className="w-8 h-8 rounded-full bg-gold-400/10 flex items-center justify-center text-gold-400 group-hover:scale-105 transition-transform duration-300">
+                  <span className="text-sm">⭐</span>
+                </div>
+                <h4 className="font-serif text-xs font-bold text-white uppercase tracking-wider">
+                  {introSection.urgency4Title}
+                </h4>
+                <p className="text-[10px] text-neutral-400 leading-normal font-light">
+                  {introSection.urgency4Desc}
+                </p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
 
       {/* 2. Nuestro Menú */}
       <div id="menu-section" className="max-w-7xl mx-auto px-6 relative z-10 pt-4">
@@ -522,7 +636,6 @@ export default async function ZonaGrillPage() {
               </div>
             </div>
           </div>
-          
           <div className="bg-black border border-gold-400/20 p-8 rounded-sm shadow-2xl relative">
             {/* Ambient fire glow */}
             <div className="absolute -inset-0.5 bg-gradient-to-r from-red-600/10 to-gold-400/10 rounded-sm blur-md opacity-75 pointer-events-none" />
@@ -532,6 +645,16 @@ export default async function ZonaGrillPage() {
           </div>
         </div>
       </section>
+
+      {/* Intro Video Popup Modal */}
+      <GrillIntroVideoPopup
+        enabled={popupVideo.enabled}
+        title={popupVideo.title}
+        videoUrl={popupVideo.videoUrl}
+        posterUrl={popupVideo.posterUrl}
+        footerText={popupVideo.footerText}
+        buttonText={popupVideo.buttonText}
+      />
     </div>
   );
 }

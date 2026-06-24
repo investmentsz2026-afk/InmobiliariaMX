@@ -18,7 +18,7 @@ export default function HomeContactForm() {
   const [submitError, setSubmitError] = useState("");
   const pathname = usePathname();
 
-  const isStorePage = pathname.startsWith("/store") || pathname.startsWith("/propiedades");
+  const isStorePage = pathname.startsWith("/meat-store") || pathname.startsWith("/propiedades");
 
   const {
     register,

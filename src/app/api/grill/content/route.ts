@@ -149,7 +149,7 @@ const DEFAULT_GRILL_CONTENT = {
     step5Desc: "Y disfruta del aroma y sabor de la parrilla en tu mesa.",
   },
   favoritesSection: {
-    title: "LOS FAVORITOS DE LA CASA",
+    title: "LAS FAVORITAS DE NUESTROS CLIENTES",
     buttonText: "Ver todos los favoritos",
   },
   promotionsTitleSection: {
@@ -160,6 +160,27 @@ const DEFAULT_GRILL_CONTENT = {
     title: "LO QUE DICEN NUESTROS CLIENTES",
     buttonText: "Ver más reseñas",
     buttonLink: "https://wa.me/523222018003?text=Hola,%20quisiera%20enviar%20una%20reseña%20sobre%20mi%20experiencia%20en%20la%20Zona%20Grill.",
+  },
+  popupVideo: {
+    enabled: true,
+    title: "Descubre Cómo Funcionamos",
+    videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-barbecue-steaks-cooking-on-grill-42284-large.mp4",
+    posterUrl: "https://images.unsplash.com/photo-1544025162-d76694265947?w=1200&auto=format&fit=crop&q=80",
+    footerText: "¿Listo para saborear la experiencia?",
+    buttonText: "Entendido, Ver Menú",
+  },
+  introSection: {
+    tag: "LA EXPERIENCIA DEFINITIVA AL CARBÓN",
+    title: "Cortes Premium preparados al momento y llevados hasta tu casa.",
+    description: "Nuestra pasión es el fuego y la excelencia. Cada fin de semana encendemos las brasas con leña de mezquite 100% natural para asar pacientemente las mejores piezas seleccionadas de Sonora. Empacamos con tecnología térmica para que experimentes el aroma ahumado, la jugosidad y el término perfecto directo en tu mesa.",
+    urgency1Title: "Solo Servicio a Domicilio",
+    urgency1Desc: "La Cava del Corte en tu hogar. Sin demoras, directo de nuestra parrilla a tu mesa.",
+    urgency2Title: "Entrega en la Bahía",
+    urgency2Desc: "Envíos a Bahía de Banderas y Puerto Vallarta con empaques térmicos especializados.",
+    urgency3Title: "Cortes Seleccionados",
+    urgency3Desc: "Parrilladas, papas rellenas gigantes y especialidades con carne premium de Sonora.",
+    urgency4Title: "Preparados al Momento",
+    urgency4Desc: "Asados al carbón de mezquite únicamente al recibir tu orden para garantizar la jugosidad.",
   },
 };
 
@@ -186,6 +207,8 @@ export async function GET(req: NextRequest) {
       favoritesSection: { ...DEFAULT_GRILL_CONTENT.favoritesSection, ...data.favoritesSection },
       promotionsTitleSection: { ...DEFAULT_GRILL_CONTENT.promotionsTitleSection, ...data.promotionsTitleSection },
       testimonialsSection: { ...DEFAULT_GRILL_CONTENT.testimonialsSection, ...data.testimonialsSection },
+      popupVideo: { ...DEFAULT_GRILL_CONTENT.popupVideo, ...data.popupVideo },
+      introSection: { ...DEFAULT_GRILL_CONTENT.introSection, ...data.introSection },
     });
   } catch (error) {
     console.error("Error fetching grill content:", error);

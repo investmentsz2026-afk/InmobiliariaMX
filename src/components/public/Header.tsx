@@ -19,7 +19,7 @@ export default function Header() {
   const { items: grillItems, toggleCart: toggleGrillCart } = useGrillCartStore();
 
   const isGrillPage = pathname === "/";
-  const isStorePage = pathname.startsWith("/store") || pathname.startsWith("/propiedades");
+  const isStorePage = pathname.startsWith("/meat-store") || pathname.startsWith("/propiedades");
   const items = isGrillPage ? grillItems : storeItems;
   const toggleCart = isGrillPage ? toggleGrillCart : toggleStoreCart;
 
@@ -48,7 +48,7 @@ export default function Header() {
     };
   }, [mobileMenuOpen]);
 
-  const isHomeOrGrill = pathname === "/" || pathname === "/store";
+  const isHomeOrGrill = pathname === "/" || pathname === "/meat-store";
 
   const handleLinkClick = () => {
     setMobileMenuOpen(false);
@@ -56,18 +56,18 @@ export default function Header() {
 
   const navLinks = [
     { label: "Zona Grill", href: "/" },
-    { label: "Store", href: "/store" },
+    { label: "MEAT STORE", href: "/meat-store" },
     { 
       label: "Nosotros", 
       href: pathname === "/" 
         ? "#nosotros" 
-        : (pathname === "/store" ? "#nosotros" : "/store#nosotros") 
+        : (pathname === "/meat-store" ? "#nosotros" : "/meat-store#nosotros") 
     },
     { 
       label: "Contacto", 
       href: pathname === "/" 
         ? "#contacto" 
-        : (pathname === "/store" ? "#contacto" : "/store#contacto") 
+        : (pathname === "/meat-store" ? "#contacto" : "/meat-store#contacto") 
     },
   ];
 

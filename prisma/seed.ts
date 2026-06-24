@@ -50,6 +50,26 @@ async function main() {
   // 3. Create Meat Products
   const propertiesData = [
     {
+      title: "El Monstruo del Asador: Tomahawk Gigante (1.8kg)",
+      slug: "el-monstruo-del-asador-tomahawk-gigante-1-8kg",
+      description: "Nuestra pieza insignia definitiva: un colosal Tomahawk de 1.8 kg cortado grueso con su hueso largo característico. Posee una infiltración de grasa excepcional y un marmoleado de campeonato. Empacado individualmente al alto vacío en origen y congelado de inmediato. Es el reto definitivo para parrilleros expertos.",
+      price: 1450,
+      location: "Sonora / Selección Especial",
+      city: "Hermosillo",
+      state: "Sonora",
+      m2Total: 1800, // 1.8kg
+      m2Covered: 0,
+      bedrooms: 3.0, // 3 pulgadas
+      bathrooms: 5, // Categoría suprema
+      parkingSpaces: 6, // 6 personas
+      type: "Cortes de Res",
+      status: PropertyStatus.DISPONIBLE,
+      featured: true,
+      images: [
+        { url: "https://images.unsplash.com/photo-1628268909376-e8c44bb3153f?w=800&auto=format&fit=crop&q=80", isMain: true }
+      ]
+    },
+    {
       title: "Ribeye Sonora Premium",
       slug: "ribeye-sonora-premium",
       description: "Ribeye de res originaria de Sonora, seleccionada minuciosamente por su excelente grado de marmoleo y jugosidad. Cada corte es empacado individualmente al alto vacío en origen y congelado de inmediato para preservar intactas la frescura, ternura y sabor del producto hasta llegar a tu asador. Espesor ideal de 1.5 pulgadas para un término medio perfecto.",

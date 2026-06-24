@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Edit2, Trash2, Loader2, Upload, X, Check, Star, Search, Film, BookOpen, MessageSquare, Image as ImageIcon, LayoutGrid, Tag } from "lucide-react";
+import { Plus, Edit2, Trash2, Loader2, Upload, X, Check, Star, Search, Film, BookOpen, MessageSquare, Image as ImageIcon, LayoutGrid, Tag, Gift, Sparkles, Flame } from "lucide-react";
 import ConfirmModal from "@/components/admin/ConfirmModal";
 import { parseDescription, serializeDescription } from "@/lib/utils";
 import { upload } from "@vercel/blob/client";
@@ -84,7 +84,7 @@ export default function AdminPropertiesPage() {
 
   // Store Content Modal State
   const [isContentModalOpen, setIsContentModalOpen] = useState(false);
-  const [contentTab, setContentTab] = useState<"hero" | "video" | "catalog" | "gallery" | "about" | "testimonials">("hero");
+  const [contentTab, setContentTab] = useState<"hero" | "promo" | "video" | "favorites" | "monster" | "catalog" | "gallery" | "about" | "testimonials">("hero");
   const [loadingContent, setLoadingContent] = useState(false);
   const [savingContent, setSavingContent] = useState(false);
 
@@ -154,6 +154,54 @@ export default function AdminPropertiesPage() {
   const [catalogTitle, setCatalogTitle] = useState("");
   const [catalogDescription, setCatalogDescription] = useState("");
 
+  // Promo Banner Fields
+  const [promoBannerVisible, setPromoBannerVisible] = useState(true);
+  const [promoBannerTag, setPromoBannerTag] = useState("");
+  const [promoBannerDescription, setPromoBannerDescription] = useState("");
+  const [promoBannerCode, setPromoBannerCode] = useState("");
+  const [promoBannerButtonText, setPromoBannerButtonText] = useState("");
+  const [promoBannerWhatsappUrl, setPromoBannerWhatsappUrl] = useState("");
+
+  // Favorites Section Fields
+  const [favoritesSectionTag, setFavoritesSectionTag] = useState("");
+  const [favoritesSectionTitle, setFavoritesSectionTitle] = useState("");
+  const [favoritesSectionDescription, setFavoritesSectionDescription] = useState("");
+  // Favorites Card 1
+  const [fav1Badge, setFav1Badge] = useState("");
+  const [fav1Title, setFav1Title] = useState("");
+  const [fav1Tag, setFav1Tag] = useState("");
+  const [fav1Description, setFav1Description] = useState("");
+  // Favorites Card 2
+  const [fav2Badge, setFav2Badge] = useState("");
+  const [fav2Title, setFav2Title] = useState("");
+  const [fav2Tag, setFav2Tag] = useState("");
+  const [fav2Description, setFav2Description] = useState("");
+  // Favorites Card 3
+  const [fav3Badge, setFav3Badge] = useState("");
+  const [fav3Title, setFav3Title] = useState("");
+  const [fav3Tag, setFav3Tag] = useState("");
+  const [fav3Description, setFav3Description] = useState("");
+  // Favorites Card 4
+  const [fav4Badge, setFav4Badge] = useState("");
+  const [fav4Title, setFav4Title] = useState("");
+  const [fav4Tag, setFav4Tag] = useState("");
+  const [fav4Description, setFav4Description] = useState("");
+
+  // Monster Product Fields
+  const [monsterProductVisible, setMonsterProductVisible] = useState(true);
+  const [monsterProductTag, setMonsterProductTag] = useState("");
+  const [monsterProductTitle, setMonsterProductTitle] = useState("");
+  const [monsterProductTitleBold, setMonsterProductTitleBold] = useState("");
+  const [monsterProductDescription, setMonsterProductDescription] = useState("");
+  const [monsterProductPrice, setMonsterProductPrice] = useState("");
+  const [monsterProductWeight, setMonsterProductWeight] = useState("");
+  const [monsterProductThickness, setMonsterProductThickness] = useState("");
+  const [monsterProductSuggestion, setMonsterProductSuggestion] = useState("");
+  const [monsterProductButtonText, setMonsterProductButtonText] = useState("");
+  const [monsterProductButtonLink, setMonsterProductButtonLink] = useState("");
+  const [monsterProductImageUrl, setMonsterProductImageUrl] = useState("");
+  const [uploadingMonsterImage, setUploadingMonsterImage] = useState(false);
+
   // Gallery Section Fields
   const [galleryTitle, setGalleryTitle] = useState("");
   const [galleryImages, setGalleryImages] = useState<any[]>([]);
@@ -206,6 +254,59 @@ export default function AdminPropertiesPage() {
         // Load gallery section
         setGalleryTitle(data.gallerySection?.title || "");
         setGalleryImages(data.gallerySection?.images || []);
+
+        // Load Promo Banner
+        setPromoBannerVisible(data.promoBanner?.visible !== false);
+        setPromoBannerTag(data.promoBanner?.tag || "");
+        setPromoBannerDescription(data.promoBanner?.description || "");
+        setPromoBannerCode(data.promoBanner?.code || "");
+        setPromoBannerButtonText(data.promoBanner?.buttonText || "");
+        setPromoBannerWhatsappUrl(data.promoBanner?.whatsappUrl || "");
+
+        // Load Favorites Section
+        setFavoritesSectionTag(data.favoritesSection?.tag || "");
+        setFavoritesSectionTitle(data.favoritesSection?.title || "");
+        setFavoritesSectionDescription(data.favoritesSection?.description || "");
+        
+        // Load Favorites Cards (1 to 4)
+        const cards = data.favoritesSection?.cards || [];
+        const card1 = cards[0] || {};
+        setFav1Badge(card1.badge || "🥇 Para 2 personas");
+        setFav1Title(card1.title || "");
+        setFav1Tag(card1.tag || "");
+        setFav1Description(card1.description || "");
+
+        const card2 = cards[1] || {};
+        setFav2Badge(card2.badge || "🥇 Para reunión de amigos");
+        setFav2Title(card2.title || "");
+        setFav2Tag(card2.tag || "");
+        setFav2Description(card2.description || "");
+
+        const card3 = cards[2] || {};
+        setFav3Badge(card3.badge || "🥇 Para principiantes");
+        setFav3Title(card3.title || "");
+        setFav3Tag(card3.tag || "");
+        setFav3Description(card3.description || "");
+
+        const card4 = cards[3] || {};
+        setFav4Badge(card4.badge || "🥇 Para parrilleros expertos");
+        setFav4Title(card4.title || "");
+        setFav4Tag(card4.tag || "");
+        setFav4Description(card4.description || "");
+
+        // Load Monster Product
+        setMonsterProductVisible(data.monsterProduct?.visible !== false);
+        setMonsterProductTag(data.monsterProduct?.tag || "");
+        setMonsterProductTitle(data.monsterProduct?.title || "");
+        setMonsterProductTitleBold(data.monsterProduct?.titleBold || "");
+        setMonsterProductDescription(data.monsterProduct?.description || "");
+        setMonsterProductPrice(data.monsterProduct?.price || "");
+        setMonsterProductWeight(data.monsterProduct?.weight || "");
+        setMonsterProductThickness(data.monsterProduct?.thickness || "");
+        setMonsterProductSuggestion(data.monsterProduct?.suggestion || "");
+        setMonsterProductButtonText(data.monsterProduct?.buttonText || "");
+        setMonsterProductButtonLink(data.monsterProduct?.buttonLink || "");
+        setMonsterProductImageUrl(data.monsterProduct?.imageUrl || "");
       }
     } catch (err) {
       console.error("Error loading store content:", err);
@@ -261,6 +362,39 @@ export default function AdminPropertiesPage() {
         title: galleryTitle,
         images: galleryImages,
       },
+      promoBanner: {
+        visible: promoBannerVisible,
+        tag: promoBannerTag,
+        description: promoBannerDescription,
+        code: promoBannerCode,
+        buttonText: promoBannerButtonText,
+        whatsappUrl: promoBannerWhatsappUrl,
+      },
+      favoritesSection: {
+        tag: favoritesSectionTag,
+        title: favoritesSectionTitle,
+        description: favoritesSectionDescription,
+        cards: [
+          { id: "1", badge: fav1Badge, title: fav1Title, tag: fav1Tag, description: fav1Description },
+          { id: "2", badge: fav2Badge, title: fav2Title, tag: fav2Tag, description: fav2Description },
+          { id: "3", badge: fav3Badge, title: fav3Title, tag: fav3Tag, description: fav3Description },
+          { id: "4", badge: fav4Badge, title: fav4Title, tag: fav4Tag, description: fav4Description },
+        ]
+      },
+      monsterProduct: {
+        visible: monsterProductVisible,
+        tag: monsterProductTag,
+        title: monsterProductTitle,
+        titleBold: monsterProductTitleBold,
+        description: monsterProductDescription,
+        price: Number(monsterProductPrice) || 0,
+        weight: monsterProductWeight,
+        thickness: monsterProductThickness,
+        suggestion: monsterProductSuggestion,
+        buttonText: monsterProductButtonText,
+        buttonLink: monsterProductButtonLink,
+        imageUrl: monsterProductImageUrl,
+      }
     };
 
     try {
@@ -1422,6 +1556,18 @@ export default function AdminPropertiesPage() {
                 </button>
                 <button
                   type="button"
+                  onClick={() => setContentTab("promo")}
+                  className={`pb-3 text-xs font-bold uppercase tracking-widest border-b-2 transition-all flex items-center gap-2 shrink-0 ${
+                    contentTab === "promo"
+                      ? "border-gold-400 text-gold-400"
+                      : "border-transparent text-neutral-400 hover:text-white"
+                  }`}
+                >
+                  <Gift className="w-4 h-4" />
+                  Banner Oferta
+                </button>
+                <button
+                  type="button"
                   onClick={() => setContentTab("video")}
                   className={`pb-3 text-xs font-bold uppercase tracking-widest border-b-2 transition-all flex items-center gap-2 shrink-0 ${
                     contentTab === "video"
@@ -1431,6 +1577,30 @@ export default function AdminPropertiesPage() {
                 >
                   <Film className="w-4 h-4" />
                   Experiencia Sensorial
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setContentTab("favorites")}
+                  className={`pb-3 text-xs font-bold uppercase tracking-widest border-b-2 transition-all flex items-center gap-2 shrink-0 ${
+                    contentTab === "favorites"
+                      ? "border-gold-400 text-gold-400"
+                      : "border-transparent text-neutral-400 hover:text-white"
+                  }`}
+                >
+                  <Sparkles className="w-4 h-4" />
+                  Recomendados
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setContentTab("monster")}
+                  className={`pb-3 text-xs font-bold uppercase tracking-widest border-b-2 transition-all flex items-center gap-2 shrink-0 ${
+                    contentTab === "monster"
+                      ? "border-gold-400 text-gold-400"
+                      : "border-transparent text-neutral-400 hover:text-white"
+                  }`}
+                >
+                  <Flame className="w-4 h-4" />
+                  Monstruo de Producto
                 </button>
                 <button
                   type="button"
@@ -1565,6 +1735,85 @@ export default function AdminPropertiesPage() {
                     </div>
                   )}
 
+                  {/* TAB: PROMO BANNER */}
+                  {contentTab === "promo" && (
+                    <div className="space-y-6 animate-in fade-in duration-200">
+                      <div className="flex items-center justify-between p-4 bg-neutral-900 border border-neutral-850 rounded-sm">
+                        <div>
+                          <h4 className="text-xs font-bold text-white uppercase tracking-wider">Mostrar Banner de Oferta</h4>
+                          <p className="text-[10px] text-neutral-500 mt-1">Habilita o deshabilita la visualización del banner promocional inicial en la Store.</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setPromoBannerVisible(!promoBannerVisible)}
+                          className={`px-4 py-2 text-[10px] font-bold tracking-widest uppercase transition-all duration-300 rounded-sm ${
+                            promoBannerVisible ? "bg-[#b01e28] text-white" : "bg-neutral-800 text-neutral-400"
+                          }`}
+                        >
+                          {promoBannerVisible ? "Visible" : "Oculto"}
+                        </button>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                          <label className="block text-[9px] uppercase tracking-widest text-neutral-500 mb-2 font-bold">Título / Tag del Banner</label>
+                          <input
+                            type="text"
+                            value={promoBannerTag}
+                            onChange={(e) => setPromoBannerTag(e.target.value)}
+                            placeholder="Ej. ¡Gran Apertura MEAT STORE!"
+                            className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[9px] uppercase tracking-widest text-neutral-500 mb-2 font-bold">Código de Descuento</label>
+                          <input
+                            type="text"
+                            value={promoBannerCode}
+                            onChange={(e) => setPromoBannerCode(e.target.value)}
+                            placeholder="Ej. MEATSTORE10"
+                            className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white font-mono uppercase tracking-widest"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                          <label className="block text-[9px] uppercase tracking-widest text-neutral-500 mb-2 font-bold">Descripción de la Oferta</label>
+                          <textarea
+                            rows={3}
+                            value={promoBannerDescription}
+                            onChange={(e) => setPromoBannerDescription(e.target.value)}
+                            placeholder="Ej. Obtén 10% de descuento en tu primer pedido..."
+                            className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white resize-none"
+                          />
+                        </div>
+                        <div className="space-y-4">
+                          <div>
+                            <label className="block text-[9px] uppercase tracking-widest text-neutral-500 mb-2 font-bold">Texto del Botón</label>
+                            <input
+                              type="text"
+                              value={promoBannerButtonText}
+                              onChange={(e) => setPromoBannerButtonText(e.target.value)}
+                              placeholder="Ej. Aplicar en WhatsApp"
+                              className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[9px] uppercase tracking-widest text-neutral-500 mb-2 font-bold">Enlace de WhatsApp (URL Completa)</label>
+                            <input
+                              type="text"
+                              value={promoBannerWhatsappUrl}
+                              onChange={(e) => setPromoBannerWhatsappUrl(e.target.value)}
+                              placeholder="Ej. https://wa.me/523222018003..."
+                              className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   {/* TAB: VIDEO */}
                   {contentTab === "video" && (
                     <div className="space-y-6">
@@ -1692,6 +1941,410 @@ export default function AdminPropertiesPage() {
                             </div>
                           )}
                         </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* TAB: FAVORITES SECTION */}
+                  {contentTab === "favorites" && (
+                    <div className="space-y-8 animate-in fade-in duration-200">
+                      {/* Section headers */}
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 border-b border-neutral-850 pb-6">
+                        <div>
+                          <label className="block text-[9px] uppercase tracking-widest text-neutral-500 mb-2 font-bold">Tag Superior</label>
+                          <input
+                            type="text"
+                            value={favoritesSectionTag}
+                            onChange={(e) => setFavoritesSectionTag(e.target.value)}
+                            placeholder="Ej. RECOMENDACIONES DE LA CASA"
+                            className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[9px] uppercase tracking-widest text-neutral-500 mb-2 font-bold">Título de Sección</label>
+                          <input
+                            type="text"
+                            value={favoritesSectionTitle}
+                            onChange={(e) => setFavoritesSectionTitle(e.target.value)}
+                            placeholder="Ej. Favoritos de Nuestros Clientes"
+                            className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[9px] uppercase tracking-widest text-neutral-500 mb-2 font-bold">Descripción General</label>
+                          <input
+                            type="text"
+                            value={favoritesSectionDescription}
+                            onChange={(e) => setFavoritesSectionDescription(e.target.value)}
+                            placeholder="Ej. Selecciones diseñadas a la medida..."
+                            className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Cards Grid */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {/* Card 1 */}
+                        <div className="p-5 bg-neutral-900 border border-neutral-850 rounded-sm space-y-4 relative">
+                          <div className="px-3 py-1 bg-gold-400 text-obsidian text-[8px] font-black tracking-widest uppercase rounded-sm inline-block">
+                            Recomendado 1
+                          </div>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div>
+                              <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Etiqueta/Filtro</label>
+                              <input
+                                type="text"
+                                value={fav1Badge}
+                                onChange={(e) => setFav1Badge(e.target.value)}
+                                className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-1.5 px-2 text-xs rounded-xs text-white"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Sub-Tag</label>
+                              <input
+                                type="text"
+                                value={fav1Tag}
+                                onChange={(e) => setFav1Tag(e.target.value)}
+                                placeholder="Ej. Reserva Doble"
+                                className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-1.5 px-2 text-xs rounded-xs text-white"
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Título de la Tarjeta</label>
+                            <input
+                              type="text"
+                              value={fav1Title}
+                              onChange={(e) => setFav1Title(e.target.value)}
+                              className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-1.5 px-2 text-xs rounded-xs text-white"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Descripción</label>
+                            <textarea
+                              rows={2}
+                              value={fav1Description}
+                              onChange={(e) => setFav1Description(e.target.value)}
+                              className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-1.5 px-2 text-xs rounded-xs text-white resize-none"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Card 2 */}
+                        <div className="p-5 bg-neutral-900 border border-neutral-850 rounded-sm space-y-4 relative">
+                          <div className="px-3 py-1 bg-gold-400 text-obsidian text-[8px] font-black tracking-widest uppercase rounded-sm inline-block">
+                            Recomendado 2
+                          </div>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div>
+                              <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Etiqueta/Filtro</label>
+                              <input
+                                type="text"
+                                value={fav2Badge}
+                                onChange={(e) => setFav2Badge(e.target.value)}
+                                className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-1.5 px-2 text-xs rounded-xs text-white"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Sub-Tag</label>
+                              <input
+                                type="text"
+                                value={fav2Tag}
+                                onChange={(e) => setFav2Tag(e.target.value)}
+                                placeholder="Ej. Paquete Todo Incluido"
+                                className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-1.5 px-2 text-xs rounded-xs text-white"
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Título de la Tarjeta</label>
+                            <input
+                              type="text"
+                              value={fav2Title}
+                              onChange={(e) => setFav2Title(e.target.value)}
+                              className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-1.5 px-2 text-xs rounded-xs text-white"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Descripción</label>
+                            <textarea
+                              rows={2}
+                              value={fav2Description}
+                              onChange={(e) => setFav2Description(e.target.value)}
+                              className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-1.5 px-2 text-xs rounded-xs text-white resize-none"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Card 3 */}
+                        <div className="p-5 bg-neutral-900 border border-neutral-850 rounded-sm space-y-4 relative">
+                          <div className="px-3 py-1 bg-gold-400 text-obsidian text-[8px] font-black tracking-widest uppercase rounded-sm inline-block">
+                            Recomendado 3
+                          </div>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div>
+                              <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Etiqueta/Filtro</label>
+                              <input
+                                type="text"
+                                value={fav3Badge}
+                                onChange={(e) => setFav3Badge(e.target.value)}
+                                className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-1.5 px-2 text-xs rounded-xs text-white"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Sub-Tag</label>
+                              <input
+                                type="text"
+                                value={fav3Tag}
+                                onChange={(e) => setFav3Tag(e.target.value)}
+                                placeholder="Ej. Fácil Preparación"
+                                className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-1.5 px-2 text-xs rounded-xs text-white"
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Título de la Tarjeta</label>
+                            <input
+                              type="text"
+                              value={fav3Title}
+                              onChange={(e) => setFav3Title(e.target.value)}
+                              className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-1.5 px-2 text-xs rounded-xs text-white"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Descripción</label>
+                            <textarea
+                              rows={2}
+                              value={fav3Description}
+                              onChange={(e) => setFav3Description(e.target.value)}
+                              className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-1.5 px-2 text-xs rounded-xs text-white resize-none"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Card 4 */}
+                        <div className="p-5 bg-neutral-900 border border-neutral-850 rounded-sm space-y-4 relative">
+                          <div className="px-3 py-1 bg-gold-400 text-obsidian text-[8px] font-black tracking-widest uppercase rounded-sm inline-block">
+                            Recomendado 4
+                          </div>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div>
+                              <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Etiqueta/Filtro</label>
+                              <input
+                                type="text"
+                                value={fav4Badge}
+                                onChange={(e) => setFav4Badge(e.target.value)}
+                                className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-1.5 px-2 text-xs rounded-xs text-white"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Sub-Tag</label>
+                              <input
+                                type="text"
+                                value={fav4Tag}
+                                onChange={(e) => setFav4Tag(e.target.value)}
+                                placeholder="Ej. Cortes Gruesos"
+                                className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-1.5 px-2 text-xs rounded-xs text-white"
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Título de la Tarjeta</label>
+                            <input
+                              type="text"
+                              value={fav4Title}
+                              onChange={(e) => setFav4Title(e.target.value)}
+                              className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-1.5 px-2 text-xs rounded-xs text-white"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Descripción</label>
+                            <textarea
+                              rows={2}
+                              value={fav4Description}
+                              onChange={(e) => setFav4Description(e.target.value)}
+                              className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-1.5 px-2 text-xs rounded-xs text-white resize-none"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* TAB: MONSTER PRODUCT */}
+                  {contentTab === "monster" && (
+                    <div className="space-y-6 animate-in fade-in duration-200">
+                      <div className="flex items-center justify-between p-4 bg-neutral-900 border border-neutral-850 rounded-sm">
+                        <div>
+                          <h4 className="text-xs font-bold text-white uppercase tracking-wider">Mostrar Showcase de Monstruo de Producto</h4>
+                          <p className="text-[10px] text-neutral-500 mt-1">Muestra o esconde la sección especial del producto colosal en la Store.</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setMonsterProductVisible(!monsterProductVisible)}
+                          className={`px-4 py-2 text-[10px] font-bold tracking-widest uppercase transition-all duration-300 rounded-sm ${
+                            monsterProductVisible ? "bg-[#b01e28] text-white" : "bg-neutral-800 text-neutral-400"
+                          }`}
+                        >
+                          {monsterProductVisible ? "Visible" : "Oculto"}
+                        </button>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                        <div>
+                          <label className="block text-[9px] uppercase tracking-widest text-neutral-500 mb-2 font-bold">Tag Superior</label>
+                          <input
+                            type="text"
+                            value={monsterProductTag}
+                            onChange={(e) => setMonsterProductTag(e.target.value)}
+                            placeholder="Ej. 🔥 EL MONSTRUO DEL ASADOR"
+                            className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[9px] uppercase tracking-widest text-neutral-500 mb-2 font-bold">Título del Producto</label>
+                          <input
+                            type="text"
+                            value={monsterProductTitle}
+                            onChange={(e) => setMonsterProductTitle(e.target.value)}
+                            placeholder="Ej. Tomahawk Gigante"
+                            className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[9px] uppercase tracking-widest text-neutral-500 mb-2 font-bold">Destacado (Paréntesis)</label>
+                          <input
+                            type="text"
+                            value={monsterProductTitleBold}
+                            onChange={(e) => setMonsterProductTitleBold(e.target.value)}
+                            placeholder="Ej. (1.8 kg)"
+                            className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white font-bold text-gold-400"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-[9px] uppercase tracking-widest text-neutral-500 mb-2 font-bold">Descripción Detallada</label>
+                        <textarea
+                          rows={4}
+                          value={monsterProductDescription}
+                          onChange={(e) => setMonsterProductDescription(e.target.value)}
+                          placeholder="Nuestra pieza insignia definitiva: un colosal..."
+                          className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white resize-none"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-4 gap-6">
+                        <div>
+                          <label className="block text-[9px] uppercase tracking-widest text-neutral-500 mb-2 font-bold">Precio Boutique ($)</label>
+                          <input
+                            type="number"
+                            value={monsterProductPrice}
+                            onChange={(e) => setMonsterProductPrice(e.target.value)}
+                            placeholder="Ej. 1450"
+                            className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white font-mono"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[9px] uppercase tracking-widest text-neutral-500 mb-2 font-bold">Peso Aprox</label>
+                          <input
+                            type="text"
+                            value={monsterProductWeight}
+                            onChange={(e) => setMonsterProductWeight(e.target.value)}
+                            placeholder="Ej. 1.8 kg"
+                            className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[9px] uppercase tracking-widest text-neutral-500 mb-2 font-bold">Grosor</label>
+                          <input
+                            type="text"
+                            value={monsterProductThickness}
+                            onChange={(e) => setMonsterProductThickness(e.target.value)}
+                            placeholder='Ej. 3.0"'
+                            className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[9px] uppercase tracking-widest text-neutral-500 mb-2 font-bold">Sugerencia Porción</label>
+                          <input
+                            type="text"
+                            value={monsterProductSuggestion}
+                            onChange={(e) => setMonsterProductSuggestion(e.target.value)}
+                            placeholder="Ej. 6 Personas"
+                            className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                          <label className="block text-[9px] uppercase tracking-widest text-neutral-500 mb-2 font-bold">Texto del Botón</label>
+                          <input
+                            type="text"
+                            value={monsterProductButtonText}
+                            onChange={(e) => setMonsterProductButtonText(e.target.value)}
+                            placeholder="Ej. Ver Detalle del Monstruo"
+                            className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[9px] uppercase tracking-widest text-neutral-500 mb-2 font-bold">Enlace del Botón (Ruta)</label>
+                          <input
+                            type="text"
+                            value={monsterProductButtonLink}
+                            onChange={(e) => setMonsterProductButtonLink(e.target.value)}
+                            placeholder="Ej. /propiedades/el-monstruo-del-asador-tomahawk-gigante-1-8kg"
+                            className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Banner Image Upload */}
+                      <div>
+                        <label className="block text-[9px] uppercase tracking-widest text-neutral-500 mb-2 font-bold">Imagen del Monstruo</label>
+                        {monsterProductImageUrl ? (
+                          <div className="relative aspect-[16/9] max-w-lg border border-neutral-800 rounded-sm overflow-hidden group">
+                            <img src={monsterProductImageUrl} alt="Monstruo Preview" className="w-full h-full object-cover" />
+                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                              <button
+                                type="button"
+                                onClick={() => setMonsterProductImageUrl("")}
+                                className="px-4 py-2 bg-red-650 hover:bg-red-700 text-white text-xs uppercase font-bold tracking-wider rounded-sm transition-all flex items-center gap-1.5"
+                              >
+                                <Trash2 className="w-4 h-4" /> Eliminar Imagen
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="border-2 border-dashed border-neutral-800 hover:border-gold-400/25 p-6 text-center transition-colors rounded-sm relative max-w-lg">
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={async (e) => {
+                                const files = e.target.files;
+                                if (!files || files.length === 0) return;
+                                setUploadingMonsterImage(true);
+                                setContentFormError("");
+                                try {
+                                  const url = await uploadImageFile(files[0]);
+                                  setMonsterProductImageUrl(url);
+                                } catch (err: any) {
+                                  setContentFormError(err.message || "Error al subir imagen");
+                                } finally {
+                                  setUploadingMonsterImage(false);
+                                }
+                              }}
+                              disabled={uploadingMonsterImage}
+                              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                            />
+                            <Upload className="w-8 h-8 text-neutral-600 mx-auto mb-2" />
+                            <span className="block text-xs text-neutral-400 font-semibold uppercase tracking-wider">
+                              {uploadingMonsterImage ? "Subiendo imagen..." : "Seleccionar Imagen"}
+                            </span>
+                            <span className="text-[10px] text-neutral-600 block mt-1">Formatos: JPG, PNG, WebP (Máx. 10MB)</span>
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}

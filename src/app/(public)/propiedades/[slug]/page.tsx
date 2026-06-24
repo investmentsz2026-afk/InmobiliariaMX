@@ -85,7 +85,7 @@ export default async function PropertyDetailPage(props: Props) {
       <div className="max-w-7xl mx-auto px-6">
         {/* Back Link */}
         <Link
-          href="/store#catalogo"
+          href="/meat-store#catalogo"
           className="inline-flex items-center text-xs tracking-widest uppercase text-gray-500 hover:text-[#b01e28] mb-8 transition-colors duration-300 font-bold"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />

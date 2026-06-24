@@ -59,7 +59,7 @@ export default function AdminGrillPage() {
 
   // Grill Content Modal State
   const [isContentModalOpen, setIsContentModalOpen] = useState(false);
-  const [contentTab, setContentTab] = useState<"hero" | "menu" | "video" | "about" | "carousel" | "testimonials" | "how" | "titles">("hero");
+  const [contentTab, setContentTab] = useState<"hero" | "intro" | "menu" | "video" | "about" | "carousel" | "testimonials" | "how" | "titles">("hero");
   const [loadingContent, setLoadingContent] = useState(false);
   const [savingContent, setSavingContent] = useState(false);
 
@@ -164,6 +164,29 @@ export default function AdminGrillPage() {
   const [testimonialsTitle, setTestimonialsTitle] = useState("");
   const [testimonialsButtonText, setTestimonialsButtonText] = useState("");
   const [testimonialsButtonLink, setTestimonialsButtonLink] = useState("");
+
+  // Popup Video Fields
+  const [popupVideoEnabled, setPopupVideoEnabled] = useState(true);
+  const [popupVideoTitle, setPopupVideoTitle] = useState("");
+  const [popupVideoUrl, setPopupVideoUrl] = useState("");
+  const [popupVideoPosterUrl, setPopupVideoPosterUrl] = useState("");
+  const [popupVideoFooterText, setPopupVideoFooterText] = useState("");
+  const [popupVideoButtonText, setPopupVideoButtonText] = useState("");
+  const [uploadingPopupVideo, setUploadingPopupVideo] = useState(false);
+  const [uploadingPopupPoster, setUploadingPopupPoster] = useState(false);
+
+  // Intro Storytelling & Urgency Fields
+  const [introTag, setIntroTag] = useState("");
+  const [introTitle, setIntroTitle] = useState("");
+  const [introDescription, setIntroDescription] = useState("");
+  const [urgency1Title, setUrgency1Title] = useState("");
+  const [urgency1Desc, setUrgency1Desc] = useState("");
+  const [urgency2Title, setUrgency2Title] = useState("");
+  const [urgency2Desc, setUrgency2Desc] = useState("");
+  const [urgency3Title, setUrgency3Title] = useState("");
+  const [urgency3Desc, setUrgency3Desc] = useState("");
+  const [urgency4Title, setUrgency4Title] = useState("");
+  const [urgency4Desc, setUrgency4Desc] = useState("");
 
   // Modal Sub-Form Error States
   const [slideFormError, setSlideFormError] = useState("");
@@ -405,6 +428,27 @@ export default function AdminGrillPage() {
         setTestimonialsTitle(data.testimonialsSection?.title || "");
         setTestimonialsButtonText(data.testimonialsSection?.buttonText || "");
         setTestimonialsButtonLink(data.testimonialsSection?.buttonLink || "");
+
+        // Load popupVideo
+        setPopupVideoEnabled(data.popupVideo?.enabled !== false);
+        setPopupVideoTitle(data.popupVideo?.title || "");
+        setPopupVideoUrl(data.popupVideo?.videoUrl || "");
+        setPopupVideoPosterUrl(data.popupVideo?.posterUrl || "");
+        setPopupVideoFooterText(data.popupVideo?.footerText || "");
+        setPopupVideoButtonText(data.popupVideo?.buttonText || "");
+
+        // Load introSection
+        setIntroTag(data.introSection?.tag || "");
+        setIntroTitle(data.introSection?.title || "");
+        setIntroDescription(data.introSection?.description || "");
+        setUrgency1Title(data.introSection?.urgency1Title || "");
+        setUrgency1Desc(data.introSection?.urgency1Desc || "");
+        setUrgency2Title(data.introSection?.urgency2Title || "");
+        setUrgency2Desc(data.introSection?.urgency2Desc || "");
+        setUrgency3Title(data.introSection?.urgency3Title || "");
+        setUrgency3Desc(data.introSection?.urgency3Desc || "");
+        setUrgency4Title(data.introSection?.urgency4Title || "");
+        setUrgency4Desc(data.introSection?.urgency4Desc || "");
       }
     } catch (err) {
       console.error("Error loading grill content:", err);
@@ -491,6 +535,27 @@ export default function AdminGrillPage() {
         title: testimonialsTitle,
         buttonText: testimonialsButtonText,
         buttonLink: testimonialsButtonLink,
+      },
+      popupVideo: {
+        enabled: popupVideoEnabled,
+        title: popupVideoTitle,
+        videoUrl: popupVideoUrl,
+        posterUrl: popupVideoPosterUrl,
+        footerText: popupVideoFooterText,
+        buttonText: popupVideoButtonText,
+      },
+      introSection: {
+        tag: introTag,
+        title: introTitle,
+        description: introDescription,
+        urgency1Title,
+        urgency1Desc,
+        urgency2Title,
+        urgency2Desc,
+        urgency3Title,
+        urgency3Desc,
+        urgency4Title,
+        urgency4Desc,
       },
     };
 
@@ -1373,6 +1438,20 @@ export default function AdminGrillPage() {
                   Portada (Slider)
                 </button>
 
+                {/* 1.5. Introducción (Storytelling) */}
+                <button
+                  type="button"
+                  onClick={() => setContentTab("intro")}
+                  className={`pb-3 text-xs font-bold uppercase tracking-widest border-b-2 transition-all flex items-center gap-2 shrink-0 ${
+                    contentTab === "intro"
+                      ? "border-gold-400 text-gold-400"
+                      : "border-transparent text-neutral-400 hover:text-white"
+                  }`}
+                >
+                  <BookOpen className="w-4 h-4" />
+                  Introducción (Storytelling)
+                </button>
+
                 {/* 2. Nuestro Menú */}
                 <button
                   type="button"
@@ -1550,6 +1629,170 @@ export default function AdminGrillPage() {
                             </div>
                           ))
                         )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* TAB: INTRO STORYTELLING & URGENCY */}
+                  {contentTab === "intro" && (
+                    <div className="space-y-6 animate-in fade-in duration-200">
+                      <div className="border-b border-neutral-800 pb-4">
+                        <h4 className="text-[10px] text-gold-400 uppercase tracking-widest font-black">Introducción y Storytelling</h4>
+                        <p className="text-[10px] text-neutral-500 uppercase mt-1">Configura el texto de storytelling y las 4 tarjetas de urgencia/beneficios.</p>
+                      </div>
+
+                      {/* Storytelling Card */}
+                      <div className="p-4 bg-black/20 border border-neutral-850 rounded-sm space-y-4 text-left">
+                        <h3 className="font-serif text-sm font-semibold text-gold-400 flex items-center gap-1.5">
+                          <BookOpen className="w-4 h-4 text-gold-400" />
+                          Historia & Storytelling (Primeros Segundos)
+                        </h3>
+                        
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Tag Superior</label>
+                            <input
+                              type="text"
+                              value={introTag}
+                              onChange={(e) => setIntroTag(e.target.value)}
+                              placeholder="Ej. LA EXPERIENCIA DEFINITIVA AL CARBÓN"
+                              className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-2.5 text-xs outline-none transition-colors rounded-xs text-white"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Título Principal</label>
+                            <input
+                              type="text"
+                              value={introTitle}
+                              onChange={(e) => setIntroTitle(e.target.value)}
+                              placeholder="Ej. Cortes Premium preparados al momento..."
+                              className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-2.5 text-xs outline-none transition-colors rounded-xs text-white"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Descripción Corta / Storytelling</label>
+                          <textarea
+                            rows={4}
+                            value={introDescription}
+                            onChange={(e) => setIntroDescription(e.target.value)}
+                            placeholder="Ej. Nuestra pasión es el fuego y la excelencia. Cada fin de semana encendemos las brasas..."
+                            className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-2.5 text-xs outline-none transition-colors rounded-xs text-white resize-none"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Urgency Grid Block */}
+                      <div className="p-4 bg-black/20 border border-neutral-850 rounded-sm space-y-4 text-left">
+                        <h3 className="font-serif text-sm font-semibold text-gold-400 flex items-center gap-1.5">
+                          <Flame className="w-4 h-4 text-gold-400" />
+                          Bloques de Posicionamiento y Urgencia (4 Tarjetas)
+                        </h3>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          
+                          {/* Card 1 */}
+                          <div className="p-3 bg-black/40 border border-neutral-850 rounded-sm space-y-3">
+                            <h5 className="text-[9px] text-gold-400 uppercase tracking-widest font-black">Tarjeta 1 (Ej. 🔥 Solo Domicilio)</h5>
+                            <div className="space-y-2">
+                              <div>
+                                <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-0.5 font-bold">Título</label>
+                                <input
+                                  type="text"
+                                  value={urgency1Title}
+                                  onChange={(e) => setUrgency1Title(e.target.value)}
+                                  className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-1.5 px-2 text-xs outline-none transition-colors rounded-xs text-white"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-0.5 font-bold">Descripción</label>
+                                <input
+                                  type="text"
+                                  value={urgency1Desc}
+                                  onChange={(e) => setUrgency1Desc(e.target.value)}
+                                  className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-1.5 px-2 text-xs outline-none transition-colors rounded-xs text-white"
+                                />
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Card 2 */}
+                          <div className="p-3 bg-black/40 border border-neutral-850 rounded-sm space-y-3">
+                            <h5 className="text-[9px] text-gold-400 uppercase tracking-widest font-black">Tarjeta 2 (Ej. 🚚 Entrega en la Bahía)</h5>
+                            <div className="space-y-2">
+                              <div>
+                                <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-0.5 font-bold">Título</label>
+                                <input
+                                  type="text"
+                                  value={urgency2Title}
+                                  onChange={(e) => setUrgency2Title(e.target.value)}
+                                  className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-1.5 px-2 text-xs outline-none transition-colors rounded-xs text-white"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-0.5 font-bold">Descripción</label>
+                                <input
+                                  type="text"
+                                  value={urgency2Desc}
+                                  onChange={(e) => setUrgency2Desc(e.target.value)}
+                                  className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-1.5 px-2 text-xs outline-none transition-colors rounded-xs text-white"
+                                />
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Card 3 */}
+                          <div className="p-3 bg-black/40 border border-neutral-850 rounded-sm space-y-3">
+                            <h5 className="text-[9px] text-gold-400 uppercase tracking-widest font-black">Tarjeta 3 (Ej. 🥩 Cortes Seleccionados)</h5>
+                            <div className="space-y-2">
+                              <div>
+                                <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-0.5 font-bold">Título</label>
+                                <input
+                                  type="text"
+                                  value={urgency3Title}
+                                  onChange={(e) => setUrgency3Title(e.target.value)}
+                                  className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-1.5 px-2 text-xs outline-none transition-colors rounded-xs text-white"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-0.5 font-bold">Descripción</label>
+                                <input
+                                  type="text"
+                                  value={urgency3Desc}
+                                  onChange={(e) => setUrgency3Desc(e.target.value)}
+                                  className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-1.5 px-2 text-xs outline-none transition-colors rounded-xs text-white"
+                                />
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Card 4 */}
+                          <div className="p-3 bg-black/40 border border-neutral-850 rounded-sm space-y-3">
+                            <h5 className="text-[9px] text-gold-400 uppercase tracking-widest font-black">Tarjeta 4 (Ej. ⭐ Preparados al Momento)</h5>
+                            <div className="space-y-2">
+                              <div>
+                                <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-0.5 font-bold">Título</label>
+                                <input
+                                  type="text"
+                                  value={urgency4Title}
+                                  onChange={(e) => setUrgency4Title(e.target.value)}
+                                  className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-1.5 px-2 text-xs outline-none transition-colors rounded-xs text-white"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-0.5 font-bold">Descripción</label>
+                                <input
+                                  type="text"
+                                  value={urgency4Desc}
+                                  onChange={(e) => setUrgency4Desc(e.target.value)}
+                                  className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-1.5 px-2 text-xs outline-none transition-colors rounded-xs text-white"
+                                />
+                              </div>
+                            </div>
+                          </div>
+
+                        </div>
                       </div>
                     </div>
                   )}
@@ -2143,6 +2386,162 @@ export default function AdminGrillPage() {
                           placeholder="Ej. ¿CÓMO FUNCIONA?"
                           className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2.5 px-3 text-xs outline-none transition-colors duration-300 rounded-sm text-white"
                         />
+                      </div>
+
+                      {/* POPUP VIDEO CONFIGURATION */}
+                      <div className="p-4 bg-black/20 border border-neutral-850 rounded-sm space-y-4 text-left">
+                        <div className="flex items-center justify-between border-b border-neutral-800 pb-3">
+                          <div>
+                            <h4 className="text-[10px] text-gold-400 uppercase tracking-widest font-black flex items-center gap-1.5">
+                              <Film className="w-3.5 h-3.5 text-gold-400" />
+                              Popup de Video de Bienvenida ("Cómo Funcionamos")
+                            </h4>
+                            <p className="text-[9px] text-neutral-500 uppercase mt-0.5">Se muestra automáticamente al abrir la página (una vez por sesión).</p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setPopupVideoEnabled(!popupVideoEnabled)}
+                            className={`px-3 py-1.5 text-[8px] font-black tracking-widest uppercase transition-all duration-300 rounded-sm border ${
+                              popupVideoEnabled 
+                                ? "bg-gold-400 text-black border-gold-400 hover:bg-gold-500" 
+                                : "bg-neutral-800 text-neutral-400 border-neutral-700 hover:bg-neutral-750"
+                            }`}
+                          >
+                            {popupVideoEnabled ? "Habilitado" : "Deshabilitado"}
+                          </button>
+                        </div>
+
+                        {popupVideoEnabled && (
+                          <div className="space-y-4 animate-in fade-in duration-200">
+                            <div>
+                              <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Título del Popup</label>
+                              <input
+                                type="text"
+                                value={popupVideoTitle}
+                                onChange={(e) => setPopupVideoTitle(e.target.value)}
+                                placeholder="Ej. Descubre Cómo Funcionamos"
+                                className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-2.5 text-xs outline-none transition-colors rounded-xs text-white"
+                              />
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                              {/* Video URL / Uploader */}
+                              <div>
+                                <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1.5 font-bold">Archivo de Video</label>
+                                {popupVideoUrl ? (
+                                  <div className="space-y-2">
+                                    <div className="relative aspect-video w-full border border-neutral-800 rounded-sm overflow-hidden bg-black flex items-center justify-center">
+                                      <video src={popupVideoUrl} className="w-full h-full object-cover" controls muted />
+                                    </div>
+                                    <button
+                                      type="button"
+                                      onClick={() => setPopupVideoUrl("")}
+                                      className="w-full py-1.5 bg-red-650/15 border border-red-500/20 hover:bg-red-650/30 text-red-400 text-[9px] uppercase font-bold tracking-wider rounded-xs transition-all flex items-center justify-center gap-1.5"
+                                    >
+                                      <Trash2 className="w-3.5 h-3.5" /> Eliminar Video
+                                    </button>
+                                  </div>
+                                ) : (
+                                  <div className="border border-dashed border-neutral-800 hover:border-gold-400/25 p-4 text-center transition-colors rounded-xs relative">
+                                    <input
+                                      type="file"
+                                      accept="video/*"
+                                      disabled={uploadingPopupVideo}
+                                      onChange={async (e) => {
+                                        const files = e.target.files;
+                                        if (!files || files.length === 0) return;
+                                        setUploadingPopupVideo(true);
+                                        setContentFormError("");
+                                        try {
+                                          const url = await uploadImageFile(files[0]);
+                                          setPopupVideoUrl(url);
+                                        } catch (err: any) {
+                                          setContentFormError(err.message || "Error al subir video");
+                                        } finally {
+                                          setUploadingPopupVideo(false);
+                                        }
+                                      }}
+                                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                    />
+                                    <Upload className="w-6 h-6 text-neutral-600 mx-auto mb-1" />
+                                    <span className="block text-[9px] text-neutral-400 font-bold uppercase tracking-wider">
+                                      {uploadingPopupVideo ? "Subiendo..." : "Subir Video"}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Poster Image URL / Uploader */}
+                              <div>
+                                <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1.5 font-bold">Imagen Poster (Miniatura)</label>
+                                {popupVideoPosterUrl ? (
+                                  <div className="space-y-2">
+                                    <div className="relative aspect-video w-full border border-neutral-800 rounded-sm overflow-hidden">
+                                      <img src={popupVideoPosterUrl} alt="Poster" className="w-full h-full object-cover" />
+                                    </div>
+                                    <button
+                                      type="button"
+                                      onClick={() => setPopupVideoPosterUrl("")}
+                                      className="w-full py-1.5 bg-red-650/15 border border-red-500/20 hover:bg-red-650/30 text-red-400 text-[9px] uppercase font-bold tracking-wider rounded-xs transition-all flex items-center justify-center gap-1.5"
+                                    >
+                                      <Trash2 className="w-3.5 h-3.5" /> Eliminar Poster
+                                    </button>
+                                  </div>
+                                ) : (
+                                  <div className="border border-dashed border-neutral-800 hover:border-gold-400/25 p-4 text-center transition-colors rounded-xs relative">
+                                    <input
+                                      type="file"
+                                      accept="image/*"
+                                      disabled={uploadingPopupPoster}
+                                      onChange={async (e) => {
+                                        const files = e.target.files;
+                                        if (!files || files.length === 0) return;
+                                        setUploadingPopupPoster(true);
+                                        setContentFormError("");
+                                        try {
+                                          const url = await uploadImageFile(files[0]);
+                                          setPopupVideoPosterUrl(url);
+                                        } catch (err: any) {
+                                          setContentFormError(err.message || "Error al subir poster");
+                                        } finally {
+                                          setUploadingPopupPoster(false);
+                                        }
+                                      }}
+                                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                    />
+                                    <Upload className="w-6 h-6 text-neutral-600 mx-auto mb-1" />
+                                    <span className="block text-[9px] text-neutral-400 font-bold uppercase tracking-wider">
+                                      {uploadingPopupPoster ? "Subiendo..." : "Subir Poster"}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                              <div>
+                                <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Texto de Descripción Inferior (Footer)</label>
+                                <input
+                                  type="text"
+                                  value={popupVideoFooterText}
+                                  onChange={(e) => setPopupVideoFooterText(e.target.value)}
+                                  placeholder="Ej. ¿Listo para saborear la experiencia?"
+                                  className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-2.5 text-xs outline-none transition-colors rounded-xs text-white"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-[8px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Texto del Botón de Cierre</label>
+                                <input
+                                  type="text"
+                                  value={popupVideoButtonText}
+                                  onChange={(e) => setPopupVideoButtonText(e.target.value)}
+                                  placeholder="Ej. Entendido, Ver Menú"
+                                  className="w-full bg-black/40 border border-white/10 focus:border-gold-400 py-2 px-2.5 text-xs outline-none transition-colors rounded-xs text-white"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </div>
 
                       <div className="space-y-6">

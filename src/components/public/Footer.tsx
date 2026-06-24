@@ -6,15 +6,15 @@ import { Mail, Phone, MapPin, MessageCircle } from "lucide-react";
 
 export default function Footer() {
   const pathname = usePathname();
-  const isStorePage = pathname.startsWith("/store") || pathname.startsWith("/propiedades");
+  const isStorePage = pathname.startsWith("/meat-store") || pathname.startsWith("/propiedades");
   const isGrillPage = pathname === "/";
 
   const nosotrosHref = isGrillPage 
     ? "#nosotros" 
-    : (pathname === "/store" ? "#nosotros" : "/store#nosotros");
+    : (pathname === "/meat-store" ? "#nosotros" : "/meat-store#nosotros");
   const contactoHref = isGrillPage 
     ? "#contacto" 
-    : (pathname === "/store" ? "#contacto" : "/store#contacto");
+    : (pathname === "/meat-store" ? "#contacto" : "/meat-store#contacto");
 
   const footerBgClass = isStorePage ? "bg-neutral-50 text-neutral-600 border-t border-neutral-200 font-sans" : "bg-black text-gray-400 pt-20 pb-10 border-t border-white/5 font-sans";
   const footerTitleClass = isStorePage ? "font-serif text-neutral-900 tracking-widest text-sm uppercase mb-6 font-bold" : "font-serif text-white tracking-widest text-sm uppercase mb-6 font-semibold";
@@ -91,10 +91,10 @@ export default function Footer() {
               <Link href="/" className={footerLinkClass(!isStorePage)}>Zona Grill</Link>
             </li>
             <li>
-              <Link href="/store" className={footerLinkClass(isStorePage && pathname === "/store")}>Store / Cortes</Link>
+              <Link href="/meat-store" className={footerLinkClass(isStorePage && pathname === "/meat-store")}>MEAT STORE</Link>
             </li>
             <li>
-              <Link href="/store#catalogo" className={footerLinkClass(false)}>Cortes Premium</Link>
+              <Link href="/meat-store#catalogo" className={footerLinkClass(false)}>Cortes Premium</Link>
             </li>
             <li>
               <Link href={nosotrosHref} className={footerLinkClass(false)}>Nosotros</Link>
