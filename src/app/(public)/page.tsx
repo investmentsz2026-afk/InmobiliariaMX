@@ -243,7 +243,7 @@ export default async function ZonaGrillPage() {
             <div className="absolute -top-24 -left-24 w-48 h-48 bg-gold-400/[0.04] rounded-full blur-3xl pointer-events-none" />
             
             <div className="relative z-10 text-left space-y-4">
-              <span className="block text-[9px] uppercase tracking-widest text-gold-400 font-bold">
+              <span className="block text-[11px] sm:text-xs uppercase tracking-[0.2em] text-gold-400 font-black">
                 {introSection.tag}
               </span>
               <h2 className="font-serif text-2xl sm:text-3xl font-extrabold text-white leading-tight">
@@ -332,7 +332,7 @@ export default async function ZonaGrillPage() {
       <section id="nosotros" className="max-w-7xl mx-auto px-6 relative z-10 py-24 border-t border-gold-400/10 bg-black mt-16 rounded-sm shadow-2xl border border-gold-400/5">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
           <div className="space-y-6 text-left">
-            <span className="inline-flex items-center gap-2 px-3 py-1 bg-red-650/15 border border-red-500/20 text-red-400 text-[10px] tracking-widest uppercase font-bold rounded-full">
+            <span className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[#ff2a2a]/20 border border-[#ff2a2a]/30 text-[#ff4444] text-[11px] sm:text-xs tracking-[0.2em] uppercase font-black rounded-full shadow-sm shadow-[#ff2a2a]/5">
               {aboutSection.tag}
             </span>
             <h2 className="font-serif text-3xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight">
@@ -401,13 +401,13 @@ export default async function ZonaGrillPage() {
 
               {/* Left Side Texts */}
               <div className="flex-1 text-left">
-                <span className="inline-block px-2 py-0.5 bg-red-750/90 text-white text-[8px] tracking-widest font-black rounded-xs uppercase mb-3">
+                <span className="inline-block px-3 py-1 bg-[#ff2a2a] text-white text-[10px] sm:text-xs tracking-widest font-black rounded-xs uppercase mb-3 shadow-md shadow-[#ff2a2a]/20">
                   {promo.tag}
                 </span>
                 <h3 className="font-serif text-base sm:text-lg font-bold text-white uppercase leading-snug group-hover:text-gold-400 transition-colors">
                   {promo.title}
                 </h3>
-                <p className="text-xs text-neutral-250 font-normal leading-relaxed mt-2 line-clamp-3">
+                <p className="text-xs sm:text-sm text-neutral-100 font-medium leading-relaxed mt-2 line-clamp-3">
                   {promo.description}
                 </p>
                 
@@ -415,7 +415,7 @@ export default async function ZonaGrillPage() {
                   href="https://wa.me/523222018003?text=Hola,%20quisiera%20ordenar%20la%20promoción:%20"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-block mt-4 px-4 py-2 bg-red-750 hover:bg-red-650 text-white text-[9px] font-bold tracking-widest uppercase transition-all duration-300 rounded-xs border-none"
+                  className="inline-block mt-4 px-5 py-2.5 bg-[#ff2a2a] hover:bg-[#ff1111] text-white text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all duration-300 rounded-xs border-none shadow-md shadow-[#ff2a2a]/15 hover:scale-102 cursor-pointer"
                 >
                   ¡Pídela ya!
                 </a>
@@ -452,7 +452,7 @@ export default async function ZonaGrillPage() {
           {/* Left: Interactive Video Player */}
           <div className="lg:col-span-7 space-y-4">
             <div className="text-left mb-6">
-              <span className="inline-flex items-center gap-2 px-3 py-1 bg-gold-400/10 border border-gold-400/20 text-gold-400 text-[10px] tracking-widest uppercase font-bold rounded-full">
+              <span className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-gold-400/10 border border-gold-400/20 text-gold-400 text-[11px] sm:text-xs tracking-[0.2em] uppercase font-black rounded-full">
                 <Flame className="w-3.5 h-3.5 animate-pulse text-gold-400" />
                 {videoSection.tag}
               </span>
@@ -595,7 +595,7 @@ export default async function ZonaGrillPage() {
       <section id="contacto" className="max-w-7xl mx-auto px-6 relative z-10 py-24 border-t border-gold-400/10">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-start">
           <div className="space-y-6 text-left">
-            <span className="inline-flex items-center gap-2 px-3 py-1 bg-red-650/15 border border-red-500/20 text-red-400 text-[10px] tracking-widest uppercase font-bold rounded-full">
+            <span className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[#ff2a2a]/20 border border-[#ff2a2a]/30 text-[#ff4444] text-[11px] sm:text-xs tracking-[0.2em] uppercase font-black rounded-full shadow-sm shadow-[#ff2a2a]/5">
               Ponte en Contacto
             </span>
             <h2 className="font-serif text-3xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight">

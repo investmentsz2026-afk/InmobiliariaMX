@@ -224,8 +224,8 @@ export default function GrillHeroSlider({ slides }: GrillHeroSliderProps) {
                   <span 
                     className={
                       isVideo
-                        ? "text-gold-400 font-sans tracking-[0.25em] text-[10px] font-bold uppercase block select-none mb-1"
-                        : "text-gold-400 font-sans tracking-[0.25em] text-xs sm:text-sm font-bold uppercase block select-none"
+                        ? "text-gold-400 font-sans tracking-[0.25em] text-xs sm:text-sm font-black uppercase block select-none mb-1"
+                        : "text-gold-400 font-sans tracking-[0.25em] text-sm sm:text-base font-black uppercase block select-none"
                     }
                     style={isVideo ? { textShadow: "1.5px 1.5px 0px rgba(0,0,0,0.85)" } : {}}
                   >

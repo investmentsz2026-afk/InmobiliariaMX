@@ -217,7 +217,7 @@ export default function GrillCarousel({ slides }: GrillCarouselProps) {
                   transition={{ duration: 0.4 }}
                   className="space-y-3 sm:space-y-4"
                 >
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-red-600/20 border border-red-500/30 text-[9px] sm:text-[10px] tracking-widest text-red-400 font-black rounded-xs uppercase w-max">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#ff2a2a]/20 border border-[#ff2a2a]/30 text-[11px] sm:text-xs tracking-widest text-[#ff4444] font-black rounded-xs uppercase w-max">
                     {activeSlides[currentIndex].tag}
                   </span>
                   <h3 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight leading-tight">

@@ -231,35 +231,35 @@ export default function GrillMenuInteractive() {
         <div className="animate-marquee whitespace-nowrap flex items-center text-[10px] sm:text-xs tracking-[0.2em] font-bold uppercase text-gold-400">
           <div className="flex shrink-0 gap-16 items-center px-8">
             <span className="flex items-center gap-2">
-              <Flame className="w-3.5 h-3.5 text-red-500 animate-pulse fill-red-500/10" /> LA CAVA DEL CORTE
+              <Flame className="w-3.5 h-3.5 text-[#ff2a2a] animate-pulse fill-[#ff2a2a]/10" /> LA CAVA DEL CORTE
             </span>
-            <span className="text-red-500/30">•</span>
+            <span className="text-[#ff2a2a]/30">•</span>
             <span className="text-neutral-200">LAS MEJORES CARNES AL CARBÓN</span>
-            <span className="text-red-500/30">•</span>
+            <span className="text-[#ff2a2a]/30">•</span>
             <span className="text-gold-300 font-extrabold">ZONA GRILL RESTAURANTE</span>
-            <span className="text-red-500/30">•</span>
+            <span className="text-[#ff2a2a]/30">•</span>
             <span className="text-neutral-200">100% GANADO DE SONORA</span>
-            <span className="text-red-500/30">•</span>
-            <span className="text-red-400">SABOR & JUGOSIDAD ÚNICA</span>
-            <span className="text-red-500/30">•</span>
+            <span className="text-[#ff2a2a]/30">•</span>
+            <span className="text-[#ff4444] font-black">SABOR & JUGOSIDAD ÚNICA</span>
+            <span className="text-[#ff2a2a]/30">•</span>
             <span className="text-neutral-200">PREMIUM SELECTION</span>
-            <span className="text-red-500/30">•</span>
+            <span className="text-[#ff2a2a]/30">•</span>
           </div>
           <div className="flex shrink-0 gap-16 items-center px-8" aria-hidden="true">
             <span className="flex items-center gap-2">
-              <Flame className="w-3.5 h-3.5 text-red-500 animate-pulse fill-red-500/10" /> LA CAVA DEL CORTE
+              <Flame className="w-3.5 h-3.5 text-[#ff2a2a] animate-pulse fill-[#ff2a2a]/10" /> LA CAVA DEL CORTE
             </span>
-            <span className="text-red-500/30">•</span>
+            <span className="text-[#ff2a2a]/30">•</span>
             <span className="text-neutral-200">LAS MEJORES CARNES AL CARBÓN</span>
-            <span className="text-red-500/30">•</span>
+            <span className="text-[#ff2a2a]/30">•</span>
             <span className="text-gold-300 font-extrabold">ZONA GRILL RESTAURANTE</span>
-            <span className="text-red-500/30">•</span>
+            <span className="text-[#ff2a2a]/30">•</span>
             <span className="text-neutral-200">100% GANADO DE SONORA</span>
-            <span className="text-red-500/30">•</span>
-            <span className="text-red-400">SABOR & JUGOSIDAD ÚNICA</span>
-            <span className="text-red-500/30">•</span>
+            <span className="text-[#ff2a2a]/30">•</span>
+            <span className="text-[#ff4444] font-black">SABOR & JUGOSIDAD ÚNICA</span>
+            <span className="text-[#ff2a2a]/30">•</span>
             <span className="text-neutral-200">PREMIUM SELECTION</span>
-            <span className="text-red-500/30">•</span>
+            <span className="text-[#ff2a2a]/30">•</span>
           </div>
         </div>
       </div>
@@ -376,7 +376,7 @@ export default function GrillMenuInteractive() {
               >
                 {/* Header de la Sección */}
                 <div className="relative border-b border-gold-400/20 pb-4">
-                  <span className="text-[10px] uppercase text-red-500 tracking-[0.25em] font-bold block">
+                  <span className="text-xs sm:text-sm uppercase text-[#ff2a2a] tracking-[0.25em] font-black block">
                     {section.subtitle}
                   </span>
                   <h2 className="font-serif text-2xl sm:text-3xl text-white font-extrabold mt-1.5 leading-snug">
@@ -407,28 +407,28 @@ export default function GrillMenuInteractive() {
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#120202] to-[#0a0101]">
-                            <Flame className="w-6 h-6 text-neutral-600 group-hover/item:text-red-500 transition-colors duration-300" />
+                            <Flame className="w-6 h-6 text-neutral-600 group-hover/item:text-[#ff2a2a] transition-colors duration-300" />
                           </div>
                         )}
                         <div className="absolute inset-0 bg-black/5 group-hover/item:bg-transparent transition-colors duration-300" />
                       </div>
 
                       {/* Item Info (Larger and Clearer text) */}
-                      <div className="flex-1 min-w-0 space-y-1">
+                      <div className="flex-1 min-w-0 space-y-1.5">
                         <div className="flex justify-between items-baseline gap-2">
-                          <h3 className="text-base font-bold text-white group-hover/item:text-gold-400 transition-colors truncate">
+                          <h3 className="text-lg font-black text-white group-hover/item:text-gold-400 transition-colors truncate">
                             {item.name}
                           </h3>
-                          <span className="text-base font-serif font-black text-gold-400 whitespace-nowrap">
+                          <span className="text-lg font-serif font-black text-gold-400 whitespace-nowrap">
                             ${item.price}
                           </span>
                         </div>
-                        <p className="text-xs sm:text-sm text-neutral-250 font-normal leading-relaxed line-clamp-2">
+                        <p className="text-xs sm:text-sm text-neutral-100 font-medium leading-relaxed line-clamp-3">
                           {item.description}
                         </p>
                         <div className="mt-1.5 flex items-center gap-1.5">
-                          <span className="text-[8px] bg-red-500/15 text-red-400 border border-red-500/10 px-1.5 py-0.5 rounded-xs uppercase tracking-widest font-semibold flex items-center gap-1">
-                            <Sparkles className="w-2.5 h-2.5 text-gold-400 animate-pulse" /> Ver detalles y ordenar
+                          <span className="text-[10px] sm:text-xs bg-[#ff2a2a]/20 text-[#ff4444] border border-[#ff2a2a]/30 px-2.5 py-1 rounded-xs uppercase tracking-widest font-black flex items-center gap-1.5 shadow-sm shadow-[#ff2a2a]/5">
+                            <Sparkles className="w-3 h-3 text-gold-400 animate-pulse flex-shrink-0" /> Ver detalles y ordenar
                           </span>
                         </div>
                       </div>
@@ -452,7 +452,7 @@ export default function GrillMenuInteractive() {
         <div className="absolute -left-16 -top-16 w-32 h-32 bg-red-650/5 rounded-full blur-3xl" />
         
         <div className="space-y-3 relative z-10">
-          <span className="px-2.5 py-1 bg-red-600/15 border border-red-500/20 text-red-400 text-[9px] tracking-widest uppercase font-bold rounded-sm">
+          <span className="px-3.5 py-1.5 bg-[#ff2a2a]/20 border border-[#ff2a2a]/30 text-[#ff4444] text-[11px] sm:text-xs tracking-widest uppercase font-black rounded-sm">
             Servicio para Llevar o a Domicilio
           </span>
           <h3 className="font-serif text-xl sm:text-2xl font-bold text-white mt-2">¿Quieres hacer un pedido libre para este fin de semana?</h3>
